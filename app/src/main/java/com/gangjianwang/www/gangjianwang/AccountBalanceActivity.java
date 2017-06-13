@@ -28,7 +28,6 @@ public class AccountBalanceActivity extends AppCompatActivity implements View.On
     private FragmentManager mFragmentManager;
     private List<Fragment> mFragmentList;
     private int curIndex;
-    private int secondCommit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
