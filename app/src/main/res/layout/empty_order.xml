@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/x5"
+            android:scaleType="fitXY"
+            android:src="@mipmap/no_order" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/x5"
+            android:text="您还没有相关的订单"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/x18" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/x5"
+            android:text="可以去看看那些想要买的"
+            android:textSize="@dimen/x14" />
+
+        <RelativeLayout
+            android:id="@+id/rl_empty_order_stroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/x10"
+            android:background="@drawable/order_item_shape"
+            android:padding="@dimen/x3"
+            android:clickable="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="随便逛逛"
+                android:textSize="@dimen/x15" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

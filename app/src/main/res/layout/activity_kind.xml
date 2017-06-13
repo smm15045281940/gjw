@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_kind"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.gangjianwang.www.gangjianwang.KindActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            style="@style/iv_back"
+            android:src="@mipmap/back_black"
+            android:id="@+id/iv_back"/>
+
+        <TextView
+            style="@style/tv_title"
+            android:text="选择分类"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="@dimen/x5"
+                android:layout_marginBottom="@dimen/x5"
+                android:text="一级分类"
+                android:textSize="@dimen/x15"
+                android:textColor="@android:color/holo_red_light"
+                android:id="@+id/tv_kind_first"/>
+            <View
+                android:layout_width="@dimen/x40"
+                android:layout_height="@dimen/x1"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/tv_kind_first"
+                android:background="@android:color/holo_red_light"
+                android:id="@+id/v_kind_first"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="@dimen/x5"
+                android:layout_marginBottom="@dimen/x5"
+                android:text="二级分类"
+                android:textSize="@dimen/x15"
+                android:id="@+id/tv_kind_second"/>
+            <View
+                android:layout_width="@dimen/x40"
+                android:layout_height="@dimen/x1"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/tv_kind_second"
+                android:background="@android:color/holo_red_light"
+                android:visibility="invisible"
+                android:id="@+id/v_kind_second"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="@dimen/x5"
+                android:layout_marginBottom="@dimen/x5"
+                android:text="三级分类"
+                android:textSize="@dimen/x15"
+                android:id="@+id/tv_kind_third"/>
+            <View
+                android:layout_width="@dimen/x40"
+                android:layout_height="@dimen/x1"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/tv_kind_third"
+                android:background="@android:color/holo_red_light"
+                android:visibility="invisible"
+                android:id="@+id/v_kind_third"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x5"
+        android:background="#F5F5F5"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/ll_kind_sit"/>
+
+</LinearLayout>

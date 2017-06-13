@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">钢建网</string>
+    <string-array name="realorder_title">
+        <item>全部</item>
+        <item>待付款</item>
+        <item>待收货</item>
+        <item>待自提</item>
+        <item>待评价</item>
+    </string-array>
+    <string-array name="virtualorder_title">
+        <item>全部</item>
+        <item>待付款</item>
+        <item>待使用</item>
+    </string-array>
+    <string-array name="goodsdetail_title">
+        <item>商品</item>
+        <item>详情</item>
+        <item>评价</item>
+    </string-array>
+    <string-array name="inquirylist_title">
+        <item>全部</item>
+        <item>未修改</item>
+        <item>已修改</item>
+        <item>未下单</item>
+        <item>已下单</item>
+    </string-array>
+
+    <string-array name="lowerletter">
+        <item>a</item>
+        <item>b</item>
+        <item>c</item>
+        <item>d</item>
+        <item>e</item>
+        <item>f</item>
+        <item>g</item>
+        <item>h</item>
+        <item>i</item>
+        <item>j</item>
+        <item>k</item>
+        <item>l</item>
+        <item>m</item>
+        <item>n</item>
+        <item>o</item>
+        <item>p</item>
+        <item>q</item>
+        <item>r</item>
+        <item>s</item>
+        <item>t</item>
+        <item>u</item>
+        <item>v</item>
+        <item>w</item>
+        <item>x</item>
+        <item>y</item>
+        <item>z</item>
+    </string-array>
+
+</resources>

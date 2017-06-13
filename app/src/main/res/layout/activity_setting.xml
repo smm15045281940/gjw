@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_setting"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F8F8"
+    android:orientation="vertical"
+    tools:context="com.gangjianwang.www.gangjianwang.SettingActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x40">
+
+        <RelativeLayout
+            android:id="@+id/rl_setting_back"
+            android:layout_width="@dimen/x40"
+            android:layout_height="match_parent"
+            android:background="@drawable/default_gray_selector"
+            android:padding="@dimen/x10">
+
+            <ImageView
+                android:layout_width="@dimen/x20"
+                android:layout_height="@dimen/x20"
+                android:src="@mipmap/back_black" />
+
+        </RelativeLayout>
+
+        <TextView
+            style="@style/tv_title"
+            android:text="设置" />
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/rl_setting_loginpassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/pressbackcolor_selector"
+                android:clickable="true">
+
+                <TextView
+                    android:id="@+id/tv_setting_loginpassword"
+                    style="@style/tv_setting_login"
+                    android:text="登录密码" />
+
+                <TextView
+                    style="@style/tv_setting_advice"
+                    android:layout_below="@+id/tv_setting_loginpassword"
+                    android:text="建议您定期更改密码以保护账户安全" />
+
+                <ImageView
+                    style="@style/iv_mine_order_more"
+                    android:src="@mipmap/more_black" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_setting_phoneprove"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/x1"
+                android:background="@drawable/pressbackcolor_selector"
+                android:clickable="true">
+
+                <TextView
+                    android:id="@+id/tv_setting_phoneprove"
+                    style="@style/tv_setting_login"
+                    android:text="手机验证" />
+
+                <TextView
+                    style="@style/tv_setting_advice"
+                    android:layout_below="@+id/tv_setting_phoneprove"
+                    android:text="若您的手机已丢失或停用，请立即修改更换" />
+
+                <ImageView
+                    style="@style/iv_mine_order_more"
+                    android:src="@mipmap/more_black" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_setting_paypassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/x1"
+                android:background="@drawable/pressbackcolor_selector"
+                android:clickable="true">
+
+                <TextView
+                    android:id="@+id/tv_setting_paypassword"
+                    style="@style/tv_setting_login"
+                    android:text="支付密码" />
+
+                <TextView
+                    style="@style/tv_setting_advice"
+                    android:layout_below="@+id/tv_setting_paypassword"
+                    android:text="建议您设置复杂的支付密码保护账户金额安全" />
+
+                <ImageView
+                    android:id="@+id/iv_setting_paypassword"
+                    style="@style/iv_mine_order_more"
+                    android:src="@mipmap/more_black" />
+
+                <TextView
+                    style="@style/tv_setting_advice"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/iv_setting_paypassword"
+                    android:text="未设置"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/x12" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_setting_userfeedback"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/x10"
+                android:background="@drawable/pressbackcolor_selector"
+                android:clickable="true">
+
+                <TextView
+                    android:id="@+id/tv_setting_userfeedback"
+                    style="@style/tv_setting_login"
+                    android:text="用户反馈" />
+
+                <TextView
+                    style="@style/tv_setting_advice"
+                    android:layout_below="@+id/tv_setting_userfeedback"
+                    android:text="您在使用中遇到的问题与建议可向我们反馈" />
+
+                <ImageView
+                    style="@style/iv_mine_order_more"
+                    android:src="@mipmap/more_black" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_setting_safequit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/x10"
+                android:background="@drawable/pressbackcolor_selector"
+                android:clickable="true">
+
+                <TextView
+                    style="@style/tv_setting_login"
+                    android:text="安全退出" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

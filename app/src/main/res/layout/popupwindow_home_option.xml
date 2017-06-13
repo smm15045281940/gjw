@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/rl_home_pop_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/default_gray_selector"
+            android:padding="@dimen/x10">
+
+            <ImageView
+                android:id="@+id/iv_home_pop_close"
+                android:layout_width="@dimen/x15"
+                android:layout_height="@dimen/x15"
+                android:src="@mipmap/pop_close" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:id="@+id/rl_home_pop_firstpage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/default_gray_selector"
+            android:padding="@dimen/x5">
+
+            <ImageView
+                android:id="@+id/iv_home_pop_firstpage"
+                android:layout_width="@dimen/x30"
+                android:layout_height="@dimen/x30"
+                android:layout_centerHorizontal="true"
+                android:src="@mipmap/pop_first" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_home_pop_firstpage"
+                android:layout_centerHorizontal="true"
+                android:text="首页"
+                android:textSize="@dimen/x10" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_home_pop_shopcar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/default_gray_selector"
+            android:padding="@dimen/x5">
+
+            <ImageView
+                android:id="@+id/iv_home_pop_shopcar"
+                android:layout_width="@dimen/x30"
+                android:layout_height="@dimen/x30"
+                android:layout_centerHorizontal="true"
+                android:src="@mipmap/pop_shopcar" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_home_pop_shopcar"
+                android:layout_centerHorizontal="true"
+                android:text="购物车"
+                android:textSize="@dimen/x10" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_home_pop_mymall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/default_gray_selector"
+            android:padding="@dimen/x5">
+
+            <ImageView
+                android:id="@+id/iv_home_pop_mymall"
+                android:layout_width="@dimen/x30"
+                android:layout_height="@dimen/x30"
+                android:layout_centerHorizontal="true"
+                android:src="@mipmap/pop_shop" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_home_pop_mymall"
+                android:layout_centerHorizontal="true"
+                android:text="我的商城"
+                android:textSize="@dimen/x10" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:id="@+id/rl_home_pop_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/default_gray_selector"
+            android:padding="@dimen/x5">
+
+            <ImageView
+                android:id="@+id/iv_home_pop_message"
+                android:layout_width="@dimen/x30"
+                android:layout_height="@dimen/x30"
+                android:layout_centerHorizontal="true"
+                android:src="@mipmap/pop_msg" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_home_pop_message"
+                android:layout_centerHorizontal="true"
+                android:text="消息"
+                android:textSize="@dimen/x10" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"></RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"></RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,220 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">#FF6207</item>
+        <item name="colorAccent">#FF6207</item>
+    </style>
+    <!--首页RadioButton样式-->
+    <style name="rb_home">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:button">@null</item>
+        <item name="android:padding">@dimen/x5</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textSize">@dimen/x10</item>
+    </style>
+    <!--我的中灰相对布局样式-->
+    <style name="rl_mine_midgray">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/default_gray_selector</item>
+    </style>
+    <!--我的中灰线性布局样式-->
+    <style name="ll_mine_midgray">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:layout_marginTop">@dimen/x10</item>
+        <item name="android:layout_marginBottom">@dimen/x10</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+    <!--我的中灰图片样式-->
+    <style name="iv_mine_midgray">
+        <item name="android:layout_width">@dimen/x20</item>
+        <item name="android:layout_height">@dimen/x20</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:scaleType">fitXY</item>
+    </style>
+    <!--我的中灰文字样式-->
+    <style name="tv_mine_midgray">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:layout_marginTop">@dimen/x5</item>
+        <item name="android:textSize">@dimen/x10</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+    <!--我的订单图片样式-->
+    <style name="iv_mine_order">
+        <item name="android:layout_width">@dimen/x25</item>
+        <item name="android:layout_height">@dimen/x25</item>
+        <item name="android:layout_margin">@dimen/x8</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+    <!--我的订单文字样式-->
+    <style name="tv_mine_order">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">@dimen/x15</item>
+    </style>
+    <!--我的订单更多文字样式-->
+    <style name="tv_mine_order_more">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textSize">@dimen/x10</item>
+    </style>
+    <!--我的订单更多图片样式-->
+    <style name="iv_mine_order_more">
+        <item name="android:layout_width">@dimen/x10</item>
+        <item name="android:layout_height">@dimen/x10</item>
+        <item name="android:layout_margin">@dimen/x5</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+    </style>
+    <!--待付款图片样式-->
+    <style name="iv_mine_waitpay">
+        <item name="android:layout_width">@dimen/x25</item>
+        <item name="android:layout_height">@dimen/x25</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+    </style>
+    <!--待付款文字样式-->
+    <style name="tv_mine_waitpay">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:layout_marginTop">@dimen/x5</item>
+        <item name="android:textSize">@dimen/x10</item>
+    </style>
+    <!--返回键图片样式-->
+    <style name="iv_back">
+        <item name="android:layout_width">@dimen/x25</item>
+        <item name="android:layout_height">@dimen/x25</item>
+        <item name="android:layout_margin">@dimen/x8</item>
+        <item name="android:scaleType">fitXY</item>
+    </style>
+    <!--标题文字样式-->
+    <style name="tv_title">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">@dimen/x18</item>
+    </style>
+    <!--设置登录密码文字样式-->
+    <style name="tv_setting_login">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">@dimen/x5</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">@dimen/x15</item>
+    </style>
+    <!--设置建议文字样式-->
+    <style name="tv_setting_advice">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">@dimen/x5</item>
+        <item name="android:textSize">@dimen/x12</item>
+    </style>
+    <!--用户名线性布局样式-->
+    <style name="ll_username">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:padding">@dimen/x10</item>
+        <item name="android:background">@android:color/white</item>
+    </style>
+    <!--用户名文字样式-->
+    <style name="tv_username">
+        <item name="android:layout_width">@dimen/x65</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">right</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">@dimen/x15</item>
+    </style>
+    <!--请输入编辑样式-->
+    <style name="et_input">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_marginLeft">@dimen/x10</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textSize">@dimen/x15</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:background">@null</item>
+    </style>
+    <!--账户余额相对布局样式-->
+    <style name="rl_accountbalance">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/x10</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+    <!--账户余额图片样式-->
+    <style name="iv_accountbalance">
+        <item name="android:layout_width">@dimen/x18</item>
+        <item name="android:layout_height">@dimen/x18</item>
+        <item name="android:layout_marginLeft">@dimen/x8</item>
+        <item name="android:scaleType">fitXY</item>
+    </style>
+    <!--账户余额文字样式一-->
+    <style name="tv_accountbalance_one">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/x5</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">@dimen/x15</item>
+    </style>
+    <!--账户余额文字样式二-->
+    <style name="tv_accountbalance_two">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/x5</item>
+        <item name="android:textSize">@dimen/x12</item>
+    </style>
+    <!--账户余额文字样式三-->
+    <style name="tv_accountbalance_three">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_marginRight">@dimen/x5</item>
+    </style>
+    <!--订单tab文字样式-->
+    <style name="tv_order_tab">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_marginTop">@dimen/x5</item>
+        <item name="android:layout_marginBottom">@dimen/x5</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">@dimen/x15</item>
+    </style>
+    <!--订单tab下划线样式-->
+    <style name="v_order_tab">
+        <item name="android:layout_width">@dimen/x25</item>
+        <item name="android:layout_height">@dimen/x1</item>
+        <item name="android:layout_centerHorizontal">true</item>
+    </style>
+
+    <style name="homeoption_popwindow_anim">
+        <item name="android:windowEnterAnimation">@anim/homeoption_popshow_anim</item>
+        <item name="android:windowExitAnimation">@anim/homeoption_pophidden_anim</item>
+    </style>
+
+    <style name="goodsdetailgoods_popwindow_anim">
+        <item name="android:windowEnterAnimation">@anim/goodsdetailgoods_popshow_anim</item>
+        <item name="android:windowExitAnimation">@anim/goodsdetailgoods_pophidden_anim</item>
+    </style>
+
+</resources>

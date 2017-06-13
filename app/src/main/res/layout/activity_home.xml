@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_home"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.gangjianwang.www.gangjianwang.HomeActivity">
+
+    <LinearLayout
+        android:id="@+id/ll_home_sit"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_above="@+id/rg_home"
+        android:layout_weight="1"
+        android:orientation="vertical" />
+
+    <RadioGroup
+        android:id="@+id/rg_home"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rg_home_shape"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_home_firstpage"
+            style="@style/rb_home"
+            android:drawableTop="@drawable/rb_first_selector"
+            android:text="首页"
+            android:textColor="@color/home_radiobutton_textcolor_selector" />
+
+        <RadioButton
+            android:id="@+id/rb_home_purchase"
+            style="@style/rb_home"
+            android:drawableTop="@drawable/rb_purchase_selector"
+            android:text="采购单"
+            android:textColor="@color/home_radiobutton_textcolor_selector" />
+
+        <RadioButton
+            android:id="@+id/rb_home_calculate"
+            style="@style/rb_home"
+            android:background="#FF6207"
+            android:drawableTop="@drawable/rb_calculate_selector"
+            android:text="用量计算"
+            android:textColor="@android:color/white" />
+
+        <RadioButton
+            android:id="@+id/rb_home_shopcar"
+            style="@style/rb_home"
+            android:drawableTop="@drawable/rb_shopcar_selector"
+            android:text="购物车"
+            android:textColor="@color/home_radiobutton_textcolor_selector" />
+
+        <RadioButton
+            android:id="@+id/rb_home_me"
+            style="@style/rb_home"
+            android:drawableTop="@drawable/rb_me_selector"
+            android:text="我的"
+            android:textColor="@color/home_radiobutton_textcolor_selector" />
+
+    </RadioGroup>
+
+</LinearLayout>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/x5">
+
+        <ImageView
+            android:id="@+id/iv_item_allgoods_listview_goodsicon"
+            android:layout_width="@dimen/x70"
+            android:layout_height="@dimen/x50"
+            android:scaleType="fitXY"
+            android:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/tv_item_allgoods_listview_goodsname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/iv_item_allgoods_listview_goodsicon"
+            android:text="goodsName"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/x15" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/iv_item_allgoods_listview_goodsicon"
+            android:layout_toRightOf="@+id/iv_item_allgoods_listview_goodsicon"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="销量"
+                android:textSize="@dimen/x12" />
+
+            <TextView
+                android:id="@+id/tv_item_allgoods_listview_goodssales"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="goodsSales"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/x12" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_item_allgoods_listview_goodsprice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="goodsPrice"
+            android:textColor="@android:color/holo_red_light" />
+
+    </RelativeLayout>
+
+</LinearLayout>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_integrate"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.gangjianwang.www.gangjianwang.IntegrateActivity">
+
+    <RelativeLayout
+        android:id="@+id/ll_integrate_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x40">
+
+        <RelativeLayout
+            android:id="@+id/rl_integrate_back"
+            android:layout_width="@dimen/x40"
+            android:layout_height="match_parent"
+            android:background="@drawable/default_gray_selector"
+            android:padding="@dimen/x10">
+
+            <ImageView
+                android:layout_width="@dimen/x20"
+                android:layout_height="@dimen/x20"
+                android:scaleType="fitXY"
+                android:src="@mipmap/back_black" />
+
+        </RelativeLayout>
+
+        <TextView
+            style="@style/tv_title"
+            android:text="积分明细" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ll_integrate_bar">
+
+        <ListView
+            android:id="@+id/lv_integrate"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </ListView>
+
+        <TextView
+            android:id="@+id/tv_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="空空如也"
+            android:visibility="invisible" />
+
+        <RelativeLayout
+            android:id="@+id/rl_integrate_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="invisible">
+
+            <ImageView
+                android:id="@+id/iv_integrate_loading"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerInParent="true"
+                android:scaleType="fitXY"
+                android:src="@mipmap/ic_launcher" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_integrate_loading"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:singleLine="true"
+                android:text="加载中.." />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

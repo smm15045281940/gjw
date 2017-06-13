@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_make_sure_order"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5"
+    tools:context="com.gangjianwang.www.gangjianwang.MakeSureOrderActivity">
+
+    <RelativeLayout
+        android:id="@+id/rl_makesureorder_topbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:background="@drawable/gray_selector"
+            android:id="@+id/rl_makesureorder_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true">
+
+            <ImageView
+                android:layout_width="@dimen/x20"
+                android:layout_height="@dimen/x20"
+                android:layout_margin="@dimen/x10"
+                android:scaleType="fitXY"
+                android:src="@mipmap/back_black" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="确认订单"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/x18" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_makesureorder_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/white">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="合计总金额："
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/x12" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="¥25.50"
+                    android:textColor="@android:color/holo_red_light"
+                    android:textSize="@dimen/x15" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_makesureorder_submitorder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#ED5564"
+            android:clickable="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/x10"
+                android:layout_marginLeft="@dimen/x20"
+                android:layout_marginRight="@dimen/x20"
+                android:layout_marginTop="@dimen/x10"
+                android:text="提交订单"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/x18" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <ListView
+        android:divider="@null"
+        android:id="@+id/lv_makesureorder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/ll_makesureorder_bottom"
+        android:layout_below="@+id/rl_makesureorder_topbar" />
+
+</RelativeLayout>

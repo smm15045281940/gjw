@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/x10">
+
+        <CheckBox
+            android:id="@+id/cb_item_shopcar_inner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true" />
+
+        <ImageView
+            android:id="@+id/iv_item_shopcar_inner_goodsicon"
+            android:layout_width="@dimen/x50"
+            android:layout_height="@dimen/x50"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/cb_item_shopcar_inner"
+            android:scaleType="fitXY"
+            android:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/tv_item_shopcar_inner_goodsname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/iv_item_shopcar_inner_goodsicon"
+            android:text="goodsName" />
+
+        <TextView
+            android:id="@+id/tv_item_shopcar_inner_goodssize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_item_shopcar_inner_goodsname"
+            android:layout_toRightOf="@+id/iv_item_shopcar_inner_goodsicon"
+            android:text="goodsSize" />
+
+        <TextView
+            android:id="@+id/tv_item_shopcar_inner_goodsprice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_item_shopcar_inner_goodssize"
+            android:layout_toRightOf="@+id/iv_item_shopcar_inner_goodsicon"
+            android:text="goodsPrice" />
+
+        <ImageView
+            android:layout_width="@dimen/x10"
+            android:layout_height="@dimen/x10"
+            android:layout_alignParentRight="true"
+            android:scaleType="fitXY"
+            android:src="@mipmap/ic_launcher" />
+
+    </RelativeLayout>
+
+</LinearLayout>

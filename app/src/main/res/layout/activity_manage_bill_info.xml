@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_manage_bill_info"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5"
+    android:orientation="vertical"
+    tools:context="com.gangjianwang.www.gangjianwang.ManageBillInfoActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#F8F8F8">
+
+        <RelativeLayout
+            android:id="@+id/rl_managebillinfo_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/default_gray_selector"
+            android:clickable="true"
+            android:padding="@dimen/x10">
+
+            <ImageView
+                android:layout_width="@dimen/x20"
+                android:layout_height="@dimen/x20"
+                android:scaleType="fitXY"
+                android:src="@mipmap/back_black" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="管理发票信息"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/x18" />
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:orientation="vertical"
+                android:padding="@dimen/x10">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="是否开据发票"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/x15" />
+
+                <RadioGroup
+                    android:id="@+id/rg_managebillinfo_isbill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/x10"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rb_managebillinfo_isbill_no"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bill_radiobutton_background_selector"
+                        android:button="@null"
+                        android:checked="true"
+                        android:padding="@dimen/x5"
+                        android:text="不需要发票"
+                        android:textColor="@color/bill_radiobutton_textcolor_selector" />
+
+                    <RadioButton
+                        android:id="@+id/rb_managebillinfo_isbill_yes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/x10"
+                        android:background="@drawable/bill_radiobutton_background_selector"
+                        android:button="@null"
+                        android:padding="@dimen/x5"
+                        android:text="需要并填写发票信息"
+                        android:textColor="@color/bill_radiobutton_textcolor_selector" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_manage_bill_isbill"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ListView
+                    android:id="@+id/lv_manage_bill_history"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="@null" />
+
+                <RelativeLayout
+                    android:id="@+id/rl_managebillinfo_addbillcontent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/white"
+                    android:clickable="true">
+
+                    <ImageView
+                        android:id="@+id/iv_managebillinfo_addbillcontent"
+                        android:layout_width="@dimen/x20"
+                        android:layout_height="@dimen/x20"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="@dimen/x10"
+                        android:scaleType="fitXY"
+                        android:src="@mipmap/ic_launcher" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/iv_managebillinfo_addbillcontent"
+                        android:text="新增发票内容"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/x15" />
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_manage_bill_billcontent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/x1"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/white">
+
+                        <TextView
+                            android:id="@+id/tv_managebillinfo_billtype"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_margin="@dimen/x10"
+                            android:text="发票类型"
+                            android:textSize="@dimen/x15" />
+
+                        <RadioGroup
+                            android:id="@+id/rg_managebillinfo_billtype"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="@dimen/x15"
+                            android:layout_marginTop="@dimen/x10"
+                            android:layout_toRightOf="@+id/tv_managebillinfo_billtype"
+                            android:orientation="horizontal">
+
+                            <RadioButton
+                                android:id="@+id/rb_managebillinfo_billtype_person"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bill_radiobutton_background_selector"
+                                android:button="@null"
+                                android:checked="true"
+                                android:padding="@dimen/x5"
+                                android:text="个人"
+                                android:textColor="@color/bill_radiobutton_textcolor_selector" />
+
+                            <RadioButton
+                                android:id="@+id/rb_managebillinfo_billtype_company"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/x10"
+                                android:background="@drawable/bill_radiobutton_background_selector"
+                                android:button="@null"
+                                android:padding="@dimen/x5"
+                                android:text="单位"
+                                android:textColor="@color/bill_radiobutton_textcolor_selector" />
+
+                        </RadioGroup>
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/rl_managebillinfo_billtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/x1"
+                        android:background="@android:color/white">
+
+                        <TextView
+                            android:id="@+id/tv_managebillinfo_billtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_margin="@dimen/x10"
+                            android:text="发票抬头"
+                            android:textSize="@dimen/x15" />
+
+                        <EditText
+                            android:id="@+id/et_managebillinfo_billtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="@dimen/x15"
+                            android:layout_toRightOf="@+id/tv_managebillinfo_billtitle"
+                            android:background="@null"
+                            android:hint="输入个人或企业名称"
+                            android:textColorHint="@android:color/darker_gray"
+                            android:textCursorDrawable="@android:color/darker_gray"
+                            android:textSize="@dimen/x15" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/x1"
+                        android:background="@android:color/white">
+
+                        <TextView
+                            android:id="@+id/tv_managebillinfo_billcontent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_margin="@dimen/x10"
+                            android:text="发票内容"
+                            android:textSize="@dimen/x15" />
+
+                        <Spinner
+                            android:id="@+id/sp_managebillinfo_billcontent"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/tv_managebillinfo_billcontent" />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_managebillinfo_sure"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="@dimen/x5"
+                android:layout_marginTop="@dimen/x20"
+                android:background="@drawable/addreceiveaddress_selector"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginBottom="@dimen/x10"
+                    android:layout_marginTop="@dimen/x10"
+                    android:text="确定"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/x15" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

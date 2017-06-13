@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_item_goodsdetailgoods_othergoods"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="其他规格商品"
+        android:textSize="@dimen/x15"
+        android:layout_margin="@dimen/x10"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x1"
+        android:background="@android:color/darker_gray"/>
+
+    <LinearLayout
+        android:padding="@dimen/x5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/x100"
+            android:layout_height="@dimen/x70"
+            android:scaleType="fitXY"
+            android:src="@mipmap/ic_launcher" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="圆 管" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/x5"
+                    android:text="13 0.3"
+                    android:textColor="@android:color/black" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="@dimen/x5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="规格*厚度"
+                    android:textColor="@android:color/holo_red_light"/>
+
+                <TextView
+                    android:padding="@dimen/x2"
+                    android:background="@drawable/size_thick_shape"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/x5"
+                    android:text="13*0.3"
+                    android:textSize="@dimen/x10"
+                    android:textColor="@android:color/black" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_marginTop="@dimen/x15"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="¥7.50"
+                    android:textSize="@dimen/x13"
+                    android:textColor="@android:color/holo_red_light"/>
+
+                <RelativeLayout
+                    android:layout_marginRight="@dimen/x10"
+                    android:background="@drawable/add_shopcar_shape"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_margin="@dimen/x5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="加入购物车"
+                        android:textSize="@dimen/x13"
+                        android:textColor="@android:color/white"/>
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

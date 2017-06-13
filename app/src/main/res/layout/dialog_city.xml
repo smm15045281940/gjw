@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="检测到您所选的城市与定位的城市不符，现在切换?"
+        android:textSize="@dimen/x20"
+        android:background="@android:color/holo_blue_dark"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/x10"
+            android:gravity="center"
+            android:background="@android:color/holo_green_dark"
+            android:text="确定"
+            android:id="@+id/tv_dialog_sure"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/x10"
+            android:gravity="center"
+            android:background="@android:color/holo_red_dark"
+            android:text="取消"
+            android:id="@+id/tv_dialog_cancel"/>
+
+    </LinearLayout>
+
+</LinearLayout>

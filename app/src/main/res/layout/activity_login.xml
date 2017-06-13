@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_login"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5"
+    android:orientation="vertical"
+    tools:context="com.gangjianwang.www.gangjianwang.LoginActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x40"
+        android:background="#F8F8F8">
+
+        <RelativeLayout
+            android:id="@+id/rl_login_back"
+            android:layout_width="@dimen/x40"
+            android:layout_height="match_parent"
+            android:background="@drawable/default_gray_selector"
+            android:padding="@dimen/x10">
+
+            <ImageView
+                android:layout_width="@dimen/x20"
+                android:layout_height="@dimen/x20"
+                android:src="@mipmap/back_black" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_login_title"
+            style="@style/tv_title"
+            android:text="登录" />
+
+        <RelativeLayout
+            android:id="@+id/rl_login_logreg"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/default_gray_selector">
+
+            <TextView
+                android:id="@+id/tv_login_logreg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="@dimen/x10"
+                android:layout_marginRight="@dimen/x10"
+                android:text="注册"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="@dimen/x15" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_login_sit"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/x1"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+</LinearLayout>

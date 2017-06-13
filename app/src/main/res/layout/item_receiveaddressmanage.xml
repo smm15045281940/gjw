@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/whitegray_selector"
+        android:padding="@dimen/x10">
+
+        <LinearLayout
+            android:id="@+id/ll_item_receiveaddressmanage_namenumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="收货人："
+                android:textSize="@dimen/x12" />
+
+            <TextView
+                android:id="@+id/tv_item_receiveaddressmanage_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/x5"
+                android:text="name"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/x15" />
+
+            <TextView
+                android:id="@+id/tv_item_receiveaddressmanage_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/x5"
+                android:text="number"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/x15" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ll_item_receiveaddressmanage_namenumber"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_item_receiveaddressmanage_roughaddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/x5"
+                android:text="roughaddress"
+                android:textSize="@dimen/x12" />
+            <TextView
+                android:layout_marginLeft="@dimen/x5"
+                android:id="@+id/tv_item_receiveaddressmanage_detailaddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/x5"
+                android:text="detailaddress"
+                android:textSize="@dimen/x12" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

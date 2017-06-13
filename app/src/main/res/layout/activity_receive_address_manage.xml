@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_receive_address_manage"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F8F8"
+    tools:context="com.gangjianwang.www.gangjianwang.ReceiveAddressManageActivity">
+
+    <RelativeLayout
+        android:id="@+id/rl_receiveaddressmanage_topbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/rl_receiveaddressmanage_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/whitegray_selector"
+            android:clickable="true">
+
+            <ImageView
+                android:id="@+id/iv_receiveaddressmanager_back"
+                android:layout_width="@dimen/x20"
+                android:layout_height="@dimen/x20"
+                android:layout_margin="@dimen/x10"
+                android:scaleType="fitXY"
+                android:src="@mipmap/back_black" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="收货地址管理"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/x18" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_receiveaddressmanage_addreceiveaddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/x5"
+        android:background="@drawable/addreceiveaddress_selector"
+        android:clickable="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="@dimen/x10"
+            android:layout_marginTop="@dimen/x10"
+            android:text="新增收货地址"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/x15" />
+
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/lv_receiveaddressmanage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/rl_receiveaddressmanage_addreceiveaddress"
+        android:layout_below="@+id/rl_receiveaddressmanage_topbar" />
+
+    <TextView
+        android:id="@+id/tv_receiveaddressmanage_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="invisible"
+        android:text="尚无收货地址"
+        android:textSize="@dimen/x15" />
+
+</RelativeLayout>
