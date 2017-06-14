@@ -217,4 +217,9 @@
         <item name="android:windowExitAnimation">@anim/goodsdetailgoods_pophidden_anim</item>
     </style>
 
+    <!--订单tab下划线样式-->
+    <style name="TabLayoutTextStyle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
+        <item name="android:textSize">@dimen/x15</item>
+    </style>
+
 </resources>
