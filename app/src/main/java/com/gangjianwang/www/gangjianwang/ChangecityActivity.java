@@ -155,7 +155,12 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
                     }
                 }
             }
-            handlerUi.post(runnableUi);
+            new Thread() {
+                @Override
+                public void run() {
+                    handlerUi.post(runnableUi);
+                }
+            }.start();
         } catch (JSONException e) {
             e.printStackTrace();
             ToastUtils.toast(ChangeCityActivity.this, "解析数据异常");
