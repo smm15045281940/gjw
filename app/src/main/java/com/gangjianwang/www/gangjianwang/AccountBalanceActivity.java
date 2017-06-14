@@ -24,7 +24,6 @@ public class AccountBalanceActivity extends AppCompatActivity implements View.On
     private TextView mAccountBalanceTitleTv;
     private TextView mAccountBalanceTv, mRechargeDetailTv, mAccountCashTv;
     private View mAccountBalanceV, mRechargeDetailV, mAccountCashV;
-
     private FragmentManager mFragmentManager;
     private List<Fragment> mFragmentList;
     private int curIndex;
@@ -48,7 +47,6 @@ public class AccountBalanceActivity extends AppCompatActivity implements View.On
         mAccountBalanceV = findViewById(R.id.v_accountbalance);
         mRechargeDetailV = findViewById(R.id.v_rechargedetail);
         mAccountCashV = findViewById(R.id.v_accountcash);
-
         mAccountBalanceTv.setTextColor(Color.RED);
         mAccountBalanceV.setVisibility(View.VISIBLE);
     }
@@ -100,33 +98,27 @@ public class AccountBalanceActivity extends AppCompatActivity implements View.On
         switch (a) {
             case 0:
                 mAccountBalanceTitleTv.setText("预存款账户");
-
                 mAccountBalanceTv.setTextColor(Color.RED);
                 mRechargeDetailTv.setTextColor(Color.BLACK);
                 mAccountCashTv.setTextColor(Color.BLACK);
-
                 mAccountBalanceV.setVisibility(View.VISIBLE);
                 mRechargeDetailV.setVisibility(View.INVISIBLE);
                 mAccountCashV.setVisibility(View.INVISIBLE);
                 break;
             case 1:
                 mAccountBalanceTitleTv.setText("预存款充值");
-
                 mAccountBalanceTv.setTextColor(Color.BLACK);
                 mRechargeDetailTv.setTextColor(Color.RED);
                 mAccountCashTv.setTextColor(Color.BLACK);
-
                 mAccountBalanceV.setVisibility(View.INVISIBLE);
                 mRechargeDetailV.setVisibility(View.VISIBLE);
                 mAccountCashV.setVisibility(View.INVISIBLE);
                 break;
             case 2:
                 mAccountBalanceTitleTv.setText("预存款提现");
-
                 mAccountBalanceTv.setTextColor(Color.BLACK);
                 mRechargeDetailTv.setTextColor(Color.BLACK);
                 mAccountCashTv.setTextColor(Color.RED);
-
                 mAccountBalanceV.setVisibility(View.INVISIBLE);
                 mRechargeDetailV.setVisibility(View.INVISIBLE);
                 mAccountCashV.setVisibility(View.VISIBLE);
