@@ -2,14 +2,13 @@ package com.gangjianwang.www.gangjianwang;
 
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -21,10 +20,9 @@ import fragment.MineVoucherFragment;
 
 public class VoucherActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private RelativeLayout mMineRl,mGetRl;
+    private RelativeLayout mBackRl,mMineRl,mGetRl;
     private GradientDrawable mMineGd,mGetGd;
     private TextView mMineTv,mGetTv;
-    private ImageView mBackIv;
 
     private FragmentManager mFragmentManager;
     private List<Fragment> mFragmentList;
@@ -41,7 +39,7 @@ public class VoucherActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initView(){
-        mBackIv = (ImageView) findViewById(R.id.iv_voucher_back);
+        mBackRl = (RelativeLayout) findViewById(R.id.rl_voucher_back);
         mMineRl = (RelativeLayout) findViewById(R.id.rl_voucher_mine);
         mGetRl = (RelativeLayout) findViewById(R.id.rl_voucher_get);
         mMineGd = (GradientDrawable) mMineRl.getBackground();
@@ -67,7 +65,7 @@ public class VoucherActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void setListener(){
-        mBackIv.setOnClickListener(this);
+        mBackRl.setOnClickListener(this);
         mMineRl.setOnClickListener(this);
         mGetRl.setOnClickListener(this);
     }
@@ -75,7 +73,7 @@ public class VoucherActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.iv_voucher_back:
+            case R.id.rl_voucher_back:
                 finish();
                 break;
             case R.id.rl_voucher_mine:

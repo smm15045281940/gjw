@@ -7,99 +7,82 @@
     android:orientation="vertical"
     tools:context="com.gangjianwang.www.gangjianwang.RedBagActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal">
+        android:layout_height="@dimen/x40">
 
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/rl_redbag_back"
+            android:layout_width="@dimen/x40"
             android:layout_height="match_parent"
-            android:background="@drawable/whitegray_selector"
+            android:background="@drawable/default_gray_selector"
             android:clickable="true"
-            android:id="@+id/rl_redbag_back">
+            android:padding="@dimen/x10">
 
             <ImageView
-                android:padding="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:src="@mipmap/ic_launcher"/>
+                android:layout_width="@dimen/x20"
+                android:layout_height="@dimen/x20"
+                android:scaleType="fitXY"
+                android:src="@mipmap/back_black" />
 
         </RelativeLayout>
 
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="horizontal">
 
-            <LinearLayout
+            <RelativeLayout
+                android:id="@+id/rl_redbag_mine"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:orientation="horizontal">
+                android:background="@drawable/realorder_shape"
+                android:clickable="true">
 
-                <RelativeLayout
+                <TextView
+                    android:id="@+id/tv_redbag_mine"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:background="@drawable/realorder_shape"
-                    android:clickable="true"
-                    android:id="@+id/rl_redbag_mine">
-                    <TextView
-                        android:layout_marginLeft="10dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="20sp"
-                        android:textColor="@android:color/black"
-                        android:text="我的红包"
-                        android:id="@+id/tv_redbag_mine"/>
-                </RelativeLayout>
+                    android:layout_marginBottom="@dimen/x3"
+                    android:layout_marginLeft="@dimen/x10"
+                    android:layout_marginRight="@dimen/x10"
+                    android:layout_marginTop="@dimen/x3"
+                    android:text="我的红包"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/x15" />
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:background="@drawable/virtualorder_shape"
-                    android:clickable="true"
-                    android:id="@+id/rl_redbag_get">
-                    <TextView
-                        android:layout_marginRight="10dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="20sp"
-                        android:textColor="@android:color/black"
-                        android:text="领取红包"
-                        android:id="@+id/tv_redbag_get"/>
-                </RelativeLayout>
+            </RelativeLayout>
 
-            </LinearLayout>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:visibility="invisible"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/whitegray_selector"
-            android:clickable="true"
-            android:id="@+id/rl_redbag_option">
-
-            <ImageView
-                android:padding="10dp"
+            <RelativeLayout
+                android:id="@+id/rl_redbag_get"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:src="@mipmap/ic_launcher"/>
+                android:layout_height="wrap_content"
+                android:background="@drawable/virtualorder_shape"
+                android:clickable="true">
 
-        </RelativeLayout>
+                <TextView
+                    android:id="@+id/tv_redbag_get"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/x3"
+                    android:layout_marginLeft="@dimen/x10"
+                    android:layout_marginRight="@dimen/x10"
+                    android:layout_marginTop="@dimen/x3"
+                    android:text="领取红包"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/x15" />
 
-    </LinearLayout>
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/ll_redbag_sit"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:id="@+id/ll_redbag_sit">
-
-    </LinearLayout>
+        android:orientation="vertical" />
 
 </LinearLayout>

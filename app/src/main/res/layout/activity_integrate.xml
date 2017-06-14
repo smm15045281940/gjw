@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_integrate"
     android:layout_width="match_parent"
@@ -28,57 +28,18 @@
         </RelativeLayout>
 
         <TextView
-            style="@style/tv_title"
-            android:text="积分明细" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="积分明细"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/x18" />
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <customview.MyRefreshListView
+        android:id="@+id/lv_integrate"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/ll_integrate_bar">
+        android:layout_height="match_parent" />
 
-        <ListView
-            android:id="@+id/lv_integrate"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </ListView>
-
-        <TextView
-            android:id="@+id/tv_empty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="空空如也"
-            android:visibility="invisible" />
-
-        <RelativeLayout
-            android:id="@+id/rl_integrate_loading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:visibility="invisible">
-
-            <ImageView
-                android:id="@+id/iv_integrate_loading"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_centerInParent="true"
-                android:scaleType="fitXY"
-                android:src="@mipmap/ic_launcher" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/iv_integrate_loading"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:singleLine="true"
-                android:text="加载中.." />
-
-        </RelativeLayout>
-
-    </RelativeLayout>
-
-</RelativeLayout>
+</LinearLayout>

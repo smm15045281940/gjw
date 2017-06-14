@@ -1,61 +1,43 @@
 package com.gangjianwang.www.gangjianwang;
 
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
-import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Message;
-import android.os.SystemClock;
-import android.support.v7.app.AppCompatActivity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import adapter.MyIntegrateAdapter;
-import adapter.MyfootAdapter;
 import bean.MyIntegrate;
 import bean.MyIntegrateSum;
+import config.NetConfig;
 import customview.MyRefreshListView;
 import customview.OnRefreshListener;
+import utils.ToastUtils;
 
-public class IntegrateActivity extends AppCompatActivity implements View.OnClickListener {
+public class IntegrateActivity extends AppCompatActivity implements View.OnClickListener, OnRefreshListener {
 
-    private RelativeLayout mAnimRl;
     private RelativeLayout mBackRl;
-    private ListView mLv;
-    private TextView mEmptyTv;
-    private ImageView mAnimIv;
-    private ObjectAnimator animator;//加载动画
-    private List<MyIntegrateSum> mFirstList;
-    private List<MyIntegrate> mDataList;//数据
-    private MyIntegrateAdapter mAdapter;//适配器
-    private int pageIndex = 1;
-
-    Handler mCancelLoadingAnimHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg != null) {
-                if (msg.what == 666) {
-                    cancelAnim();
-                    setEmptyView();
-                }
-            }
-        }
-    };
+    private MyRefreshListView mLv;
+    private List<MyIntegrateSum> mFirstList = new ArrayList<>();
+    private List<MyIntegrate> mDataList = new ArrayList<>();
+    private MyIntegrateAdapter mAdapter;
+    private final int LOAD_FIRST = 1;
+    private final int LOAD_REFRESH = 2;
+    private final int LOAD_LOAD = 3;
+    private ProgressDialog mPd;
+    private Handler handler;
+    private OkHttpClient okHttpClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,78 +45,162 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_integrate);
         initView();
-        initAnim();
         initData();
-        bindData();
+        setData();
         setListener();
-        loadData(pageIndex);
+        loadData(LOAD_FIRST);
     }
 
     private void initView() {
         mBackRl = (RelativeLayout) findViewById(R.id.rl_integrate_back);
-        mLv = (ListView) findViewById(R.id.lv_integrate);
-        mEmptyTv = (TextView) findViewById(R.id.tv_empty);
-        mAnimRl = (RelativeLayout) findViewById(R.id.rl_integrate_loading);
-        mAnimIv = (ImageView) findViewById(R.id.iv_integrate_loading);
-    }
-
-    private void initAnim() {
-        animator = ObjectAnimator.ofFloat(mAnimIv, "rotation", 0.0F, 359.0F);
-        animator.setDuration(500);
-        animator.setRepeatCount(-1);
-        animator.setRepeatMode(ValueAnimator.RESTART);
+        mLv = (MyRefreshListView) findViewById(R.id.lv_integrate);
     }
 
     private void initData() {
-        mFirstList = new ArrayList<>();
-        mDataList = new ArrayList<>();
+        mPd = new ProgressDialog(this);
+        mPd.setMessage("加载中..");
+        handler = new Handler();
+        okHttpClient = new OkHttpClient();
+        mAdapter = new MyIntegrateAdapter(this, mFirstList, mDataList);
     }
 
-    private void bindData() {
-        mAdapter = new MyIntegrateAdapter(this, mFirstList, mDataList);
+    private void setData() {
         mLv.setAdapter(mAdapter);
     }
 
     private void setListener() {
         mBackRl.setOnClickListener(this);
+        mLv.setOnRefreshListener(this);
     }
 
-    private void loadData(int pageIndex) {
-        startAnim();
-        MyIntegrateSum myIntegrateSum = new MyIntegrateSum();
-        myIntegrateSum.integrateSumName = "我的积分";
-        myIntegrateSum.integrateSumScore = "17450";
-        mFirstList.add(myIntegrateSum);
-        MyIntegrate myIntegrate1 = new MyIntegrate();
-        myIntegrate1.integrateTitle = "登录";
-        myIntegrate1.integrateContent = "会员登录";
-        myIntegrate1.integrateScore = "+20";
-        myIntegrate1.integrateTime = "2016-4-20";
-        mDataList.add(myIntegrate1);
-        MyIntegrate myIntegrate2 = new MyIntegrate();
-        myIntegrate2.integrateTitle = "登录";
-        myIntegrate2.integrateContent = "会员登录";
-        myIntegrate2.integrateScore = "+5";
-        myIntegrate2.integrateTime = "2017-4-5";
-        mDataList.add(myIntegrate2);
-        mAdapter.notifyDataSetChanged();
-        mCancelLoadingAnimHandler.sendEmptyMessageDelayed(666, 1000);
-    }
+    private void loadData(int LOAD_STATE) {
+        switch (LOAD_STATE) {
+            case LOAD_FIRST:
+                mPd.show();
+                Request requestFirst = new Request.Builder().url(NetConfig.cityUrl).get().build();
+                okHttpClient.newCall(requestFirst).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Request request, IOException e) {
+                        mPd.dismiss();
+                        ToastUtils.toast(IntegrateActivity.this, "无网络");
+                    }
 
-    private void startAnim() {
-        mLv.setVisibility(View.INVISIBLE);
-        mAnimRl.setVisibility(View.VISIBLE);
-        animator.start();
-    }
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        if (response.isSuccessful()) {
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    super.run();
+                                    MyIntegrateSum myIntegrateSum = new MyIntegrateSum();
+                                    myIntegrateSum.integrateSumName = "我的积分";
+                                    myIntegrateSum.integrateSumScore = "10745";
+                                    mFirstList.add(myIntegrateSum);
+                                    MyIntegrate myIntegrate1 = new MyIntegrate();
+                                    myIntegrate1.integrateTitle = "登录";
+                                    myIntegrate1.integrateContent = "会员登录";
+                                    myIntegrate1.integrateScore = "+20";
+                                    myIntegrate1.integrateTime = "2016-4-20";
+                                    mDataList.add(myIntegrate1);
+                                    MyIntegrate myIntegrate2 = new MyIntegrate();
+                                    myIntegrate2.integrateTitle = "登录";
+                                    myIntegrate2.integrateContent = "会员登录";
+                                    myIntegrate2.integrateScore = "+5";
+                                    myIntegrate2.integrateTime = "2017-4-5";
+                                    mDataList.add(myIntegrate2);
+                                    handler.post(runnableFirst);
+                                }
+                            }.start();
+                        } else {
+                            mPd.dismiss();
+                            ToastUtils.toast(IntegrateActivity.this, "出小差了");
+                        }
+                    }
+                });
+                break;
+            case LOAD_REFRESH:
+                Request requestRefresh = new Request.Builder().url(NetConfig.cityUrl).get().build();
+                okHttpClient.newCall(requestRefresh).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Request request, IOException e) {
+                        mLv.hideHeadView();
+                        ToastUtils.toast(IntegrateActivity.this, "无网络");
+                    }
 
-    private void cancelAnim() {
-        mAnimRl.setVisibility(View.INVISIBLE);
-        mLv.setVisibility(View.VISIBLE);
-        animator.cancel();
-    }
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        if (response.isSuccessful()) {
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    super.run();
+                                    List<MyIntegrate> tempList = new ArrayList<MyIntegrate>();
+                                    tempList.addAll(mDataList);
+                                    mDataList.clear();
+                                    MyIntegrate myIntegrate1 = new MyIntegrate();
+                                    myIntegrate1.integrateTitle = "登录";
+                                    myIntegrate1.integrateContent = "会员登录";
+                                    myIntegrate1.integrateScore = "+20";
+                                    myIntegrate1.integrateTime = "2016-4-20";
+                                    mDataList.add(myIntegrate1);
+                                    MyIntegrate myIntegrate2 = new MyIntegrate();
+                                    myIntegrate2.integrateTitle = "登录";
+                                    myIntegrate2.integrateContent = "会员登录";
+                                    myIntegrate2.integrateScore = "+5";
+                                    myIntegrate2.integrateTime = "2017-4-5";
+                                    mDataList.add(myIntegrate2);
+                                    mDataList.addAll(tempList);
+                                    handler.post(runnableRefresh);
+                                }
+                            }.start();
+                        } else {
+                            mLv.hideHeadView();
+                            ToastUtils.toast(IntegrateActivity.this, "出小差了");
+                        }
+                    }
+                });
+                break;
+            case LOAD_LOAD:
+                Request requestLoad = new Request.Builder().url(NetConfig.cityUrl).get().build();
+                okHttpClient.newCall(requestLoad).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Request request, IOException e) {
+                        mLv.hideFootView();
+                        ToastUtils.toast(IntegrateActivity.this, "无网络");
+                    }
 
-    private void setEmptyView() {
-        mLv.setEmptyView(mEmptyTv);
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        if (response.isSuccessful()) {
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    super.run();
+                                    MyIntegrate myIntegrate1 = new MyIntegrate();
+                                    myIntegrate1.integrateTitle = "登录";
+                                    myIntegrate1.integrateContent = "会员登录";
+                                    myIntegrate1.integrateScore = "+20";
+                                    myIntegrate1.integrateTime = "2016-4-20";
+                                    mDataList.add(myIntegrate1);
+                                    MyIntegrate myIntegrate2 = new MyIntegrate();
+                                    myIntegrate2.integrateTitle = "登录";
+                                    myIntegrate2.integrateContent = "会员登录";
+                                    myIntegrate2.integrateScore = "+5";
+                                    myIntegrate2.integrateTime = "2017-4-5";
+                                    mDataList.add(myIntegrate2);
+                                    handler.post(runnableLoad);
+                                }
+                            }.start();
+                        } else {
+                            mLv.hideFootView();
+                            ToastUtils.toast(IntegrateActivity.this, "出小差了");
+                        }
+                    }
+                });
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -147,4 +213,38 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
                 break;
         }
     }
+
+    @Override
+    public void onDownPullRefresh() {
+        loadData(LOAD_REFRESH);
+    }
+
+    @Override
+    public void onLoadingMore() {
+        loadData(LOAD_LOAD);
+    }
+
+    Runnable runnableFirst = new Runnable() {
+        @Override
+        public void run() {
+            mPd.dismiss();
+            mAdapter.notifyDataSetChanged();
+        }
+    };
+
+    Runnable runnableRefresh = new Runnable() {
+        @Override
+        public void run() {
+            mLv.hideHeadView();
+            mAdapter.notifyDataSetChanged();
+        }
+    };
+
+    Runnable runnableLoad = new Runnable() {
+        @Override
+        public void run() {
+            mLv.hideFootView();
+            mAdapter.notifyDataSetChanged();
+        }
+    };
 }

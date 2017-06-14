@@ -77,31 +77,12 @@
 
         </LinearLayout>
 
-
-        <RelativeLayout
-            android:id="@+id/rl_prepaidcard_option"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/whitegray_selector"
-            android:clickable="true"
-            android:visibility="invisible">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:padding="10dp"
-                android:src="@mipmap/ic_launcher" />
-
-        </RelativeLayout>
-
     </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/ll_prepaidcard_sit"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-    </LinearLayout>
+        android:orientation="vertical" />
 
 </LinearLayout>

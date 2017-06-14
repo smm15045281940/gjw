@@ -1,104 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/holo_red_light">
-
-        <LinearLayout
-            android:layout_alignParentRight="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:layout_gravity="right"
-                android:textColor="@android:color/white"
-                android:text="请输入已获得的代金券卡密领取代金券"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:layout_gravity="right"
-                android:textColor="@android:color/white"
-                android:text="领取代金券后可以在购买商品下单时选择符合使用条件的代金券抵扣订单金额"/>
-
-        </LinearLayout>
-
-    </RelativeLayout>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:padding="20dp"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_red_light">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:padding="@dimen/x5"
+                    android:text="请输入已获得的代金券卡密领取代金券"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:padding="@dimen/x5"
+                    android:text="领取代金券后可以在购买商品下单时选择符合使用条件的代金券抵扣订单金额"
+                    android:textColor="@android:color/white" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/x10">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:text="代金券卡密"
                 android:textColor="@android:color/black"
-                android:textSize="25sp"
-                android:text="代金券卡密"/>
+                android:textSize="@dimen/x20" />
+
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:textSize="20sp"
-                android:hint="请输入代金券卡密号"/>
+                android:hint="请输入代金券卡密号"
+                android:textSize="@dimen/x18" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:padding="20dp"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/x10">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:text="验    证    码"
                 android:textColor="@android:color/black"
-                android:textSize="25sp"
-                android:text="验    证    码"/>
+                android:textSize="@dimen/x20" />
+
             <EditText
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:textSize="20sp"
-                android:hint="请输入验证码"/>
+                android:layout_weight="1"
+                android:hint="请输入验证码"
+                android:textSize="@dimen/x18" />
+
             <ImageView
-                android:layout_width="80dp"
-                android:layout_height="30dp"
-                android:scaleType="fitXY"
+                android:id="@+id/iv_prepaidcard_paycash_imgcode"
+                android:layout_width="@dimen/x50"
+                android:layout_height="@dimen/x30"
                 android:layout_gravity="center"
-                android:src="@mipmap/ic_launcher"
-                android:id="@+id/iv_prepaidcard_paycash_imgcode"/>
+                android:scaleType="fitXY"
+                android:src="@mipmap/ic_launcher" />
 
         </LinearLayout>
 
         <Button
-            android:layout_margin="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:text="确认提交"/>
+            android:text="确认提交"
+            android:textSize="20sp" />
 
     </LinearLayout>
 
-</LinearLayout>
+</ScrollView>

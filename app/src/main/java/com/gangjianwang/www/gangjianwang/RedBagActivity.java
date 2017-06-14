@@ -47,7 +47,6 @@ public class RedBagActivity extends AppCompatActivity implements View.OnClickLis
         mGetGd = (GradientDrawable) mGetRl.getBackground();
         mMineTv = (TextView) findViewById(R.id.tv_redbag_mine);
         mGetTv = (TextView) findViewById(R.id.tv_redbag_get);
-
         mMineGd.setColor(Color.RED);
         mMineTv.setTextColor(Color.WHITE);
     }
