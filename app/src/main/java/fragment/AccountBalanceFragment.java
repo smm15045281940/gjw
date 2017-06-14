@@ -7,7 +7,8 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 
 import com.gangjianwang.www.gangjianwang.R;
@@ -17,21 +18,31 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import config.NetConfig;
 import customview.LazyFragment;
+import customview.MyRefreshListView;
+import customview.OnRefreshListener;
 import utils.ToastUtils;
 
 /**
  * Created by Administrator on 2017/4/20 0020.
  */
 
-public class AccountBalanceFragment extends LazyFragment {
+public class AccountBalanceFragment extends LazyFragment implements OnRefreshListener {
 
     private View rootView, mEmptyView;
-    private ListView mLv;
+    private MyRefreshListView mLv;
     private ProgressDialog mPd;
     private Handler handler;
+    private final int LOAD_FIRST = 1;
+    private final int LOAD_REFRESH = 2;
+    private final int LOAD_LOAD = 3;
+    private OkHttpClient okHttpClient;
+    private List<String> testList = new ArrayList<>();
+    private ArrayAdapter<String> testAdapter;
 
     @Nullable
     @Override
@@ -39,11 +50,13 @@ public class AccountBalanceFragment extends LazyFragment {
         rootView = inflater.inflate(R.layout.fragment_accountbalance, null);
         initView();
         initData();
+        setData();
+        setListener();
         return rootView;
     }
 
     private void initView() {
-        mLv = (ListView) rootView.findViewById(R.id.lv_accountbalance);
+        mLv = (MyRefreshListView) rootView.findViewById(R.id.lv_accountbalance);
         mEmptyView = View.inflate(getActivity(), R.layout.empty_account_balance, null);
         mEmptyView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
         ((ViewGroup) mLv.getParent()).addView(mEmptyView);
@@ -55,44 +68,162 @@ public class AccountBalanceFragment extends LazyFragment {
         mPd = new ProgressDialog(getActivity());
         mPd.setMessage("加载中..");
         handler = new Handler();
+        okHttpClient = new OkHttpClient();
+        testAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, testList);
     }
 
-    @Override
-    protected void onFragmentFirstVisible() {
-        loadData();
+    private void setData() {
+        mLv.setAdapter(testAdapter);
     }
 
-    private void loadData() {
-        mEmptyView.setVisibility(View.GONE);
-        mPd.show();
-        OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = new Request.Builder().url(NetConfig.cityUrl).get().build();
-        okHttpClient.newCall(request).enqueue(new Callback() {
+    private void setListener() {
+        mLv.setOnRefreshListener(this);
+        mLv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public void onFailure(Request request, IOException e) {
-                mPd.dismiss();
-                ToastUtils.toast(getActivity(), "无网络");
-            }
-
-            @Override
-            public void onResponse(Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    new Thread() {
-                        @Override
-                        public void run() {
-                            handler.post(runnableUi);
-                        }
-                    }.start();
-                }
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                testList.clear();
+                testAdapter.notifyDataSetChanged();
+                return false;
             }
         });
     }
 
-    Runnable runnableUi = new Runnable() {
+    @Override
+    protected void onFragmentFirstVisible() {
+        loadData(LOAD_FIRST);
+    }
+
+    private void loadData(int LOAD_STATE) {
+        switch (LOAD_STATE) {
+            case LOAD_FIRST:
+                mEmptyView.setVisibility(View.GONE);
+                mPd.show();
+                Request requestFirst = new Request.Builder().url(NetConfig.cityUrl).get().build();
+                okHttpClient.newCall(requestFirst).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Request request, IOException e) {
+                        mPd.dismiss();
+                        ToastUtils.toast(getActivity(), "无网络");
+                    }
+
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        if (response.isSuccessful()) {
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    for (int i = 0; i < 10; i++) {
+                                        testList.add("账户余额-第一次加载的数据-" + i);
+                                    }
+                                    handler.post(runnableFirst);
+                                }
+                            }.start();
+                        } else {
+                            mPd.dismiss();
+                            ToastUtils.toast(getActivity(), "出小差了");
+                        }
+                    }
+                });
+                break;
+            case LOAD_REFRESH:
+                Request requestRefresh = new Request.Builder().url(NetConfig.cityUrl).get().build();
+                okHttpClient.newCall(requestRefresh).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Request request, IOException e) {
+                        mLv.hideHeadView();
+                        ToastUtils.toast(getActivity(), "无网络");
+                    }
+
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        if (response.isSuccessful()) {
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    super.run();
+                                    List<String> tempList = new ArrayList<String>();
+                                    tempList.addAll(testList);
+                                    testList.clear();
+                                    for (int i = 0; i < 1; i++) {
+                                        testList.add("账户余额-刷新出来的数据-" + i);
+                                    }
+                                    testList.addAll(tempList);
+                                    handler.post(runnableRefresh);
+                                }
+                            }.start();
+                        } else {
+                            mLv.hideHeadView();
+                            ToastUtils.toast(getActivity(), "出小差了");
+                        }
+                    }
+                });
+                break;
+            case LOAD_LOAD:
+                Request requestLoad = new Request.Builder().url(NetConfig.cityUrl).get().build();
+                okHttpClient.newCall(requestLoad).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Request request, IOException e) {
+                        mLv.hideFootView();
+                        ToastUtils.toast(getActivity(), "无网络");
+                    }
+
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        if (response.isSuccessful()) {
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    super.run();
+                                    for (int i = 0; i < 1; i++) {
+                                        testList.add("账户余额-加载出来的数据-" + i);
+                                    }
+                                    handler.post(runnableLoad);
+                                }
+                            }.start();
+                        } else {
+                            mLv.hideFootView();
+                            ToastUtils.toast(getActivity(), "出小差了");
+                        }
+                    }
+                });
+                break;
+            default:
+                break;
+        }
+    }
+
+    Runnable runnableFirst = new Runnable() {
         @Override
         public void run() {
             mPd.dismiss();
             mEmptyView.setVisibility(View.VISIBLE);
+            testAdapter.notifyDataSetChanged();
         }
     };
+
+    Runnable runnableRefresh = new Runnable() {
+        @Override
+        public void run() {
+            mLv.hideHeadView();
+            testAdapter.notifyDataSetChanged();
+        }
+    };
+
+    Runnable runnableLoad = new Runnable() {
+        @Override
+        public void run() {
+            mLv.hideFootView();
+            testAdapter.notifyDataSetChanged();
+        }
+    };
+
+    @Override
+    public void onDownPullRefresh() {
+        loadData(LOAD_REFRESH);
+    }
+
+    @Override
+    public void onLoadingMore() {
+        loadData(LOAD_LOAD);
+    }
 }
