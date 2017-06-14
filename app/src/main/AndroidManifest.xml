@@ -86,7 +86,7 @@
         <activity android:name=".ChoosePayWayActivity" />
         <activity android:name=".ManageBillInfoActivity" />
         <activity android:name=".ShopIntroActivity" />
-        <activity android:name=".InquiryListActivity"></activity>
+        <activity android:name=".InquiryListActivity" />
     </application>
 
 </manifest>
