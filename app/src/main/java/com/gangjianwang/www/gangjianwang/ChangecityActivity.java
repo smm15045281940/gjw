@@ -2,25 +2,26 @@ package com.gangjianwang.www.gangjianwang;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xutils.common.Callback;
-import org.xutils.http.RequestParams;
-import org.xutils.x;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +31,7 @@ import config.NetConfig;
 import customview.SlideBar;
 import utils.ToastUtils;
 
-public class ChangecityActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class ChangeCityActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     private View rootView;
     private RelativeLayout mBackRl;
@@ -40,6 +41,7 @@ public class ChangecityActivity extends AppCompatActivity implements View.OnClic
     private ChangeCityAdapter mAdapter;
     private String[] lowerLetter;
     private ProgressDialog mPd;
+    private Handler handlerUi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,7 @@ public class ChangecityActivity extends AppCompatActivity implements View.OnClic
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         rootView = View.inflate(this, R.layout.activity_changecity, null);
         setContentView(rootView);
+        handlerUi = new Handler();
         initView();
         initData();
         setData();
@@ -89,32 +92,21 @@ public class ChangecityActivity extends AppCompatActivity implements View.OnClic
 
     private void loadData() {
         mPd.show();
-        x.http().get(new RequestParams(NetConfig.cityUrl), new Callback.CommonCallback<String>() {
+        OkHttpClient okHttpClient = new OkHttpClient();
+        Request request = new Request.Builder().url(NetConfig.cityUrl).get().build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                mPd.dismiss();
+                ToastUtils.toast(ChangeCityActivity.this, "无网络");
+            }
 
             @Override
-            public void onSuccess(String result) {
-                mPd.dismiss();
-                if (result == null) {
-                    ToastUtils.toast(ChangecityActivity.this, "无数据");
-                } else {
-                    parseJson(result);
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String json = response.body().string();
+                    parseJson(json);
                 }
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                mPd.dismiss();
-                ToastUtils.toast(ChangecityActivity.this, "无网络");
-            }
-
-            @Override
-            public void onCancelled(CancelledException cex) {
-                mPd.dismiss();
-            }
-
-            @Override
-            public void onFinished() {
-                mPd.dismiss();
             }
         });
     }
@@ -134,7 +126,7 @@ public class ChangecityActivity extends AppCompatActivity implements View.OnClic
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent();
         intent.putExtra("cityName", mDataList.get(position).getCityName());
-        ToastUtils.toast(ChangecityActivity.this, mDataList.get(position).getCityId() + "\n" + mDataList.get(position).getCityName());
+        ToastUtils.toast(ChangeCityActivity.this, mDataList.get(position).getCityId() + "\n" + mDataList.get(position).getCityName());
         setResult(1, intent);
         finish();
     }
@@ -163,11 +155,18 @@ public class ChangecityActivity extends AppCompatActivity implements View.OnClic
                     }
                 }
             }
-            mAdapter.notifyDataSetChanged();
+            handlerUi.post(runnableUi);
         } catch (JSONException e) {
             e.printStackTrace();
-            ToastUtils.toast(ChangecityActivity.this, "解析数据异常");
+            ToastUtils.toast(ChangeCityActivity.this, "解析数据异常");
         }
     }
 
+    Runnable runnableUi = new Runnable() {
+        @Override
+        public void run() {
+            mPd.dismiss();
+            mAdapter.notifyDataSetChanged();
+        }
+    };
 }

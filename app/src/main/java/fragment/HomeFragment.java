@@ -3,7 +3,6 @@ package fragment;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,21 +15,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.location.Poi;
-import com.gangjianwang.www.gangjianwang.ChangecityActivity;
+import com.gangjianwang.www.gangjianwang.ChangeCityActivity;
 import com.gangjianwang.www.gangjianwang.ClassifyActivity;
 import com.gangjianwang.www.gangjianwang.ContractProjectActivity;
 import com.gangjianwang.www.gangjianwang.HomeActivity;
@@ -274,7 +269,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.rl_home_changecity:
-                startActivityForResult(new Intent(getActivity(), ChangecityActivity.class), 1);
+                startActivityForResult(new Intent(getActivity(), ChangeCityActivity.class), 1);
                 break;
             case R.id.rl_home_search:
                 startActivity(new Intent(getActivity(), SearchActivity.class));
