@@ -7,58 +7,36 @@
     android:orientation="vertical"
     tools:context="com.gangjianwang.www.gangjianwang.AccountBalanceActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal">
+        android:layout_height="@dimen/x40">
 
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/rl_accountbalance_back"
+            android:layout_width="@dimen/x40"
             android:layout_height="match_parent"
-            android:background="@drawable/whitegray_selector"
+            android:background="@drawable/default_gray_selector"
             android:clickable="true"
-            android:id="@+id/rl_accountbalance_back">
+            android:padding="@dimen/x10">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:src="@mipmap/ic_launcher"/>
+                android:layout_width="@dimen/x20"
+                android:layout_height="@dimen/x20"
+                android:scaleType="fitXY"
+                android:src="@mipmap/back_black" />
 
         </RelativeLayout>
 
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_centerInParent="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="25sp"
-                android:textColor="@android:color/black"
-                android:text="预存款账户"
-                android:id="@+id/tv_accountbalance_title"/>
-
-        </RelativeLayout>
-
-        <RelativeLayout
+        <TextView
+            android:id="@+id/tv_accountbalance_title"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/whitegray_selector"
-            android:clickable="true"
-            android:id="@+id/rl_accountbalance_option">
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="预存款账户"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/x18" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:src="@mipmap/ic_launcher"/>
-
-        </RelativeLayout>
-
-    </LinearLayout>
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -66,25 +44,26 @@
         android:background="@android:color/holo_red_light">
 
         <LinearLayout
-            android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
                 android:layout_gravity="right"
-                android:textColor="@android:color/white"
-                android:text="预存款余额"/>
+                android:padding="5dp"
+                android:text="预存款余额"
+                android:textColor="@android:color/white" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
                 android:layout_gravity="right"
-                android:textColor="@android:color/white"
-                android:text="0.00"/>
+                android:padding="5dp"
+                android:text="0.00"
+                android:textColor="@android:color/white" />
 
         </LinearLayout>
 
@@ -97,88 +76,89 @@
 
         <RelativeLayout
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
 
             <TextView
+                android:id="@+id/tv_accountbalance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:padding="10dp"
-                android:textSize="18sp"
-                android:textColor="@android:color/black"
                 android:text="账户余额"
-                android:id="@+id/tv_accountbalance"/>
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
             <View
-                android:visibility="invisible"
+                android:id="@+id/v_accountbalance"
                 android:layout_width="50dp"
                 android:layout_height="2dp"
-                android:layout_centerHorizontal="true"
                 android:layout_alignBottom="@+id/tv_accountbalance"
+                android:layout_centerHorizontal="true"
                 android:background="@android:color/holo_red_light"
-                android:id="@+id/v_accountbalance"/>
+                android:visibility="invisible" />
 
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
 
             <TextView
-                android:layout_centerHorizontal="true"
+                android:id="@+id/tv_rechargedetail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
                 android:padding="10dp"
                 android:text="充值明细"
-                android:textSize="18sp"
                 android:textColor="@android:color/black"
-                android:id="@+id/tv_rechargedetail"/>
+                android:textSize="18sp" />
 
             <View
-                android:visibility="invisible"
+                android:id="@+id/v_rechargedetail"
                 android:layout_width="50dp"
                 android:layout_height="2dp"
-                android:layout_centerHorizontal="true"
                 android:layout_alignBottom="@+id/tv_rechargedetail"
+                android:layout_centerHorizontal="true"
                 android:background="@android:color/holo_red_light"
-                android:id="@+id/v_rechargedetail"/>
+                android:visibility="invisible" />
 
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
 
             <TextView
-                android:layout_centerHorizontal="true"
+                android:id="@+id/tv_accountcash"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
                 android:padding="10dp"
                 android:text="余额提现"
-                android:textSize="18sp"
                 android:textColor="@android:color/black"
-                android:id="@+id/tv_accountcash"/>
+                android:textSize="18sp" />
 
             <View
-                android:visibility="invisible"
+                android:id="@+id/v_accountcash"
                 android:layout_width="50dp"
                 android:layout_height="2dp"
-                android:layout_centerHorizontal="true"
                 android:layout_alignBottom="@+id/tv_accountcash"
+                android:layout_centerHorizontal="true"
                 android:background="@android:color/holo_red_light"
-                android:id="@+id/v_accountcash"/>
+                android:visibility="invisible" />
 
         </RelativeLayout>
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_accountbalance_sit"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:id="@+id/ll_accountbalance_sit">
+        android:orientation="vertical">
 
     </LinearLayout>
 
