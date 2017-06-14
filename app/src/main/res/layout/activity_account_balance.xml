@@ -69,97 +69,14 @@
 
     </RelativeLayout>
 
-    <LinearLayout
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tl_accountbalance"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content" />
 
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/tv_accountbalance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:padding="10dp"
-                android:text="账户余额"
-                android:textColor="@android:color/black"
-                android:textSize="18sp" />
-
-            <View
-                android:id="@+id/v_accountbalance"
-                android:layout_width="50dp"
-                android:layout_height="2dp"
-                android:layout_alignBottom="@+id/tv_accountbalance"
-                android:layout_centerHorizontal="true"
-                android:background="@android:color/holo_red_light"
-                android:visibility="invisible" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/tv_rechargedetail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:padding="10dp"
-                android:text="充值明细"
-                android:textColor="@android:color/black"
-                android:textSize="18sp" />
-
-            <View
-                android:id="@+id/v_rechargedetail"
-                android:layout_width="50dp"
-                android:layout_height="2dp"
-                android:layout_alignBottom="@+id/tv_rechargedetail"
-                android:layout_centerHorizontal="true"
-                android:background="@android:color/holo_red_light"
-                android:visibility="invisible" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/tv_accountcash"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:padding="10dp"
-                android:text="余额提现"
-                android:textColor="@android:color/black"
-                android:textSize="18sp" />
-
-            <View
-                android:id="@+id/v_accountcash"
-                android:layout_width="50dp"
-                android:layout_height="2dp"
-                android:layout_alignBottom="@+id/tv_accountcash"
-                android:layout_centerHorizontal="true"
-                android:background="@android:color/holo_red_light"
-                android:visibility="invisible" />
-
-        </RelativeLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_accountbalance_sit"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_accountbalance"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-    </LinearLayout>
+        android:layout_height="match_parent" />
 
 </LinearLayout>

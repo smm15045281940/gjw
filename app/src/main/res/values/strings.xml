@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">钢建网</string>
+
     <string-array name="realorder_title">
         <item>全部</item>
         <item>待付款</item>
@@ -7,22 +8,31 @@
         <item>待自提</item>
         <item>待评价</item>
     </string-array>
+
     <string-array name="virtualorder_title">
         <item>全部</item>
         <item>待付款</item>
         <item>待使用</item>
     </string-array>
+
     <string-array name="goodsdetail_title">
         <item>商品</item>
         <item>详情</item>
         <item>评价</item>
     </string-array>
+
     <string-array name="inquirylist_title">
         <item>全部</item>
         <item>未修改</item>
         <item>已修改</item>
         <item>未下单</item>
         <item>已下单</item>
+    </string-array>
+
+    <string-array name="accountbalance_title">
+        <item>账户余额</item>
+        <item>充值明细</item>
+        <item>余额提现</item>
     </string-array>
 
     <string-array name="lowerletter">
