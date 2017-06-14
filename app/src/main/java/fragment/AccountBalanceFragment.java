@@ -47,6 +47,7 @@ public class AccountBalanceFragment extends LazyFragment {
         mEmptyView = View.inflate(getActivity(), R.layout.empty_account_balance, null);
         mEmptyView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
         ((ViewGroup) mLv.getParent()).addView(mEmptyView);
+        mEmptyView.setVisibility(View.GONE);
         mLv.setEmptyView(mEmptyView);
     }
 
@@ -62,6 +63,7 @@ public class AccountBalanceFragment extends LazyFragment {
     }
 
     private void loadData() {
+        mEmptyView.setVisibility(View.GONE);
         mPd.show();
         OkHttpClient okHttpClient = new OkHttpClient();
         Request request = new Request.Builder().url(NetConfig.cityUrl).get().build();
@@ -90,6 +92,7 @@ public class AccountBalanceFragment extends LazyFragment {
         @Override
         public void run() {
             mPd.dismiss();
+            mEmptyView.setVisibility(View.VISIBLE);
         }
     };
 }
