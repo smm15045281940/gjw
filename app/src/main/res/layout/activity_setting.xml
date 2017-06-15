@@ -4,13 +4,14 @@
     android:id="@+id/activity_setting"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F8F8"
+    android:background="#F5F5F5"
     android:orientation="vertical"
     tools:context="com.gangjianwang.www.gangjianwang.SettingActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/x40">
+        android:layout_height="@dimen/x40"
+        android:background="@android:color/white">
 
         <RelativeLayout
             android:id="@+id/rl_setting_back"
@@ -45,7 +46,8 @@
                 android:id="@+id/rl_setting_loginpassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/pressbackcolor_selector"
+                android:layout_marginTop="@dimen/x1"
+                android:background="@drawable/whitegray_selector"
                 android:clickable="true">
 
                 <TextView
@@ -69,7 +71,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/x1"
-                android:background="@drawable/pressbackcolor_selector"
+                android:background="@drawable/whitegray_selector"
                 android:clickable="true">
 
                 <TextView
@@ -93,7 +95,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/x1"
-                android:background="@drawable/pressbackcolor_selector"
+                android:background="@drawable/whitegray_selector"
                 android:clickable="true">
 
                 <TextView
@@ -126,7 +128,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/x10"
-                android:background="@drawable/pressbackcolor_selector"
+                android:background="@drawable/whitegray_selector"
                 android:clickable="true">
 
                 <TextView
@@ -150,7 +152,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/x10"
-                android:background="@drawable/pressbackcolor_selector"
+                android:background="@drawable/whitegray_selector"
                 android:clickable="true">
 
                 <TextView
