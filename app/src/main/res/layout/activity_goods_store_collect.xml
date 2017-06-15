@@ -4,12 +4,14 @@
     android:id="@+id/activity_goods_store_collect"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F5F5F5"
     android:orientation="vertical"
     tools:context="com.gangjianwang.www.gangjianwang.GoodsStoreCollectActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/x40">
+        android:layout_height="@dimen/x40"
+        android:background="@android:color/white">
 
         <RelativeLayout
             android:id="@+id/rl_collect_back"
@@ -36,14 +38,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/realorder_shape"
-                android:clickable="true"
-                android:padding="10dp">
+                android:clickable="true">
 
                 <TextView
                     android:id="@+id/tv_goodsstorecollect_goodscollect"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="商品收藏" />
+                    android:layout_marginBottom="@dimen/x3"
+                    android:layout_marginLeft="@dimen/x10"
+                    android:layout_marginRight="@dimen/x10"
+                    android:layout_marginTop="@dimen/x3"
+                    android:text="商品收藏"
+                    android:textSize="@dimen/x15" />
+
             </RelativeLayout>
 
             <RelativeLayout
@@ -51,16 +58,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/virtualorder_shape"
-                android:clickable="true"
-                android:padding="10dp">
+                android:clickable="true">
 
                 <TextView
                     android:id="@+id/tv_goodstorecollect_storecollect"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="店铺收藏" />
+                    android:layout_marginBottom="@dimen/x3"
+                    android:layout_marginLeft="@dimen/x10"
+                    android:layout_marginRight="@dimen/x10"
+                    android:layout_marginTop="@dimen/x3"
+                    android:text="店铺收藏"
+                    android:textSize="@dimen/x15" />
+
             </RelativeLayout>
+
         </LinearLayout>
+
     </RelativeLayout>
 
     <LinearLayout
