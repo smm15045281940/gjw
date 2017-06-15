@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 
 import com.squareup.okhttp.Callback;
@@ -17,9 +18,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import adapter.MyIntegrateAdapter;
-import bean.MyIntegrate;
-import bean.MyIntegrateSum;
 import config.NetConfig;
 import customview.MyRefreshListView;
 import customview.OnRefreshListener;
@@ -29,15 +27,15 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
 
     private RelativeLayout mBackRl;
     private MyRefreshListView mLv;
-    private List<MyIntegrateSum> mFirstList = new ArrayList<>();
-    private List<MyIntegrate> mDataList = new ArrayList<>();
-    private MyIntegrateAdapter mAdapter;
     private final int LOAD_FIRST = 1;
     private final int LOAD_REFRESH = 2;
     private final int LOAD_LOAD = 3;
     private ProgressDialog mPd;
     private Handler handler;
     private OkHttpClient okHttpClient;
+
+    private List<String> testList = new ArrayList<>();
+    private ArrayAdapter<String> testAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,11 +59,11 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
         mPd.setMessage("加载中..");
         handler = new Handler();
         okHttpClient = new OkHttpClient();
-        mAdapter = new MyIntegrateAdapter(this, mFirstList, mDataList);
+        testAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, testList);
     }
 
     private void setData() {
-        mLv.setAdapter(mAdapter);
+        mLv.setAdapter(testAdapter);
     }
 
     private void setListener() {
@@ -92,22 +90,9 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
                                 @Override
                                 public void run() {
                                     super.run();
-                                    MyIntegrateSum myIntegrateSum = new MyIntegrateSum();
-                                    myIntegrateSum.integrateSumName = "我的积分";
-                                    myIntegrateSum.integrateSumScore = "10745";
-                                    mFirstList.add(myIntegrateSum);
-                                    MyIntegrate myIntegrate1 = new MyIntegrate();
-                                    myIntegrate1.integrateTitle = "登录";
-                                    myIntegrate1.integrateContent = "会员登录";
-                                    myIntegrate1.integrateScore = "+20";
-                                    myIntegrate1.integrateTime = "2016-4-20";
-                                    mDataList.add(myIntegrate1);
-                                    MyIntegrate myIntegrate2 = new MyIntegrate();
-                                    myIntegrate2.integrateTitle = "登录";
-                                    myIntegrate2.integrateContent = "会员登录";
-                                    myIntegrate2.integrateScore = "+5";
-                                    myIntegrate2.integrateTime = "2017-4-5";
-                                    mDataList.add(myIntegrate2);
+                                    for (int i = 0; i < 20; i++) {
+                                        testList.add("会员积分-首次加载-" + i);
+                                    }
                                     handler.post(runnableFirst);
                                 }
                             }.start();
@@ -134,22 +119,13 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
                                 @Override
                                 public void run() {
                                     super.run();
-                                    List<MyIntegrate> tempList = new ArrayList<MyIntegrate>();
-                                    tempList.addAll(mDataList);
-                                    mDataList.clear();
-                                    MyIntegrate myIntegrate1 = new MyIntegrate();
-                                    myIntegrate1.integrateTitle = "登录";
-                                    myIntegrate1.integrateContent = "会员登录";
-                                    myIntegrate1.integrateScore = "+20";
-                                    myIntegrate1.integrateTime = "2016-4-20";
-                                    mDataList.add(myIntegrate1);
-                                    MyIntegrate myIntegrate2 = new MyIntegrate();
-                                    myIntegrate2.integrateTitle = "登录";
-                                    myIntegrate2.integrateContent = "会员登录";
-                                    myIntegrate2.integrateScore = "+5";
-                                    myIntegrate2.integrateTime = "2017-4-5";
-                                    mDataList.add(myIntegrate2);
-                                    mDataList.addAll(tempList);
+                                    List<String> tempList = new ArrayList<String>();
+                                    tempList.addAll(testList);
+                                    testList.clear();
+                                    for (int i = 0; i < 1; i++) {
+                                        testList.add("会员积分-刷新" + i);
+                                    }
+                                    testList.addAll(tempList);
                                     handler.post(runnableRefresh);
                                 }
                             }.start();
@@ -176,18 +152,9 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
                                 @Override
                                 public void run() {
                                     super.run();
-                                    MyIntegrate myIntegrate1 = new MyIntegrate();
-                                    myIntegrate1.integrateTitle = "登录";
-                                    myIntegrate1.integrateContent = "会员登录";
-                                    myIntegrate1.integrateScore = "+20";
-                                    myIntegrate1.integrateTime = "2016-4-20";
-                                    mDataList.add(myIntegrate1);
-                                    MyIntegrate myIntegrate2 = new MyIntegrate();
-                                    myIntegrate2.integrateTitle = "登录";
-                                    myIntegrate2.integrateContent = "会员登录";
-                                    myIntegrate2.integrateScore = "+5";
-                                    myIntegrate2.integrateTime = "2017-4-5";
-                                    mDataList.add(myIntegrate2);
+                                    for (int i = 0; i < 1; i++) {
+                                        testList.add("会员积分-加载-" + i);
+                                    }
                                     handler.post(runnableLoad);
                                 }
                             }.start();
@@ -228,7 +195,7 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
         @Override
         public void run() {
             mPd.dismiss();
-            mAdapter.notifyDataSetChanged();
+            testAdapter.notifyDataSetChanged();
         }
     };
 
@@ -236,7 +203,7 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
         @Override
         public void run() {
             mLv.hideHeadView();
-            mAdapter.notifyDataSetChanged();
+            testAdapter.notifyDataSetChanged();
         }
     };
 
@@ -244,7 +211,7 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
         @Override
         public void run() {
             mLv.hideFootView();
-            mAdapter.notifyDataSetChanged();
+            testAdapter.notifyDataSetChanged();
         }
     };
 }
