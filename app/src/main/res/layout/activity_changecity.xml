@@ -38,17 +38,17 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
-        <ListView
+        <customview.MyRefreshListView
             android:id="@+id/lv_changecity"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:divider="@null"
-            android:scrollbars="none" />
+            android:divider="@null" />
 
         <customview.SlideBar
             android:id="@+id/sb_changecity"
@@ -56,6 +56,6 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>

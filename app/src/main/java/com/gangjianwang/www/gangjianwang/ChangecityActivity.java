@@ -9,7 +9,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.squareup.okhttp.Callback;
@@ -28,20 +27,25 @@ import java.util.List;
 import adapter.ChangeCityAdapter;
 import bean.City;
 import config.NetConfig;
+import customview.MyRefreshListView;
+import customview.OnRefreshListener;
 import customview.SlideBar;
 import utils.ToastUtils;
 
-public class ChangeCityActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class ChangeCityActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, OnRefreshListener {
 
-    private View rootView;
+    private View rootView, headView, footView;
     private RelativeLayout mBackRl;
-    private ListView mLv;
+    private MyRefreshListView mLv;
     private SlideBar mSb;
-    private List<City> mDataList;
+    private List<City> mDataList = new ArrayList<>();
     private ChangeCityAdapter mAdapter;
     private String[] lowerLetter;
     private ProgressDialog mPd;
-    private Handler handlerUi;
+    private Handler handler;
+    private OkHttpClient okHttpClient;
+    private final int LOAD_FIRST = 1;
+    private final int LOAD_REFRESH = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,35 +53,40 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         rootView = View.inflate(this, R.layout.activity_changecity, null);
         setContentView(rootView);
-        handlerUi = new Handler();
         initView();
         initData();
         setData();
         setListener();
-        loadData();
+        loadData(LOAD_FIRST);
     }
 
     private void initView() {
         mBackRl = (RelativeLayout) rootView.findViewById(R.id.rl_changecity_back);
-        mLv = (ListView) rootView.findViewById(R.id.lv_changecity);
+        mLv = (MyRefreshListView) rootView.findViewById(R.id.lv_changecity);
         mSb = (SlideBar) rootView.findViewById(R.id.sb_changecity);
+        headView = View.inflate(ChangeCityActivity.this, R.layout.head_changecity, null);
+        footView = View.inflate(ChangeCityActivity.this, R.layout.foot_changecity, null);
     }
 
     private void initData() {
-        mDataList = new ArrayList<>();
         lowerLetter = getResources().getStringArray(R.array.lowerletter);
         mPd = new ProgressDialog(this);
         mPd.setMessage("加载中..");
+        handler = new Handler();
+        okHttpClient = new OkHttpClient();
     }
 
     private void setData() {
         mAdapter = new ChangeCityAdapter(this, mDataList);
         mLv.setAdapter(mAdapter);
+        mLv.addHeaderView(headView);
+        mLv.addFooterView(footView);
     }
 
     private void setListener() {
         mBackRl.setOnClickListener(this);
         mLv.setOnItemClickListener(this);
+        mLv.setOnRefreshListener(this);
         mSb.setOnTouchLetterChangeListenner(new SlideBar.OnTouchLetterChangeListenner() {
             @Override
             public void onTouchLetterChange(MotionEvent event, String s) {
@@ -90,25 +99,69 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
         });
     }
 
-    private void loadData() {
-        mPd.show();
-        OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = new Request.Builder().url(NetConfig.cityUrl).get().build();
-        okHttpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Request request, IOException e) {
-                mPd.dismiss();
-                ToastUtils.toast(ChangeCityActivity.this, "无网络");
-            }
+    private void loadData(int LOAD_STATE) {
+        switch (LOAD_STATE) {
+            case LOAD_FIRST:
+                headView.setVisibility(View.GONE);
+                footView.setVisibility(View.GONE);
+                mPd.show();
+                Request requestFirst = new Request.Builder().url(NetConfig.cityUrl).get().build();
+                okHttpClient.newCall(requestFirst).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Request request, IOException e) {
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                super.run();
+                                handler.post(runnableNoNet);
+                            }
+                        }.start();
+                    }
 
-            @Override
-            public void onResponse(Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String json = response.body().string();
-                    parseJson(json);
-                }
-            }
-        });
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        if (response.isSuccessful()) {
+                            String json = response.body().string();
+                            parseJson(json);
+                        }
+                    }
+                });
+                break;
+            case LOAD_REFRESH:
+                Request requestRefresh = new Request.Builder().url(NetConfig.cityUrl).get().build();
+                okHttpClient.newCall(requestRefresh).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Request request, IOException e) {
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                super.run();
+                                handler.post(runnableLvnoNet);
+                            }
+                        }.start();
+                    }
+
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        if (response.isSuccessful()) {
+                            mDataList.clear();
+                            String json = response.body().string();
+                            parseJson(json);
+                        } else {
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    super.run();
+                                    handler.post(runnableCxc);
+                                }
+                            }.start();
+                        }
+                    }
+                });
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -125,8 +178,11 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent();
-        intent.putExtra("cityName", mDataList.get(position).getCityName());
-        ToastUtils.toast(ChangeCityActivity.this, mDataList.get(position).getCityId() + "\n" + mDataList.get(position).getCityName());
+        if (position == 1) {
+            intent.putExtra("cityName", "全国");
+        } else {
+            intent.putExtra("cityName", mDataList.get(position - 2).getCityName());
+        }
         setResult(1, intent);
         finish();
     }
@@ -158,7 +214,7 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
             new Thread() {
                 @Override
                 public void run() {
-                    handlerUi.post(runnableUi);
+                    handler.post(runnableFirst);
                 }
             }.start();
         } catch (JSONException e) {
@@ -167,11 +223,48 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    Runnable runnableUi = new Runnable() {
+    Runnable runnableNoNet = new Runnable() {
         @Override
         public void run() {
             mPd.dismiss();
+            ToastUtils.toast(ChangeCityActivity.this, "无网络");
+        }
+    };
+
+    Runnable runnableLvnoNet = new Runnable() {
+        @Override
+        public void run() {
+            mLv.hideHeadView();
+            ToastUtils.toast(ChangeCityActivity.this, "无网络");
+        }
+    };
+
+    Runnable runnableCxc = new Runnable() {
+        @Override
+        public void run() {
+            mLv.hideHeadView();
+            ToastUtils.toast(ChangeCityActivity.this, "出小差了");
+        }
+    };
+
+    Runnable runnableFirst = new Runnable() {
+        @Override
+        public void run() {
+            mPd.dismiss();
+            headView.setVisibility(View.VISIBLE);
+            footView.setVisibility(View.VISIBLE);
+            mLv.hideHeadView();
             mAdapter.notifyDataSetChanged();
         }
     };
+
+    @Override
+    public void onDownPullRefresh() {
+        loadData(LOAD_REFRESH);
+    }
+
+    @Override
+    public void onLoadingMore() {
+        mLv.hideFootView();
+    }
 }

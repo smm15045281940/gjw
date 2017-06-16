@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.R;
@@ -64,8 +65,10 @@ public class ChangeCityAdapter extends BaseAdapter {
         City city = list.get(position);
         if (city.getCityName() != null) {
             if (city.getCityId().equals("0")) {
+                holder.cityNameRl.setBackgroundColor(Color.GRAY);
                 holder.cityNameTv.setTextColor(Color.BLACK);
             } else {
+                holder.cityNameRl.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.whitegray_selector));
                 holder.cityNameTv.setTextColor(Color.GRAY);
             }
             holder.cityNameTv.setText(city.getCityName());
@@ -75,9 +78,11 @@ public class ChangeCityAdapter extends BaseAdapter {
 
     class ViewHolder {
 
+        private RelativeLayout cityNameRl;
         private TextView cityNameTv;
 
         public ViewHolder(View itemView) {
+            cityNameRl = (RelativeLayout) itemView.findViewById(R.id.rl_item_home_city);
             cityNameTv = (TextView) itemView.findViewById(R.id.tv_item_home_city);
         }
     }

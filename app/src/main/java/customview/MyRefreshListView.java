@@ -1,7 +1,6 @@
 package customview;
 
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -60,25 +59,25 @@ public class MyRefreshListView extends ListView implements AbsListView.OnScrollL
         this.addHeaderView(headView);
     }
 
-    public void hideHeadView(){
+    public void hideHeadView() {
         animator.cancel();
-        headView.setPadding(0,-headViewHeight,0,0);
+        headView.setPadding(0, -headViewHeight, 0, 0);
         headTextView.setText("下拉可刷新");
         currentState = DOWN_PULL_REFRESH;
     }
 
-    private void initFootView(){
-        footView = View.inflate(getContext(),R.layout.foot_myrefreshlistview,null);
+    private void initFootView() {
+        footView = View.inflate(getContext(), R.layout.foot_myrefreshlistview, null);
         footImageView = (ImageView) footView.findViewById(R.id.iv_foot_myrefreshlistview);
-        footView.measure(0,0);
+        footView.measure(0, 0);
         footViewHeight = footView.getMeasuredHeight();
-        footView.setPadding(0,-footViewHeight,0,0);
+        footView.setPadding(0, -footViewHeight, 0, 0);
         this.addFooterView(footView);
     }
 
-    public void hideFootView(){
+    public void hideFootView() {
         footAnimator.cancel();
-        footView.setPadding(0,-footViewHeight,0,0);
+        footView.setPadding(0, -footViewHeight, 0, 0);
         isLoadingMore = false;
     }
 
@@ -87,7 +86,7 @@ public class MyRefreshListView extends ListView implements AbsListView.OnScrollL
         animator.setDuration(500);
         animator.setRepeatCount(-1);
 
-        footAnimator = ObjectAnimator.ofFloat(footImageView,"rotation",0.0F,359.0F);
+        footAnimator = ObjectAnimator.ofFloat(footImageView, "rotation", 0.0F, 359.0F);
         footAnimator.setDuration(500);
         footAnimator.setRepeatCount(-1);
     }
@@ -110,20 +109,20 @@ public class MyRefreshListView extends ListView implements AbsListView.OnScrollL
                         currentState = DOWN_PULL_REFRESH;
                         refreshHeaderView();
                     }
-                    headView.setPadding(0,paddingTop,0,0);//下拉头布局
-                    return true;
+                    headView.setPadding(0, paddingTop, 0, 0);//下拉头布局
+//                    return true;
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if(currentState == RELEASE_REFRESH){
-                    headView.setPadding(0,0,0,0);
+                if (currentState == RELEASE_REFRESH) {
+                    headView.setPadding(0, 0, 0, 0);
                     currentState = REFRESHING;
                     refreshHeaderView();
-                    if(mOnRefreshListener != null){
+                    if (mOnRefreshListener != null) {
                         mOnRefreshListener.onDownPullRefresh();
                     }
-                }else if(currentState == DOWN_PULL_REFRESH){
-                    headView.setPadding(0,-headViewHeight,0,0);//隐藏头布局
+                } else if (currentState == DOWN_PULL_REFRESH) {
+                    headView.setPadding(0, -headViewHeight, 0, 0);//隐藏头布局
                 }
                 break;
             default:
@@ -149,18 +148,18 @@ public class MyRefreshListView extends ListView implements AbsListView.OnScrollL
         }
     }
 
-    public void setOnRefreshListener(OnRefreshListener listener){
+    public void setOnRefreshListener(OnRefreshListener listener) {
         mOnRefreshListener = listener;
     }
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        if(scrollState == SCROLL_STATE_IDLE || scrollState == SCROLL_STATE_FLING){
-            if(isScrolltoBottom && !isLoadingMore){
+        if (scrollState == SCROLL_STATE_IDLE || scrollState == SCROLL_STATE_FLING) {
+            if (isScrolltoBottom && !isLoadingMore) {
                 isLoadingMore = true;
-                footView.setPadding(0,0,0,0);
+                footView.setPadding(0, 0, 0, 0);
                 this.setSelection(this.getCount());
-                if(mOnRefreshListener != null){
+                if (mOnRefreshListener != null) {
                     footAnimator.start();
                     mOnRefreshListener.onLoadingMore();
                 }
@@ -171,9 +170,9 @@ public class MyRefreshListView extends ListView implements AbsListView.OnScrollL
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         firstVisibleItemPosition = firstVisibleItem;
-        if(getLastVisiblePosition() == (totalItemCount - 1)){
+        if (getLastVisiblePosition() == (totalItemCount - 1)) {
             isScrolltoBottom = true;
-        }else{
+        } else {
             isScrolltoBottom = false;
         }
     }
