@@ -137,7 +137,6 @@ public class LruJsonCache {
             if (in != null) {
                 try {
                     in.close();
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
