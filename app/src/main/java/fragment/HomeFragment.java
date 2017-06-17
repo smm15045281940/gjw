@@ -79,7 +79,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
     private ViewPager mVp;
     private List<View> viewList;
     private HomePagerAdapter mHomePagerAdapter;
-    private ImageView mHeadImageView1, mHeadImageView2;
+    private ImageView mHeadImageView1, mHeadImageView2, mHeadLogoIv;
     private RelativeLayout mClassifyRl, mShopListRl, mContractRl, mDigouCityRl;
     private TextView mOnlineTv;
     private ObjectAnimator mOnlineOa;
@@ -100,26 +100,37 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
     private OkHttpClient okHttpClient;
     private ProgressDialog mPd;
 
+    private final int FIRSTLOAD_NONET = 0;
+    private final int REFRESHLOAD_NONET = 1;
+    private final int FIRSTLOAD_DONE = 2;
+    private final int REFRESHLOAD_DONE = 3;
+
     Handler mainHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg != null) {
                 switch (msg.what) {
-                    case 0://首次加载无网络
+                    case FIRSTLOAD_NONET://首次加载无网络
                         mPd.dismiss();
                         ToastUtils.toast(getActivity(), "首次加载无网络");
                         break;
-                    case 1://刷新加载无网络
+                    case REFRESHLOAD_NONET://刷新加载无网络
                         mLv.hideHeadView();
                         ToastUtils.toast(getActivity(), "刷新加载无网络");
                         break;
-                    case 2://首次加载完成
+                    case FIRSTLOAD_DONE://首次加载完成
                         mPd.dismiss();
+                        Picasso.with(getActivity()).load(imgurlList.get(0)).placeholder(R.mipmap.img_default).into(mHeadImageView1);
+                        Picasso.with(getActivity()).load(imgurlList.get(1)).placeholder(R.mipmap.img_default).into(mHeadImageView2);
+                        Picasso.with(getActivity()).load(imgurlList.get(2)).placeholder(R.mipmap.img_default).into(mHeadLogoIv);
                         ToastUtils.toast(getActivity(), "首次加载完成");
                         break;
-                    case 3://刷新加载完成
+                    case REFRESHLOAD_DONE://刷新加载完成
                         mLv.hideHeadView();
+                        Picasso.with(getActivity()).load(imgurlList.get(0)).placeholder(R.mipmap.img_default).into(mHeadImageView1);
+                        Picasso.with(getActivity()).load(imgurlList.get(1)).placeholder(R.mipmap.img_default).into(mHeadImageView2);
+                        Picasso.with(getActivity()).load(imgurlList.get(2)).placeholder(R.mipmap.img_default).into(mHeadLogoIv);
                         ToastUtils.toast(getActivity(), "刷新加载完成");
                         break;
                     default:
@@ -160,23 +171,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         }
     };
 
-    Handler imgHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg != null) {
-                switch (msg.what) {
-                    case 0:
-                        Picasso.with(getActivity()).load(imgurlList.get(0)).into(mHeadImageView1);
-                        Picasso.with(getActivity()).load(imgurlList.get(1)).into(mHeadImageView2);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-    };
-
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
@@ -202,23 +196,22 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_home, null);
-        initView(rootView);
+        initView();
         initData();
         initAnim();
         setData();
         setListener();
-        loadData(LOAD_FIRST);
         mLocationClient.start();
         return rootView;
     }
 
-    private void initView(View view) {
-        mTopRl = (RelativeLayout) view.findViewById(R.id.rl_homefrag_up);
-        changeCityRl = (RelativeLayout) view.findViewById(R.id.rl_home_changecity);
-        mCityTv = (TextView) view.findViewById(R.id.tv_home_city);
-        searchRl = (RelativeLayout) view.findViewById(R.id.rl_home_search);
-        optionRl = (RelativeLayout) view.findViewById(R.id.rl_home_option);
-        mLv = (MyRefreshListView) view.findViewById(R.id.mlv_home);
+    private void initView() {
+        mTopRl = (RelativeLayout) rootView.findViewById(R.id.rl_homefrag_up);
+        changeCityRl = (RelativeLayout) rootView.findViewById(R.id.rl_home_changecity);
+        mCityTv = (TextView) rootView.findViewById(R.id.tv_home_city);
+        searchRl = (RelativeLayout) rootView.findViewById(R.id.rl_home_search);
+        optionRl = (RelativeLayout) rootView.findViewById(R.id.rl_home_option);
+        mLv = (MyRefreshListView) rootView.findViewById(R.id.mlv_home);
         optionPopWindowView = getActivity().getLayoutInflater().inflate(R.layout.popupwindow_home_option, null);
         mOptionPw = new PopupWindow(optionPopWindowView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         mOptionPw.setFocusable(true);
@@ -238,6 +231,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         builder.setView(diglogView);
         ad = builder.create();
         headView = View.inflate(getActivity(), R.layout.head_home_cycle, null);
+        mHeadLogoIv = (ImageView) headView.findViewById(R.id.iv_home_head_logo);
         mVp = (ViewPager) headView.findViewById(R.id.vp_home_cycle);
         mClassifyRl = (RelativeLayout) headView.findViewById(R.id.rl_homehead_classify);
         mShopListRl = (RelativeLayout) headView.findViewById(R.id.rl_homehead_shoplist);
@@ -312,15 +306,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                 okHttpClient.newCall(requestFirst).enqueue(new Callback() {
                     @Override
                     public void onFailure(Request request, IOException e) {
-                        mainHandler.sendEmptyMessage(0);
+                        mainHandler.sendEmptyMessage(FIRSTLOAD_NONET);
                     }
 
                     @Override
                     public void onResponse(Response response) throws IOException {
                         if (response.isSuccessful()) {
                             String json = response.body().string();
-                            parseJson(json);
-                            mainHandler.sendEmptyMessage(2);
+                            if (parseJson(json))
+                                mainHandler.sendEmptyMessage(FIRSTLOAD_DONE);
                         }
                     }
                 });
@@ -330,13 +324,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                 okHttpClient.newCall(requestRefresh).enqueue(new Callback() {
                     @Override
                     public void onFailure(Request request, IOException e) {
-                        mainHandler.sendEmptyMessage(1);
+                        mainHandler.sendEmptyMessage(REFRESHLOAD_NONET);
                     }
 
                     @Override
                     public void onResponse(Response response) throws IOException {
                         if (response.isSuccessful()) {
-                            mainHandler.sendEmptyMessage(3);
+                            imgurlList.clear();
+                            String json = response.body().string();
+                            if (parseJson(json))
+                                mainHandler.sendEmptyMessage(REFRESHLOAD_DONE);
                         }
                     }
                 });
@@ -346,7 +343,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         }
     }
 
-    private void parseJson(String json) {
+    private boolean parseJson(String json) {
         try {
             JSONObject objBean = new JSONObject(json);
             JSONArray arrDatas = objBean.optJSONArray("datas");
@@ -357,10 +354,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                 String image = o.optString("image");
                 imgurlList.add(image);
             }
-            imgHandler.sendEmptyMessage(0);
+            JSONObject objHome1 = arrDatas.optJSONObject(1).optJSONObject("home1");
+            String image = objHome1.optString("image");
+            imgurlList.add(image);
+            return true;
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     @Override
@@ -425,6 +426,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                 if (cityName != null) {
                     ad.dismiss();
                     mCityTv.setText(cityName);
+                    loadData(LOAD_FIRST);
                 }
                 break;
             case R.id.tv_dialog_cancel:
@@ -444,9 +446,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
     public void onPageSelected(int position) {
         switch (position) {
             case 0:
-                mVp.setCurrentItem(3, false);
+                mVp.setCurrentItem(2, false);
                 break;
-            case 4:
+            case 3:
                 mVp.setCurrentItem(1, false);
                 break;
         }
@@ -501,13 +503,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
     @Override
     public void onLoadingMore() {
         mLv.hideFootView();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mCityHandler.removeMessages(1);
-        homePagerHandler.removeMessages(666);
     }
 
     public class MyLocationListener implements BDLocationListener {

@@ -179,9 +179,11 @@
         </RelativeLayout>
 
         <ImageView
+            android:id="@+id/iv_home_head_logo"
             android:layout_width="match_parent"
             android:layout_height="@dimen/x140"
-            android:src="@mipmap/post" />
+            android:scaleType="fitXY"
+            android:src="@mipmap/img_default" />
 
     </LinearLayout>
 
