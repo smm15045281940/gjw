@@ -461,7 +461,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
 
     @Override
     public void onDownPullRefresh() {
-        refreshorLoadHandler.sendEmptyMessageDelayed(0, 1000);
+        loadData(LOAD_REFRESH);
     }
 
     @Override
