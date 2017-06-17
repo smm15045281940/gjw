@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,6 +28,7 @@ import java.util.List;
 import adapter.ChangeCityAdapter;
 import bean.City;
 import config.NetConfig;
+import customview.LruJsonCache;
 import customview.MyRefreshListView;
 import customview.OnRefreshListener;
 import customview.SlideBar;
@@ -42,10 +44,42 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
     private ChangeCityAdapter mAdapter;
     private String[] lowerLetter;
     private ProgressDialog mPd;
-    private Handler handler;
     private OkHttpClient okHttpClient;
     private final int LOAD_FIRST = 1;
     private final int LOAD_REFRESH = 2;
+    private LruJsonCache lruJsonCache;
+
+    Handler mainHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg != null) {
+                switch (msg.what) {
+                    case 0:
+                        mPd.dismiss();
+                        headView.setVisibility(View.VISIBLE);
+                        footView.setVisibility(View.VISIBLE);
+                        mAdapter.notifyDataSetChanged();
+                        ToastUtils.toast(ChangeCityActivity.this, "首次加载");
+                        break;
+                    case 1:
+                        mLv.hideHeadView();
+                        mAdapter.notifyDataSetChanged();
+                        ToastUtils.toast(ChangeCityActivity.this, "已刷新");
+                        break;
+                    case 2:
+                        mPd.dismiss();
+                        headView.setVisibility(View.VISIBLE);
+                        footView.setVisibility(View.VISIBLE);
+                        mAdapter.notifyDataSetChanged();
+                        ToastUtils.toast(ChangeCityActivity.this, "加载本地缓存");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +106,8 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
         lowerLetter = getResources().getStringArray(R.array.lowerletter);
         mPd = new ProgressDialog(this);
         mPd.setMessage("加载中..");
-        handler = new Handler();
         okHttpClient = new OkHttpClient();
+        lruJsonCache = LruJsonCache.get(ChangeCityActivity.this);
     }
 
     private void setData() {
@@ -102,43 +136,39 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
     private void loadData(int LOAD_STATE) {
         switch (LOAD_STATE) {
             case LOAD_FIRST:
+                mPd.show();
                 headView.setVisibility(View.GONE);
                 footView.setVisibility(View.GONE);
-                mPd.show();
-                Request requestFirst = new Request.Builder().url(NetConfig.cityUrl).get().build();
-                okHttpClient.newCall(requestFirst).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Request request, IOException e) {
-                        new Thread() {
-                            @Override
-                            public void run() {
-                                super.run();
-                                handler.post(runnableNoNet);
-                            }
-                        }.start();
-                    }
+                String cacheData = lruJsonCache.getAsString("city");
+                if (cacheData != null) {
+                    parseJson(cacheData);
+                    mainHandler.sendEmptyMessage(2);
+                } else {
+                    Request requestFirst = new Request.Builder().url(NetConfig.cityUrl).get().build();
+                    okHttpClient.newCall(requestFirst).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Request request, IOException e) {
 
-                    @Override
-                    public void onResponse(Response response) throws IOException {
-                        if (response.isSuccessful()) {
-                            String json = response.body().string();
-                            parseJson(json);
                         }
-                    }
-                });
+
+                        @Override
+                        public void onResponse(Response response) throws IOException {
+                            if (response.isSuccessful()) {
+                                String json = response.body().string();
+                                lruJsonCache.put("city", json, 10);
+                                parseJson(json);
+                                mainHandler.sendEmptyMessage(0);
+                            }
+                        }
+                    });
+                }
                 break;
             case LOAD_REFRESH:
                 Request requestRefresh = new Request.Builder().url(NetConfig.cityUrl).get().build();
                 okHttpClient.newCall(requestRefresh).enqueue(new Callback() {
                     @Override
                     public void onFailure(Request request, IOException e) {
-                        new Thread() {
-                            @Override
-                            public void run() {
-                                super.run();
-                                handler.post(runnableLvnoNet);
-                            }
-                        }.start();
+
                     }
 
                     @Override
@@ -147,14 +177,7 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
                             mDataList.clear();
                             String json = response.body().string();
                             parseJson(json);
-                        } else {
-                            new Thread() {
-                                @Override
-                                public void run() {
-                                    super.run();
-                                    handler.post(runnableCxc);
-                                }
-                            }.start();
+                            mainHandler.sendEmptyMessage(1);
                         }
                     }
                 });
@@ -211,52 +234,10 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
                     }
                 }
             }
-            new Thread() {
-                @Override
-                public void run() {
-                    handler.post(runnableFirst);
-                }
-            }.start();
         } catch (JSONException e) {
             e.printStackTrace();
-            ToastUtils.toast(ChangeCityActivity.this, "解析数据异常");
         }
     }
-
-    Runnable runnableNoNet = new Runnable() {
-        @Override
-        public void run() {
-            mPd.dismiss();
-            ToastUtils.toast(ChangeCityActivity.this, "无网络");
-        }
-    };
-
-    Runnable runnableLvnoNet = new Runnable() {
-        @Override
-        public void run() {
-            mLv.hideHeadView();
-            ToastUtils.toast(ChangeCityActivity.this, "无网络");
-        }
-    };
-
-    Runnable runnableCxc = new Runnable() {
-        @Override
-        public void run() {
-            mLv.hideHeadView();
-            ToastUtils.toast(ChangeCityActivity.this, "出小差了");
-        }
-    };
-
-    Runnable runnableFirst = new Runnable() {
-        @Override
-        public void run() {
-            mPd.dismiss();
-            headView.setVisibility(View.VISIBLE);
-            footView.setVisibility(View.VISIBLE);
-            mLv.hideHeadView();
-            mAdapter.notifyDataSetChanged();
-        }
-    };
 
     @Override
     public void onDownPullRefresh() {
