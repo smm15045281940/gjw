@@ -63,6 +63,7 @@ public class MyRefreshListView extends ListView implements AbsListView.OnScrollL
         animator.cancel();
         headView.setPadding(0, -headViewHeight, 0, 0);
         headTextView.setText("下拉可刷新");
+        headImageView.setImageResource(R.mipmap.img_default);
         currentState = DOWN_PULL_REFRESH;
     }
 
@@ -78,6 +79,7 @@ public class MyRefreshListView extends ListView implements AbsListView.OnScrollL
     public void hideFootView() {
         footAnimator.cancel();
         footView.setPadding(0, -footViewHeight, 0, 0);
+        footImageView.setImageResource(R.mipmap.img_default);
         isLoadingMore = false;
     }
 

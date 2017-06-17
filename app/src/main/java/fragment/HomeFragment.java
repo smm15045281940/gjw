@@ -37,6 +37,11 @@ import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -74,7 +79,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
     private ViewPager mVp;
     private List<View> viewList;
     private HomePagerAdapter mHomePagerAdapter;
-    private ImageView mHeadImageView1, mHeadImageView2, mHeadImageView3;
+    private ImageView mHeadImageView1, mHeadImageView2;
     private RelativeLayout mClassifyRl, mShopListRl, mContractRl, mDigouCityRl;
     private TextView mOnlineTv;
     private ObjectAnimator mOnlineOa;
@@ -82,6 +87,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
     private List<GoodsRecommend> goodsRecommendList = new ArrayList<>();
     private List<GoodsPost> goodsPostList = new ArrayList<>();
     private List<GoodsShow> goodsShowList = new ArrayList<>();
+    private List<String> imgurlList = new ArrayList<>();
     private FirstpageAdapter myhomeAdapter;
     private Handler mChangeFragHandler;
     public LocationClient mLocationClient = null;
@@ -93,6 +99,35 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
     private final int LOAD_REFRESH = 1;
     private OkHttpClient okHttpClient;
     private ProgressDialog mPd;
+
+    Handler mainHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg != null) {
+                switch (msg.what) {
+                    case 0://首次加载无网络
+                        mPd.dismiss();
+                        ToastUtils.toast(getActivity(), "首次加载无网络");
+                        break;
+                    case 1://刷新加载无网络
+                        mLv.hideHeadView();
+                        ToastUtils.toast(getActivity(), "刷新加载无网络");
+                        break;
+                    case 2://首次加载完成
+                        mPd.dismiss();
+                        ToastUtils.toast(getActivity(), "首次加载完成");
+                        break;
+                    case 3://刷新加载完成
+                        mLv.hideHeadView();
+                        ToastUtils.toast(getActivity(), "刷新加载完成");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    };
 
     Handler mCityHandler = new Handler() {
         @Override
@@ -113,7 +148,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
             if (msg != null) {
                 if (msg.what == 666) {
                     pageIndex++;
-                    if (pageIndex == 4) {
+                    if (pageIndex == 3) {
                         pageIndex = 1;
                         mVp.setCurrentItem(pageIndex, false);
                     } else {
@@ -125,19 +160,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         }
     };
 
-    Handler refreshorLoadHandler = new Handler() {
+    Handler imgHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg != null) {
                 switch (msg.what) {
                     case 0:
-                        mPd.dismiss();
-                        headView.setVisibility(View.VISIBLE);
-                        break;
-                    case 1:
-                        mLv.hideHeadView();
-                        ToastUtils.toast(getActivity(), "已刷新");
+                        Picasso.with(getActivity()).load(imgurlList.get(0)).into(mHeadImageView1);
+                        Picasso.with(getActivity()).load(imgurlList.get(1)).into(mHeadImageView2);
                         break;
                     default:
                         break;
@@ -213,19 +244,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         mContractRl = (RelativeLayout) headView.findViewById(R.id.rl_homehead_contract);
         mDigouCityRl = (RelativeLayout) headView.findViewById(R.id.rl_homehead_digoucity);
         mOnlineTv = (TextView) headView.findViewById(R.id.tv_home_head_online);
-        View viewF = View.inflate(getActivity(), R.layout.cycle_view3, null);
+        View viewF = View.inflate(getActivity(), R.layout.cycle_view2, null);
         View view1 = View.inflate(getActivity(), R.layout.cycle_view1, null);
         View view2 = View.inflate(getActivity(), R.layout.cycle_view2, null);
-        View view3 = View.inflate(getActivity(), R.layout.cycle_view3, null);
         View viewL = View.inflate(getActivity(), R.layout.cycle_view1, null);
         mHeadImageView1 = (ImageView) view1.findViewById(R.id.iv_homehead_1);
         mHeadImageView2 = (ImageView) view2.findViewById(R.id.iv_homehead_2);
-        mHeadImageView3 = (ImageView) view3.findViewById(R.id.iv_homehead_3);
         viewList = new ArrayList<>();
         viewList.add(viewF);
         viewList.add(view1);
         viewList.add(view2);
-        viewList.add(view3);
         viewList.add(viewL);
         mHomePagerAdapter = new HomePagerAdapter(viewList);
         mVp.setAdapter(mHomePagerAdapter);
@@ -266,9 +294,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         mPopShopcarRl.setOnClickListener(this);
         mPopMymallRl.setOnClickListener(this);
         mPopMessageRl.setOnClickListener(this);
-        mHeadImageView1.setOnClickListener(this);
-        mHeadImageView2.setOnClickListener(this);
-        mHeadImageView3.setOnClickListener(this);
         mVp.setOnPageChangeListener(this);
         mClassifyRl.setOnClickListener(this);
         mShopListRl.setOnClickListener(this);
@@ -283,40 +308,58 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         switch (LOAD_STATE) {
             case LOAD_FIRST:
                 mPd.show();
-                headView.setVisibility(View.GONE);
-                Request requestFirst = new Request.Builder().url(NetConfig.cityUrl).get().build();
+                Request requestFirst = new Request.Builder().url(NetConfig.homeUrl).get().build();
                 okHttpClient.newCall(requestFirst).enqueue(new Callback() {
                     @Override
                     public void onFailure(Request request, IOException e) {
-
+                        mainHandler.sendEmptyMessage(0);
                     }
 
                     @Override
                     public void onResponse(Response response) throws IOException {
                         if (response.isSuccessful()) {
-                            refreshorLoadHandler.sendEmptyMessage(0);
+                            String json = response.body().string();
+                            parseJson(json);
+                            mainHandler.sendEmptyMessage(2);
                         }
                     }
                 });
                 break;
             case LOAD_REFRESH:
-                Request requestRefresh = new Request.Builder().url(NetConfig.cityUrl).get().build();
+                Request requestRefresh = new Request.Builder().url(NetConfig.homeUrl).get().build();
                 okHttpClient.newCall(requestRefresh).enqueue(new Callback() {
                     @Override
                     public void onFailure(Request request, IOException e) {
-
+                        mainHandler.sendEmptyMessage(1);
                     }
 
                     @Override
                     public void onResponse(Response response) throws IOException {
                         if (response.isSuccessful()) {
-                            refreshorLoadHandler.sendEmptyMessage(1);
+                            mainHandler.sendEmptyMessage(3);
                         }
                     }
                 });
                 break;
             default:
                 break;
+        }
+    }
+
+    private void parseJson(String json) {
+        try {
+            JSONObject objBean = new JSONObject(json);
+            JSONArray arrDatas = objBean.optJSONArray("datas");
+            JSONObject objAdvList = arrDatas.optJSONObject(0).optJSONObject("adv_list");
+            JSONArray arrItem = objAdvList.optJSONArray("item");
+            for (int i = 0; i < arrItem.length(); i++) {
+                JSONObject o = arrItem.optJSONObject(i);
+                String image = o.optString("image");
+                imgurlList.add(image);
+            }
+            imgHandler.sendEmptyMessage(0);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
@@ -365,15 +408,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
             case R.id.rl_home_pop_message:
                 mOptionPw.dismiss();
                 startActivity(new Intent(getActivity(), MessageActivity.class));
-                break;
-            case R.id.iv_homehead_1:
-                ToastUtils.toast(getActivity(), "诚信的价值非同以往");
-                break;
-            case R.id.iv_homehead_2:
-                ToastUtils.toast(getActivity(), "刚建特卖会");
-                break;
-            case R.id.iv_homehead_3:
-                ToastUtils.toast(getActivity(), "供应商招募");
                 break;
             case R.id.rl_homehead_classify:
                 startActivity(new Intent(getActivity(), ClassifyActivity.class));
@@ -474,8 +508,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         super.onDestroy();
         mCityHandler.removeMessages(1);
         homePagerHandler.removeMessages(666);
-        refreshorLoadHandler.removeMessages(0);
-        refreshorLoadHandler.removeMessages(1);
     }
 
     public class MyLocationListener implements BDLocationListener {

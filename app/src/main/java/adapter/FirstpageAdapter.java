@@ -10,7 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gangjianwang.www.gangjianwang.GoodsDetailActivity;
-import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.R;
 
 import java.util.List;
@@ -23,7 +22,7 @@ import bean.GoodsShow;
  * Created by 孙明明 on 2017/5/15.
  */
 
-public class FirstpageAdapter extends BaseAdapter{
+public class FirstpageAdapter extends BaseAdapter {
 
     private Context context;
     private List<GoodsRecommend> goodsRecommendList;
@@ -39,11 +38,11 @@ public class FirstpageAdapter extends BaseAdapter{
 
     @Override
     public int getItemViewType(int position) {
-        if(position == 0){
+        if (position == 0) {
             return 0;
-        }else if(position == 2){
+        } else if (position == 2) {
             return 1;
-        }else{
+        } else {
             return 2;
         }
     }
@@ -55,24 +54,24 @@ public class FirstpageAdapter extends BaseAdapter{
 
     @Override
     public int getCount() {
-        if(goodsRecommendList==null || goodsRecommendList.size() == 0 || goodsPostList==null || goodsPostList.size() == 0 || goodsShowList==null || goodsShowList.size() == 0){
+        if (goodsRecommendList == null || goodsRecommendList.size() == 0 || goodsPostList == null || goodsPostList.size() == 0 || goodsShowList == null || goodsShowList.size() == 0) {
             return 0;
-        }else{
+        } else {
             return 1 + 1 + goodsShowList.size();
         }
     }
 
     @Override
     public Object getItem(int position) {
-        if(position == 0){
+        if (position == 0) {
             return goodsRecommendList.get(0);
-        }else if(position == 2){
+        } else if (position == 2) {
             return goodsPostList.get(0);
-        }else{
-            if(position == 1){
+        } else {
+            if (position == 1) {
                 return goodsShowList.get(0);
-            }else{
-                return goodsShowList.get(position-2);
+            } else {
+                return goodsShowList.get(position - 2);
             }
         }
     }
@@ -87,17 +86,15 @@ public class FirstpageAdapter extends BaseAdapter{
         ViewHolder1 holder1;
         ViewHolder2 holder2;
         final ViewHolder3 holder3;
-        if(getItemViewType(position) == 0){
-            if(convertView == null){
-                convertView = View.inflate(context,R.layout.item_firstpage1,null);
+        if (getItemViewType(position) == 0) {
+            if (convertView == null) {
+                convertView = View.inflate(context, R.layout.item_firstpage1, null);
                 holder1 = new ViewHolder1(convertView);
                 convertView.setTag(holder1);
-            }else{
+            } else {
                 holder1 = (ViewHolder1) convertView.getTag();
             }
             GoodsRecommend goodsRecommend = goodsRecommendList.get(0);
-            holder1.iv1.setImageResource(R.mipmap.ic_launcher);
-            holder1.iv2.setImageResource(R.mipmap.ic_launcher);
             holder1.tv1.setText(goodsRecommend.getGoodsName1());
             holder1.tv2.setText(goodsRecommend.getGoodsName2());
             holder1.tv3.setText(goodsRecommend.getGoodsPrice1());
@@ -115,93 +112,86 @@ public class FirstpageAdapter extends BaseAdapter{
                     toast("你点击了商品推荐1");
                 }
             });
-        }else if(getItemViewType(position) == 1){
-            if(convertView == null){
-                convertView = View.inflate(context,R.layout.item_firstpage2,null);
+        } else if (getItemViewType(position) == 1) {
+            if (convertView == null) {
+                convertView = View.inflate(context, R.layout.item_firstpage2, null);
                 holder2 = new ViewHolder2(convertView);
                 convertView.setTag(holder2);
-            }else{
+            } else {
                 holder2 = (ViewHolder2) convertView.getTag();
             }
             GoodsPost goodsPost = goodsPostList.get(0);
-            holder2.iv.setImageResource(R.mipmap.ic_launcher);
             holder2.iv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     toast("你点击了广告");
                 }
             });
-        }else if(getItemViewType(position) == 2){
-            if(convertView == null){
-                convertView = View.inflate(context,R.layout.item_firstpage3,null);
+        } else if (getItemViewType(position) == 2) {
+            if (convertView == null) {
+                convertView = View.inflate(context, R.layout.item_firstpage3, null);
                 holder3 = new ViewHolder3(convertView);
                 convertView.setTag(holder3);
-            }else{
+            } else {
                 holder3 = (ViewHolder3) convertView.getTag();
             }
-            if(position == 1){
+            if (position == 1) {
                 GoodsShow goodsShow = goodsShowList.get(0);
                 holder3.tv.setText(goodsShow.getTitle());
-            }else{
-                GoodsShow goodsShow = goodsShowList.get(position-2);
+            } else {
+                GoodsShow goodsShow = goodsShowList.get(position - 2);
                 holder3.tv.setText(goodsShow.getTitle());
             }
-            holder3.iv1.setImageResource(R.mipmap.ic_launcher);
-            holder3.iv2.setImageResource(R.mipmap.ic_launcher);
-            holder3.iv3.setImageResource(R.mipmap.ic_launcher);
-            holder3.iv4.setImageResource(R.mipmap.ic_launcher);
-            holder3.iv5.setImageResource(R.mipmap.ic_launcher);
-            holder3.iv6.setImageResource(R.mipmap.ic_launcher);
             holder3.iv1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    toast("你点击了"+holder3.tv.getText().toString()+"0");
+                    toast("你点击了" + holder3.tv.getText().toString() + "0");
                 }
             });
             holder3.iv2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    toast("你点击了"+holder3.tv.getText().toString()+"1");
+                    toast("你点击了" + holder3.tv.getText().toString() + "1");
                 }
             });
             holder3.iv3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    toast("你点击了"+holder3.tv.getText().toString()+"2");
+                    toast("你点击了" + holder3.tv.getText().toString() + "2");
                 }
             });
             holder3.iv4.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    toast("你点击了"+holder3.tv.getText().toString()+"3");
+                    toast("你点击了" + holder3.tv.getText().toString() + "3");
                 }
             });
             holder3.iv5.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    toast("你点击了"+holder3.tv.getText().toString()+"4");
+                    toast("你点击了" + holder3.tv.getText().toString() + "4");
                 }
             });
             holder3.iv6.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    toast("你点击了"+holder3.tv.getText().toString()+"5");
+                    toast("你点击了" + holder3.tv.getText().toString() + "5");
                 }
             });
             holder3.tvMore.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    toast("你点击了"+holder3.tv.getText().toString()+"查看更多");
+                    toast("你点击了" + holder3.tv.getText().toString() + "查看更多");
                 }
             });
         }
         return convertView;
     }
 
-    class ViewHolder1{
+    class ViewHolder1 {
 
-        private ImageView iv1,iv2;
-        private TextView tv1,tv2,tv3,tv4;
+        private ImageView iv1, iv2;
+        private TextView tv1, tv2, tv3, tv4;
 
         public ViewHolder1(View itemView) {
             iv1 = (ImageView) itemView.findViewById(R.id.iv_item_firstpage1_imgurl1);
@@ -213,7 +203,7 @@ public class FirstpageAdapter extends BaseAdapter{
         }
     }
 
-    class ViewHolder2{
+    class ViewHolder2 {
 
         private ImageView iv;
 
@@ -222,10 +212,10 @@ public class FirstpageAdapter extends BaseAdapter{
         }
     }
 
-    class ViewHolder3{
+    class ViewHolder3 {
 
-        private TextView tv,tvMore;
-        private ImageView iv1,iv2,iv3,iv4,iv5,iv6;
+        private TextView tv, tvMore;
+        private ImageView iv1, iv2, iv3, iv4, iv5, iv6;
 
         public ViewHolder3(View itemView) {
             tv = (TextView) itemView.findViewById(R.id.tv_item_firstpage3_title);
@@ -239,7 +229,7 @@ public class FirstpageAdapter extends BaseAdapter{
         }
     }
 
-    private void toast(String s){
-        Toast.makeText(context,s,Toast.LENGTH_SHORT).show();
+    private void toast(String s) {
+        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
     }
 }

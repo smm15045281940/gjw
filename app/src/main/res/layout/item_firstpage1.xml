@@ -42,7 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/x100"
                 android:scaleType="fitXY"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/img_default" />
 
             <TextView
                 android:id="@+id/tv_item_firstpage1_goodsName1"
@@ -72,7 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/x100"
                 android:scaleType="fitXY"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/img_default" />
 
             <TextView
                 android:id="@+id/tv_item_firstpage1_goodsName2"

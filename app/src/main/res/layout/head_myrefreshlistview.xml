@@ -8,9 +8,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/ic_launcher"
+            android:layout_width="@dimen/x30"
+            android:layout_height="@dimen/x30"
+            android:scaleType="fitXY"
+            android:src="@mipmap/img_default"
             android:id="@+id/iv_head_myrefreshlistview"/>
         <TextView
             android:layout_toRightOf="@+id/iv_head_myrefreshlistview"

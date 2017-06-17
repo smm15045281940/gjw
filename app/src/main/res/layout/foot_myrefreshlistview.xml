@@ -4,21 +4,24 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true">
+
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/ic_launcher"
-            android:id="@+id/iv_foot_myrefreshlistview"/>
+            android:id="@+id/iv_foot_myrefreshlistview"
+            android:layout_width="@dimen/x30"
+            android:layout_height="@dimen/x30"
+            android:scaleType="fitXY"
+            android:src="@mipmap/img_default" />
+
         <TextView
-            android:layout_toRightOf="@+id/iv_foot_myrefreshlistview"
-            android:layout_centerVertical="true"
+            android:id="@+id/tv_foot_myrefreshlistview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="正在加载"
-            android:id="@+id/tv_foot_myrefreshlistview"/>
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/iv_foot_myrefreshlistview"
+            android:text="正在加载" />
     </RelativeLayout>
 
 </RelativeLayout>

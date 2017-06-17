@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"
-        android:src="@mipmap/recycle2"
+        android:src="@mipmap/img_default"
         android:id="@+id/iv_homehead_2"/>
 
 </LinearLayout>
