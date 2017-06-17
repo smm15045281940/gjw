@@ -1,6 +1,7 @@
 package fragment;
 
 import android.animation.ObjectAnimator;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -32,7 +33,12 @@ import com.gangjianwang.www.gangjianwang.HomeActivity;
 import com.gangjianwang.www.gangjianwang.MessageActivity;
 import com.gangjianwang.www.gangjianwang.R;
 import com.gangjianwang.www.gangjianwang.SearchActivity;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +47,7 @@ import adapter.HomePagerAdapter;
 import bean.GoodsPost;
 import bean.GoodsRecommend;
 import bean.GoodsShow;
+import config.NetConfig;
 import config.PersonConfig;
 import customview.MyRefreshListView;
 import customview.OnRefreshListener;
@@ -81,8 +88,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
     public BDLocationListener myListener = new MyLocationListener();
     private int pageIndex = 1;
     private String cityName;
-
     private boolean isHidden = true;
+    private final int LOAD_FIRST = 0;
+    private final int LOAD_REFRESH = 1;
+    private OkHttpClient okHttpClient;
+    private ProgressDialog mPd;
 
     Handler mCityHandler = new Handler() {
         @Override
@@ -120,12 +130,17 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg != null) {
-                if (msg.what == 0) {
-                    mLv.hideHeadView();
-                    ToastUtils.toast(getActivity(), "已刷新");
-                } else if (msg.what == 1) {
-                    mLv.hideFootView();
-                    ToastUtils.toast(getActivity(), "已加载");
+                switch (msg.what) {
+                    case 0:
+                        mPd.dismiss();
+                        headView.setVisibility(View.VISIBLE);
+                        break;
+                    case 1:
+                        mLv.hideHeadView();
+                        ToastUtils.toast(getActivity(), "已刷新");
+                        break;
+                    default:
+                        break;
                 }
             }
         }
@@ -161,7 +176,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         initAnim();
         setData();
         setListener();
-        loadData();
+        loadData(LOAD_FIRST);
         mLocationClient.start();
         return rootView;
     }
@@ -220,6 +235,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
     }
 
     private void initData() {
+        okHttpClient = new OkHttpClient();
+        mPd = new ProgressDialog(getActivity());
+        mPd.setMessage("加载中..");
         goodsRecommendList.add(new GoodsRecommend("", "", "圆管", "枪带", "25.50", "106.00"));
         goodsPostList.add(new GoodsPost(""));
         goodsShowList.add(new GoodsShow("商家推荐", "", "", "", "", "", ""));
@@ -261,8 +279,45 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         mLv.setOnRefreshListener(this);
     }
 
-    private void loadData() {
-        myhomeAdapter.notifyDataSetChanged();
+    private void loadData(int LOAD_STATE) {
+        switch (LOAD_STATE) {
+            case LOAD_FIRST:
+                mPd.show();
+                headView.setVisibility(View.GONE);
+                Request requestFirst = new Request.Builder().url(NetConfig.cityUrl).get().build();
+                okHttpClient.newCall(requestFirst).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Request request, IOException e) {
+
+                    }
+
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        if (response.isSuccessful()) {
+                            refreshorLoadHandler.sendEmptyMessage(0);
+                        }
+                    }
+                });
+                break;
+            case LOAD_REFRESH:
+                Request requestRefresh = new Request.Builder().url(NetConfig.cityUrl).get().build();
+                okHttpClient.newCall(requestRefresh).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Request request, IOException e) {
+
+                    }
+
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        if (response.isSuccessful()) {
+                            refreshorLoadHandler.sendEmptyMessage(1);
+                        }
+                    }
+                });
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -411,7 +466,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
 
     @Override
     public void onLoadingMore() {
-        refreshorLoadHandler.sendEmptyMessageDelayed(1, 1000);
+        mLv.hideFootView();
     }
 
     @Override

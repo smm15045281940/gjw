@@ -164,6 +164,7 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
                 }
                 break;
             case LOAD_REFRESH:
+                lruJsonCache.clear();
                 Request requestRefresh = new Request.Builder().url(NetConfig.cityUrl).get().build();
                 okHttpClient.newCall(requestRefresh).enqueue(new Callback() {
                     @Override
@@ -176,6 +177,7 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
                         if (response.isSuccessful()) {
                             mDataList.clear();
                             String json = response.body().string();
+                            lruJsonCache.put("city", json, 10);
                             parseJson(json);
                             mainHandler.sendEmptyMessage(1);
                         }
