@@ -8,6 +8,9 @@ public class GoodsPost {
 
     private String imgUrl;
 
+    public GoodsPost() {
+    }
+
     public GoodsPost(String imgUrl) {
         this.imgUrl = imgUrl;
     }
@@ -20,10 +23,4 @@ public class GoodsPost {
         this.imgUrl = imgUrl;
     }
 
-    @Override
-    public String toString() {
-        return "GoodsPost{" +
-                "imgUrl='" + imgUrl + '\'' +
-                '}';
-    }
 }

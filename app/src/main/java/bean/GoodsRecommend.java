@@ -6,9 +6,13 @@ package bean;
 
 public class GoodsRecommend {
 
-    private String imgUrl1,imgUrl2;
-    private String goodsName1,goodsName2;
-    private String goodsPrice1,goodsPrice2;
+    private String title;
+    private String imgUrl1, imgUrl2;
+    private String goodsName1, goodsName2;
+    private String goodsPrice1, goodsPrice2;
+
+    public GoodsRecommend() {
+    }
 
     public GoodsRecommend(String imgUrl1, String imgUrl2, String goodsName1, String goodsName2, String goodsPrice1, String goodsPrice2) {
         this.imgUrl1 = imgUrl1;
@@ -17,6 +21,14 @@ public class GoodsRecommend {
         this.goodsName2 = goodsName2;
         this.goodsPrice1 = goodsPrice1;
         this.goodsPrice2 = goodsPrice2;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getImgUrl1() {
@@ -67,15 +79,4 @@ public class GoodsRecommend {
         this.goodsPrice2 = goodsPrice2;
     }
 
-    @Override
-    public String toString() {
-        return "GoodsRecommend{" +
-                "imgUrl1='" + imgUrl1 + '\'' +
-                ", imgUrl2='" + imgUrl2 + '\'' +
-                ", goodsName1='" + goodsName1 + '\'' +
-                ", goodsName2='" + goodsName2 + '\'' +
-                ", goodsPrice1='" + goodsPrice1 + '\'' +
-                ", goodsPrice2='" + goodsPrice2 + '\'' +
-                '}';
-    }
 }

@@ -6,9 +6,8 @@ package config;
 
 public interface NetConfig {
 
-    public static final String testUrl = "http://www.weather.com.cn/data/sk/101010100.html";
-    public static final String netUrl = "http://zhaoyu.gangjianwang.com/mobile/index.php?act=login";
-
+    //城市列表
     public static final String cityUrl = "http://www.gangjianwang.com/shop/index.php?act=index&op=getWapAreaCities";
+    //首页碎片
     public static final String homeUrl = "http://www.gangjianwang.com/mobile/index.php?act=index";
 }

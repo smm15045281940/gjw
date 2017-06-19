@@ -7,7 +7,10 @@ package bean;
 public class GoodsShow {
 
     private String title;
-    private String imgUrl1,imgUrl2,imgUrl3,imgUrl4,imgUrl5,imgUrl6;
+    private String imgUrl1, imgUrl2, imgUrl3, imgUrl4, imgUrl5, imgUrl6;
+
+    public GoodsShow() {
+    }
 
     public GoodsShow(String title, String imgUrl1, String imgUrl2, String imgUrl3, String imgUrl4, String imgUrl5, String imgUrl6) {
         this.title = title;
@@ -73,18 +76,5 @@ public class GoodsShow {
 
     public void setImgUrl6(String imgUrl6) {
         this.imgUrl6 = imgUrl6;
-    }
-
-    @Override
-    public String toString() {
-        return "GoodsShow{" +
-                "title='" + title + '\'' +
-                ", imgUrl1='" + imgUrl1 + '\'' +
-                ", imgUrl2='" + imgUrl2 + '\'' +
-                ", imgUrl3='" + imgUrl3 + '\'' +
-                ", imgUrl4='" + imgUrl4 + '\'' +
-                ", imgUrl5='" + imgUrl5 + '\'' +
-                ", imgUrl6='" + imgUrl6 + '\'' +
-                '}';
     }
 }

@@ -64,8 +64,8 @@ import utils.ToastUtils;
 
 public class HomeFragment extends Fragment implements View.OnClickListener, ViewPager.OnPageChangeListener, OnRefreshListener {
 
-    private View rootView;
-    private RelativeLayout mTopRl;
+    private View rootView, footView;
+    private RelativeLayout mTopRl, mContactRl;
     private RelativeLayout changeCityRl, searchRl, optionRl;
     private TextView mCityTv;
     private View optionPopWindowView;
@@ -121,16 +121,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                         break;
                     case FIRSTLOAD_DONE://首次加载完成
                         mPd.dismiss();
-                        Picasso.with(getActivity()).load(imgurlList.get(0)).placeholder(R.mipmap.img_default).into(mHeadImageView1);
-                        Picasso.with(getActivity()).load(imgurlList.get(1)).placeholder(R.mipmap.img_default).into(mHeadImageView2);
-                        Picasso.with(getActivity()).load(imgurlList.get(2)).placeholder(R.mipmap.img_default).into(mHeadLogoIv);
+                        Picasso.with(getActivity()).load(imgurlList.get(0)).placeholder(mHeadImageView1.getDrawable()).error(R.mipmap.img_default).into(mHeadImageView1);
+                        Picasso.with(getActivity()).load(imgurlList.get(1)).placeholder(mHeadImageView2.getDrawable()).error(R.mipmap.img_default).into(mHeadImageView2);
+                        Picasso.with(getActivity()).load(imgurlList.get(2)).placeholder(mHeadLogoIv.getDrawable()).error(R.mipmap.img_default).into(mHeadLogoIv);
+                        myhomeAdapter.notifyDataSetChanged();
                         ToastUtils.toast(getActivity(), "首次加载完成");
                         break;
                     case REFRESHLOAD_DONE://刷新加载完成
                         mLv.hideHeadView();
-                        Picasso.with(getActivity()).load(imgurlList.get(0)).placeholder(R.mipmap.img_default).into(mHeadImageView1);
-                        Picasso.with(getActivity()).load(imgurlList.get(1)).placeholder(R.mipmap.img_default).into(mHeadImageView2);
-                        Picasso.with(getActivity()).load(imgurlList.get(2)).placeholder(R.mipmap.img_default).into(mHeadLogoIv);
+                        Picasso.with(getActivity()).load(imgurlList.get(0)).placeholder(mHeadImageView1.getDrawable()).error(R.mipmap.img_default).into(mHeadImageView1);
+                        Picasso.with(getActivity()).load(imgurlList.get(1)).placeholder(mHeadImageView2.getDrawable()).error(R.mipmap.img_default).into(mHeadImageView2);
+                        Picasso.with(getActivity()).load(imgurlList.get(2)).placeholder(mHeadLogoIv.getDrawable()).error(R.mipmap.img_default).into(mHeadLogoIv);
+                        myhomeAdapter.notifyDataSetChanged();
                         ToastUtils.toast(getActivity(), "刷新加载完成");
                         break;
                     default:
@@ -201,6 +203,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         initAnim();
         setData();
         setListener();
+        loadData(LOAD_FIRST);
         mLocationClient.start();
         return rootView;
     }
@@ -233,6 +236,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         headView = View.inflate(getActivity(), R.layout.head_home_cycle, null);
         mHeadLogoIv = (ImageView) headView.findViewById(R.id.iv_home_head_logo);
         mVp = (ViewPager) headView.findViewById(R.id.vp_home_cycle);
+        footView = View.inflate(getActivity(), R.layout.foot_home_contact, null);
+        mContactRl = (RelativeLayout) footView.findViewById(R.id.rl_foot_home_contact);
         mClassifyRl = (RelativeLayout) headView.findViewById(R.id.rl_homehead_classify);
         mShopListRl = (RelativeLayout) headView.findViewById(R.id.rl_homehead_shoplist);
         mContractRl = (RelativeLayout) headView.findViewById(R.id.rl_homehead_contract);
@@ -253,6 +258,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         mVp.setAdapter(mHomePagerAdapter);
         mVp.setCurrentItem(1);
         mLv.addHeaderView(headView);
+        mLv.addFooterView(footView);
         homePagerHandler.sendEmptyMessageDelayed(666, 3000);
     }
 
@@ -260,11 +266,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         okHttpClient = new OkHttpClient();
         mPd = new ProgressDialog(getActivity());
         mPd.setMessage("加载中..");
-        goodsRecommendList.add(new GoodsRecommend("", "", "圆管", "枪带", "25.50", "106.00"));
-        goodsPostList.add(new GoodsPost(""));
-        goodsShowList.add(new GoodsShow("商家推荐", "", "", "", "", "", ""));
-        goodsShowList.add(new GoodsShow("钢建求购", "", "", "", "", "", ""));
-        goodsShowList.add(new GoodsShow("知名品牌", "", "", "", "", "", ""));
+        myhomeAdapter = new FirstpageAdapter(getActivity(), goodsRecommendList, goodsPostList, goodsShowList);
     }
 
     private void initAnim() {
@@ -275,7 +277,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
     }
 
     private void setData() {
-        myhomeAdapter = new FirstpageAdapter(getActivity(), goodsRecommendList, goodsPostList, goodsShowList);
         mLv.setAdapter(myhomeAdapter);
     }
 
@@ -283,6 +284,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         changeCityRl.setOnClickListener(this);
         searchRl.setOnClickListener(this);
         optionRl.setOnClickListener(this);
+        mContactRl.setOnClickListener(this);
         mOptionPwcloseRl.setOnClickListener(this);
         mPopFirstpageRl.setOnClickListener(this);
         mPopShopcarRl.setOnClickListener(this);
@@ -331,6 +333,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                     public void onResponse(Response response) throws IOException {
                         if (response.isSuccessful()) {
                             imgurlList.clear();
+                            goodsRecommendList.clear();
+                            goodsPostList.clear();
+                            goodsShowList.clear();
                             String json = response.body().string();
                             if (parseJson(json))
                                 mainHandler.sendEmptyMessage(REFRESHLOAD_DONE);
@@ -357,6 +362,117 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
             JSONObject objHome1 = arrDatas.optJSONObject(1).optJSONObject("home1");
             String image = objHome1.optString("image");
             imgurlList.add(image);
+            GoodsRecommend goodsRecommend = new GoodsRecommend();
+            JSONObject objGoods = arrDatas.optJSONObject(2).optJSONObject("goods");
+            goodsRecommend.setTitle(objGoods.optString("title"));
+            JSONArray arrItems = objGoods.optJSONArray("item");
+            for (int i = 0; i < arrItems.length(); i++) {
+                JSONObject o = arrItems.optJSONObject(i);
+                if (i == 0) {
+                    goodsRecommend.setGoodsName1(o.optString("goods_name"));
+                    goodsRecommend.setGoodsPrice1(o.optString("goods_promotion_price"));
+                    goodsRecommend.setImgUrl1(o.optString("goods_image"));
+                } else if (i == 1) {
+                    goodsRecommend.setGoodsName2(o.optString("goods_name"));
+                    goodsRecommend.setGoodsPrice2(o.optString("goods_promotion_price"));
+                    goodsRecommend.setImgUrl2(o.optString("goods_image"));
+                }
+            }
+            goodsRecommendList.add(goodsRecommend);
+            GoodsPost goodsPost = new GoodsPost();
+            JSONObject objGoodsPost = arrDatas.optJSONObject(4).optJSONObject("home1");
+            goodsPost.setImgUrl(objGoodsPost.optString("image"));
+            goodsPostList.add(goodsPost);
+            GoodsShow goodsShow1 = new GoodsShow();
+            JSONObject objGoodsShow1 = arrDatas.optJSONObject(3).optJSONObject("home3");
+            goodsShow1.setTitle(objGoodsShow1.optString("title"));
+            JSONArray arrGoodsShow = objGoodsShow1.optJSONArray("item");
+            for (int i = 0; i < arrGoodsShow.length(); i++) {
+                JSONObject o = arrGoodsShow.optJSONObject(i);
+                switch (i) {
+                    case 0:
+                        goodsShow1.setImgUrl1(o.optString("image"));
+                        break;
+                    case 1:
+                        goodsShow1.setImgUrl2(o.optString("image"));
+                        break;
+                    case 2:
+                        goodsShow1.setImgUrl3(o.optString("image"));
+                        break;
+                    case 3:
+                        goodsShow1.setImgUrl4(o.optString("image"));
+                        break;
+                    case 4:
+                        goodsShow1.setImgUrl5(o.optString("image"));
+                        break;
+                    case 5:
+                        goodsShow1.setImgUrl6(o.optString("image"));
+                        break;
+                    default:
+                        break;
+                }
+            }
+            GoodsShow goodsShow2 = new GoodsShow();
+            JSONObject objGoodsShow2 = arrDatas.optJSONObject(5).optJSONObject("home3");
+            goodsShow2.setTitle(objGoodsShow2.optString("title"));
+            JSONArray arrGoodsShow2 = objGoodsShow2.optJSONArray("item");
+            for (int i = 0; i < arrGoodsShow2.length(); i++) {
+                JSONObject o = arrGoodsShow2.optJSONObject(i);
+                switch (i) {
+                    case 0:
+                        goodsShow2.setImgUrl1(o.optString("image"));
+                        break;
+                    case 1:
+                        goodsShow2.setImgUrl2(o.optString("image"));
+                        break;
+                    case 2:
+                        goodsShow2.setImgUrl3(o.optString("image"));
+                        break;
+                    case 3:
+                        goodsShow2.setImgUrl4(o.optString("image"));
+                        break;
+                    case 4:
+                        goodsShow2.setImgUrl5(o.optString("image"));
+                        break;
+                    case 5:
+                        goodsShow2.setImgUrl6(o.optString("image"));
+                        break;
+                    default:
+                        break;
+                }
+            }
+            GoodsShow goodsShow3 = new GoodsShow();
+            JSONObject objGoodsShow3 = arrDatas.optJSONObject(6).optJSONObject("home3");
+            goodsShow3.setTitle(objGoodsShow3.optString("title"));
+            JSONArray arrGoodsShow3 = objGoodsShow3.optJSONArray("item");
+            for (int i = 0; i < arrGoodsShow3.length(); i++) {
+                JSONObject o = arrGoodsShow3.optJSONObject(i);
+                switch (i) {
+                    case 0:
+                        goodsShow3.setImgUrl1(o.optString("image"));
+                        break;
+                    case 1:
+                        goodsShow3.setImgUrl2(o.optString("image"));
+                        break;
+                    case 2:
+                        goodsShow3.setImgUrl3(o.optString("image"));
+                        break;
+                    case 3:
+                        goodsShow3.setImgUrl4(o.optString("image"));
+                        break;
+                    case 4:
+                        goodsShow3.setImgUrl5(o.optString("image"));
+                        break;
+                    case 5:
+                        goodsShow3.setImgUrl6(o.optString("image"));
+                        break;
+                    default:
+                        break;
+                }
+            }
+            goodsShowList.add(goodsShow1);
+            goodsShowList.add(goodsShow2);
+            goodsShowList.add(goodsShow3);
             return true;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -390,6 +506,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                         }
                     });
                 }
+                break;
+            case R.id.rl_foot_home_contact:
+                ToastUtils.toast(getActivity(), "咨询热线");
                 break;
             case R.id.rl_home_pop_close:
                 mOptionPw.dismiss();
@@ -426,7 +545,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                 if (cityName != null) {
                     ad.dismiss();
                     mCityTv.setText(cityName);
-                    loadData(LOAD_FIRST);
                 }
                 break;
             case R.id.tv_dialog_cancel:
@@ -474,7 +592,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         option.setCoorType("bd09ll");
         //可选，默认gcj02，设置返回的定位结果坐标系
         int span = 1000;
-        option.setScanSpan(span);
+        option.setScanSpan(0);
         //可选，默认0，即仅定位一次，设置发起定位请求的间隔需要大于等于1000ms才是有效的
         option.setIsNeedAddress(true);
         //可选，设置是否需要地址信息，默认不需要
@@ -576,7 +694,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                 cityName = s;
                 mCityHandler.sendEmptyMessage(1);
             }
-            mLocationClient.stop();
         }
 
         @Override

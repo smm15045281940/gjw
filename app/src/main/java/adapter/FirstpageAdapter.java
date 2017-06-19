@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.gangjianwang.www.gangjianwang.GoodsDetailActivity;
 import com.gangjianwang.www.gangjianwang.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -54,11 +55,9 @@ public class FirstpageAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        if (goodsRecommendList == null || goodsRecommendList.size() == 0 || goodsPostList == null || goodsPostList.size() == 0 || goodsShowList == null || goodsShowList.size() == 0) {
+        if (goodsRecommendList.size() == 0 || goodsPostList.size() == 0 || goodsShowList.size() == 0)
             return 0;
-        } else {
-            return 1 + 1 + goodsShowList.size();
-        }
+        return 2 + goodsShowList.size();
     }
 
     @Override
@@ -95,10 +94,13 @@ public class FirstpageAdapter extends BaseAdapter {
                 holder1 = (ViewHolder1) convertView.getTag();
             }
             GoodsRecommend goodsRecommend = goodsRecommendList.get(0);
+            holder1.tvTitle.setText(goodsRecommend.getTitle());
             holder1.tv1.setText(goodsRecommend.getGoodsName1());
             holder1.tv2.setText(goodsRecommend.getGoodsName2());
-            holder1.tv3.setText(goodsRecommend.getGoodsPrice1());
-            holder1.tv4.setText(goodsRecommend.getGoodsPrice2());
+            holder1.tv3.setText("¥" + goodsRecommend.getGoodsPrice1());
+            holder1.tv4.setText("¥" + goodsRecommend.getGoodsPrice2());
+            Picasso.with(context).load(goodsRecommend.getImgUrl1()).placeholder(holder1.iv1.getDrawable()).error(R.mipmap.img_default).into(holder1.iv1);
+            Picasso.with(context).load(goodsRecommend.getImgUrl2()).placeholder(holder1.iv2.getDrawable()).error(R.mipmap.img_default).into(holder1.iv2);
             holder1.iv1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -121,6 +123,7 @@ public class FirstpageAdapter extends BaseAdapter {
                 holder2 = (ViewHolder2) convertView.getTag();
             }
             GoodsPost goodsPost = goodsPostList.get(0);
+            Picasso.with(context).load(goodsPost.getImgUrl()).placeholder(holder2.iv.getDrawable()).error(R.mipmap.img_default).into(holder2.iv);
             holder2.iv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -138,9 +141,21 @@ public class FirstpageAdapter extends BaseAdapter {
             if (position == 1) {
                 GoodsShow goodsShow = goodsShowList.get(0);
                 holder3.tv.setText(goodsShow.getTitle());
+                Picasso.with(context).load(goodsShow.getImgUrl1()).placeholder(holder3.iv1.getDrawable()).error(R.mipmap.img_default).into(holder3.iv1);
+                Picasso.with(context).load(goodsShow.getImgUrl2()).placeholder(holder3.iv2.getDrawable()).error(R.mipmap.img_default).into(holder3.iv2);
+                Picasso.with(context).load(goodsShow.getImgUrl3()).placeholder(holder3.iv3.getDrawable()).error(R.mipmap.img_default).into(holder3.iv3);
+                Picasso.with(context).load(goodsShow.getImgUrl4()).placeholder(holder3.iv4.getDrawable()).error(R.mipmap.img_default).into(holder3.iv4);
+                Picasso.with(context).load(goodsShow.getImgUrl5()).placeholder(holder3.iv5.getDrawable()).error(R.mipmap.img_default).into(holder3.iv5);
+                Picasso.with(context).load(goodsShow.getImgUrl6()).placeholder(holder3.iv6.getDrawable()).error(R.mipmap.img_default).into(holder3.iv6);
             } else {
                 GoodsShow goodsShow = goodsShowList.get(position - 2);
                 holder3.tv.setText(goodsShow.getTitle());
+                Picasso.with(context).load(goodsShow.getImgUrl1()).placeholder(holder3.iv1.getDrawable()).error(R.mipmap.img_default).into(holder3.iv1);
+                Picasso.with(context).load(goodsShow.getImgUrl2()).placeholder(holder3.iv2.getDrawable()).error(R.mipmap.img_default).into(holder3.iv2);
+                Picasso.with(context).load(goodsShow.getImgUrl3()).placeholder(holder3.iv3.getDrawable()).error(R.mipmap.img_default).into(holder3.iv3);
+                Picasso.with(context).load(goodsShow.getImgUrl4()).placeholder(holder3.iv4.getDrawable()).error(R.mipmap.img_default).into(holder3.iv4);
+                Picasso.with(context).load(goodsShow.getImgUrl5()).placeholder(holder3.iv5.getDrawable()).error(R.mipmap.img_default).into(holder3.iv5);
+                Picasso.with(context).load(goodsShow.getImgUrl6()).placeholder(holder3.iv6.getDrawable()).error(R.mipmap.img_default).into(holder3.iv6);
             }
             holder3.iv1.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -191,9 +206,10 @@ public class FirstpageAdapter extends BaseAdapter {
     class ViewHolder1 {
 
         private ImageView iv1, iv2;
-        private TextView tv1, tv2, tv3, tv4;
+        private TextView tvTitle, tv1, tv2, tv3, tv4;
 
         public ViewHolder1(View itemView) {
+            tvTitle = (TextView) itemView.findViewById(R.id.tv_item_firstpage1_title);
             iv1 = (ImageView) itemView.findViewById(R.id.iv_item_firstpage1_imgurl1);
             iv2 = (ImageView) itemView.findViewById(R.id.iv_item_firstpage1_imgurl2);
             tv1 = (TextView) itemView.findViewById(R.id.tv_item_firstpage1_goodsName1);
