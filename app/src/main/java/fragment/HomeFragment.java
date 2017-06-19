@@ -1,13 +1,17 @@
 package fragment;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -508,7 +512,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                 }
                 break;
             case R.id.rl_foot_home_contact:
-                ToastUtils.toast(getActivity(), "咨询热线");
+                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:400-0788-889"));
+                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                getActivity().startActivity(intent);
                 break;
             case R.id.rl_home_pop_close:
                 mOptionPw.dismiss();

@@ -1,17 +1,20 @@
 package com.gangjianwang.www.gangjianwang;
 
+import android.content.Context;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.ArrayAdapter;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,11 +24,13 @@ import java.util.List;
 import adapter.ContractCompanyGridAdapter;
 import adapter.ContractCompanyListAdapter;
 import bean.ContractCompany;
+import utils.ToastUtils;
 
 public class ContractProjectActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private View mMultiRankPopView;
-    private ImageView mBackIv;
+    private View rootView, mMultiRankPopView;
+    private RelativeLayout mBackRl, mSearchRl;
+    private EditText mEtSearchContentEt;
     private TextView mMultiRankTv, mSalesPriorityTv, mScreenTv;
     private ImageView mChangeStyleIv;
     private PopupWindow mMultiRankPop;
@@ -43,7 +48,8 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_contract_project);
+        rootView = View.inflate(this, R.layout.activity_contract_project, null);
+        setContentView(rootView);
         initView();
         initData();
         setData();
@@ -52,14 +58,16 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
     }
 
     private void initView() {
-        mBackIv = (ImageView) findViewById(R.id.iv_contractProject_back);
-        mMultiRankTv = (TextView) findViewById(R.id.tv_contractProject_multiRank);
+        mBackRl = (RelativeLayout) rootView.findViewById(R.id.rl_contractproject_back);
+        mSearchRl = (RelativeLayout) rootView.findViewById(R.id.rl_contractproject_search);
+        mEtSearchContentEt = (EditText) rootView.findViewById(R.id.et_contractproject_searchcontent);
+        mMultiRankTv = (TextView) rootView.findViewById(R.id.tv_contractProject_multiRank);
         mMultiRankTv.setTextColor(Color.RED);
-        mSalesPriorityTv = (TextView) findViewById(R.id.tv_contractProject_salesPriority);
-        mScreenTv = (TextView) findViewById(R.id.tv_contractProject_screen);
-        mChangeStyleIv = (ImageView) findViewById(R.id.iv_contractProject_changeStyle);
-        mContractProjectLv = (ListView) findViewById(R.id.lv_contractProject);
-        mContractProjectGv = (GridView) findViewById(R.id.gv_contractProject);
+        mSalesPriorityTv = (TextView) rootView.findViewById(R.id.tv_contractProject_salesPriority);
+        mScreenTv = (TextView) rootView.findViewById(R.id.tv_contractProject_screen);
+        mChangeStyleIv = (ImageView) rootView.findViewById(R.id.iv_contractProject_changeStyle);
+        mContractProjectLv = (ListView) rootView.findViewById(R.id.lv_contractProject);
+        mContractProjectGv = (GridView) rootView.findViewById(R.id.gv_contractProject);
         mMultiRankPopView = View.inflate(ContractProjectActivity.this, R.layout.pop_multirank, null);
         mMultiRankPop = new PopupWindow(mMultiRankPopView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         mMultiRankPop.setFocusable(true);
@@ -83,16 +91,17 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
     }
 
     private void setListener() {
-        mMultiRankPopView.setOnClickListener(ContractProjectActivity.this);
-        mBackIv.setOnClickListener(ContractProjectActivity.this);
-        mMultiRankTv.setOnClickListener(ContractProjectActivity.this);
-        mSalesPriorityTv.setOnClickListener(ContractProjectActivity.this);
-        mScreenTv.setOnClickListener(ContractProjectActivity.this);
-        mChangeStyleIv.setOnClickListener(ContractProjectActivity.this);
-        mPopMultiRankTv.setOnClickListener(ContractProjectActivity.this);
-        mPopUptoDownTv.setOnClickListener(ContractProjectActivity.this);
-        mPopDowntoUpTv.setOnClickListener(ContractProjectActivity.this);
-        mPopPopularityTv.setOnClickListener(ContractProjectActivity.this);
+        mMultiRankPopView.setOnClickListener(this);
+        mBackRl.setOnClickListener(this);
+        mSearchRl.setOnClickListener(this);
+        mMultiRankTv.setOnClickListener(this);
+        mSalesPriorityTv.setOnClickListener(this);
+        mScreenTv.setOnClickListener(this);
+        mChangeStyleIv.setOnClickListener(this);
+        mPopMultiRankTv.setOnClickListener(this);
+        mPopUptoDownTv.setOnClickListener(this);
+        mPopDowntoUpTv.setOnClickListener(this);
+        mPopPopularityTv.setOnClickListener(this);
     }
 
     private void loadData() {
@@ -103,11 +112,29 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
         mGridAdapter.notifyDataSetChanged();
     }
 
+    private void closeSoftKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm.isActive() && getCurrentFocus() != null) {
+            if (getCurrentFocus().getWindowToken() != null) {
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        }
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.iv_contractProject_back:
+            case R.id.rl_contractproject_back:
                 finish();
+                break;
+            case R.id.rl_contractproject_search:
+                String searchContentStr = mEtSearchContentEt.getText().toString();
+                if (TextUtils.isEmpty(searchContentStr)) {
+                    ToastUtils.toast(ContractProjectActivity.this, "搜索内容不能为空!");
+                } else {
+                    ToastUtils.toast(ContractProjectActivity.this, "正在搜索:" + searchContentStr);
+                }
+                closeSoftKeyboard();
                 break;
             case R.id.tv_contractProject_multiRank:
                 mMultiRankPop.showAsDropDown(mMultiRankTv);

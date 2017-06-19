@@ -17,7 +17,7 @@ import bean.ContractCompany;
  * Created by 孙明明 on 2017/5/15.
  */
 
-public class ContractCompanyGridAdapter extends BaseAdapter{
+public class ContractCompanyGridAdapter extends BaseAdapter {
 
     private Context context;
     private List<ContractCompany> list;
@@ -45,25 +45,24 @@ public class ContractCompanyGridAdapter extends BaseAdapter{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        if(convertView == null){
-            convertView = View.inflate(context,R.layout.item_contractcompany_grid,null);
+        if (convertView == null) {
+            convertView = View.inflate(context, R.layout.item_contractcompany_grid, null);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
-        }else{
+        } else {
             holder = (ViewHolder) convertView.getTag();
         }
         ContractCompany contractCompany = list.get(position);
-        holder.iv.setImageResource(R.mipmap.ic_launcher);
         holder.tv1.setText(contractCompany.getCompanyName());
         holder.tv2.setText(contractCompany.getCompanyDuty());
         holder.tv3.setText(contractCompany.getCompanyAddress());
         return convertView;
     }
 
-    class ViewHolder{
+    class ViewHolder {
 
         private ImageView iv;
-        private TextView tv1,tv2,tv3;
+        private TextView tv1, tv2, tv3;
 
         public ViewHolder(View itemView) {
             iv = (ImageView) itemView.findViewById(R.id.iv_item_contractcompany_grid_imgurl);

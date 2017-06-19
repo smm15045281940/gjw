@@ -12,7 +12,7 @@
             android:layout_width="@dimen/x80"
             android:layout_height="@dimen/x80"
             android:scaleType="fitXY"
-            android:src="@mipmap/ic_launcher"
+            android:src="@mipmap/img_default"
             android:id="@+id/iv_item_contractcompany_list_imgurl"/>
 
         <RelativeLayout

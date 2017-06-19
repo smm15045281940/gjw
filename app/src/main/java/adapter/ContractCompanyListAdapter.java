@@ -53,7 +53,6 @@ public class ContractCompanyListAdapter extends BaseAdapter{
             holder = (ViewHolder) convertView.getTag();
         }
         ContractCompany contractCompany = list.get(position);
-        holder.iv.setImageResource(R.mipmap.ic_launcher);
         holder.tv1.setText(contractCompany.getCompanyName());
         holder.tv2.setText(contractCompany.getCompanyDuty());
         holder.tv3.setText(contractCompany.getCompanyAddress());
