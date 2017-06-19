@@ -2,6 +2,7 @@ package com.gangjianwang.www.gangjianwang;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -241,7 +242,7 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
                 Toast.makeText(ContractProjectActivity.this, "销量优先", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.rl_contractProject_screen:
-                Toast.makeText(ContractProjectActivity.this, "筛选", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(ContractProjectActivity.this, GoodsScreenActivity.class));
                 break;
             case R.id.rl_contractProject_changeStyle:
                 switch (CURRENT_STYLE_STATE) {

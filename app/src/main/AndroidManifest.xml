@@ -88,6 +88,9 @@
         <activity android:name=".ManageBillInfoActivity" />
         <activity android:name=".ShopIntroActivity" />
         <activity android:name=".InquiryListActivity" />
+        <activity
+            android:name=".GoodsScreenActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
     </application>
 
 </manifest>

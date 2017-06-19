@@ -12,4 +12,6 @@ public interface NetConfig {
     public static final String homeUrl = "http://www.gangjianwang.com/mobile/index.php?act=index";
     //承揽工程
     public static final String contractprojectUrl = "http://www.gangjianwang.com/mobile/index.php?act=store&op=store_contract_list&page=10&curpage=";
+    //省列表
+    public static final String provinceListUrl = "http://www.gangjianwang.com/mobile/index.php?act=index&op=search_adv";
 }
