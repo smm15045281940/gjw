@@ -9,13 +9,10 @@ public class ContractCompany {
     private String companyImgurl;
     private String companyName;
     private String companyDuty;
-    private String companyAddress;
+    private String companyAddress1;
+    private String companyAddress2;
 
-    public ContractCompany(String companyImgurl, String companyName, String companyDuty, String companyAddress) {
-        this.companyImgurl = companyImgurl;
-        this.companyName = companyName;
-        this.companyDuty = companyDuty;
-        this.companyAddress = companyAddress;
+    public ContractCompany() {
     }
 
     public String getCompanyImgurl() {
@@ -42,21 +39,19 @@ public class ContractCompany {
         this.companyDuty = companyDuty;
     }
 
-    public String getCompanyAddress() {
-        return companyAddress;
+    public String getCompanyAddress1() {
+        return companyAddress1;
     }
 
-    public void setCompanyAddress(String companyAddress) {
-        this.companyAddress = companyAddress;
+    public void setCompanyAddress1(String companyAddress1) {
+        this.companyAddress1 = companyAddress1;
     }
 
-    @Override
-    public String toString() {
-        return "ContractCompany{" +
-                "companyImgurl='" + companyImgurl + '\'' +
-                ", companyName='" + companyName + '\'' +
-                ", companyDuty='" + companyDuty + '\'' +
-                ", companyAddress='" + companyAddress + '\'' +
-                '}';
+    public String getCompanyAddress2() {
+        return companyAddress2;
+    }
+
+    public void setCompanyAddress2(String companyAddress2) {
+        this.companyAddress2 = companyAddress2;
     }
 }

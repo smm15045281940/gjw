@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -53,9 +54,10 @@ public class ContractCompanyGridAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         ContractCompany contractCompany = list.get(position);
+        Picasso.with(context).load(contractCompany.getCompanyImgurl()).placeholder(holder.iv.getDrawable()).into(holder.iv);
         holder.tv1.setText(contractCompany.getCompanyName());
         holder.tv2.setText(contractCompany.getCompanyDuty());
-        holder.tv3.setText(contractCompany.getCompanyAddress());
+        holder.tv3.setText(contractCompany.getCompanyAddress1() + " " + contractCompany.getCompanyAddress2());
         return convertView;
     }
 

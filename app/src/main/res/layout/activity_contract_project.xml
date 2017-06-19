@@ -75,10 +75,13 @@
         android:orientation="horizontal">
 
         <RelativeLayout
+            android:id="@+id/rl_contractProject_multiRank"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
+            android:background="@drawable/default_gray_selector"
+            android:clickable="true"
             android:padding="@dimen/x10">
 
             <TextView
@@ -94,10 +97,13 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/rl_contractProject_salesPriority"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
+            android:background="@drawable/default_gray_selector"
+            android:clickable="true"
             android:padding="@dimen/x10">
 
             <TextView
@@ -113,10 +119,13 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/rl_contractProject_screen"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
+            android:background="@drawable/default_gray_selector"
+            android:clickable="true"
             android:padding="@dimen/x10">
 
             <TextView
@@ -132,10 +141,13 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/rl_contractProject_changeStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
+            android:background="@drawable/default_gray_selector"
+            android:clickable="true"
             android:padding="@dimen/x10">
 
             <ImageView
@@ -159,18 +171,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <android.support.v4.widget.SwipeRefreshLayout
+        <GridView
+            android:id="@+id/gv_contractProject"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <GridView
-                android:id="@+id/gv_contractProject"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:numColumns="2"
-                android:visibility="invisible" />
-
-        </android.support.v4.widget.SwipeRefreshLayout>
+            android:layout_height="match_parent"
+            android:numColumns="2"
+            android:visibility="invisible" />
 
     </RelativeLayout>
 

@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ import bean.ContractCompany;
  * Created by 孙明明 on 2017/5/15.
  */
 
-public class ContractCompanyListAdapter extends BaseAdapter{
+public class ContractCompanyListAdapter extends BaseAdapter {
 
     private Context context;
     private List<ContractCompany> list;
@@ -45,24 +46,25 @@ public class ContractCompanyListAdapter extends BaseAdapter{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        if(convertView == null){
-            convertView = View.inflate(context,R.layout.item_contractcompany_list,null);
+        if (convertView == null) {
+            convertView = View.inflate(context, R.layout.item_contractcompany_list, null);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
-        }else{
+        } else {
             holder = (ViewHolder) convertView.getTag();
         }
         ContractCompany contractCompany = list.get(position);
+        Picasso.with(context).load(contractCompany.getCompanyImgurl()).placeholder(holder.iv.getDrawable()).into(holder.iv);
         holder.tv1.setText(contractCompany.getCompanyName());
         holder.tv2.setText(contractCompany.getCompanyDuty());
-        holder.tv3.setText(contractCompany.getCompanyAddress());
+        holder.tv3.setText(contractCompany.getCompanyAddress1() + " " + contractCompany.getCompanyAddress2());
         return convertView;
     }
 
-    class ViewHolder{
+    class ViewHolder {
 
         private ImageView iv;
-        private TextView tv1,tv2,tv3;
+        private TextView tv1, tv2, tv3;
 
         public ViewHolder(View itemView) {
             iv = (ImageView) itemView.findViewById(R.id.iv_item_contractcompany_list_imgurl);
