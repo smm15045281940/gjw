@@ -4,12 +4,14 @@
     android:id="@+id/activity_classify"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F5F5F5"
     android:orientation="vertical"
     tools:context="com.gangjianwang.www.gangjianwang.ClassifyActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/x40"
+        android:background="@android:color/white"
         android:orientation="horizontal">
 
         <RelativeLayout
@@ -27,14 +29,27 @@
 
         </RelativeLayout>
 
-        <EditText
+        <RelativeLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/x5"
             android:layout_weight="1"
-            android:cursorVisible="false"
-            android:hint="钢材"
-            android:singleLine="true" />
+            android:background="@drawable/search_shape">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/x10"
+                android:layout_weight="1"
+                android:background="@null"
+                android:cursorVisible="false"
+                android:hint="钢材"
+                android:singleLine="true"
+                android:textSize="@dimen/x15" />
+
+        </RelativeLayout>
 
     </LinearLayout>
 
@@ -48,10 +63,16 @@
             android:layout_width="@dimen/x80"
             android:layout_height="match_parent" />
 
+        <View
+            android:layout_width="@dimen/x1"
+            android:layout_height="match_parent"
+            android:background="@android:color/darker_gray" />
+
         <ListView
             android:id="@+id/lv_classify_right"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:divider="@null" />
 
     </LinearLayout>
 
