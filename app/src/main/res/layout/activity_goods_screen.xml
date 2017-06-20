@@ -79,10 +79,8 @@
                 android:padding="@dimen/x10">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="价格区间"
-                    android:textSize="@dimen/x15" />
+                    style="@style/style_tv_smalltitle_goods_screen"
+                    android:text="价格区间" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -97,6 +95,7 @@
                         android:background="@drawable/shape_price_section">
 
                         <EditText
+                            android:id="@+id/et_goodsScreen_minPrice"
                             android:layout_width="@dimen/x50"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
@@ -123,6 +122,7 @@
                         android:background="@drawable/shape_price_section">
 
                         <EditText
+                            android:id="@+id/et_goodsScreen_maxPrice"
                             android:layout_width="@dimen/x50"
                             android:layout_height="wrap_content"
                             android:layout_margin="@dimen/x5"
@@ -147,10 +147,8 @@
                 android:padding="@dimen/x10">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="商品所在地"
-                    android:textSize="@dimen/x15" />
+                    style="@style/style_tv_smalltitle_goods_screen"
+                    android:text="商品所在地" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -162,18 +160,169 @@
                         android:id="@+id/sp_goodsScreen_province"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:dropDownWidth="@dimen/x150" />
+                        android:dropDownWidth="@dimen/x100" />
 
                     <Spinner
                         android:id="@+id/sp_goodsScreen_city"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/x20"
-                        android:dropDownWidth="@dimen/x150" />
+                        android:dropDownWidth="@dimen/x100" />
 
                 </LinearLayout>
 
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/x1"
+                android:background="@android:color/white"
+                android:orientation="vertical"
+                android:padding="@dimen/x10">
+
+                <TextView
+                    style="@style/style_tv_smalltitle_goods_screen"
+                    android:text="商品类型" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/x5"
+                        android:orientation="horizontal">
+
+                        <CheckBox
+                            android:id="@+id/cb_goods_screen_donation"
+                            style="@style/style_checkbox_goods_screen"
+                            android:text="赠品" />
+
+                        <CheckBox
+                            android:id="@+id/cb_goods_screen_groupbuy"
+                            style="@style/style_checkbox_goods_screen"
+                            android:text="团购" />
+
+                        <CheckBox
+                            android:id="@+id/cb_goods_screen_limitdiscount"
+                            style="@style/style_checkbox_goods_screen"
+                            android:text="限时折扣" />
+
+                        <CheckBox
+                            android:id="@+id/cb_goods_screen_virtual"
+                            style="@style/style_checkbox_goods_screen"
+                            android:text="虚拟" />
+
+                    </LinearLayout>
+
+                </HorizontalScrollView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/x1"
+                android:background="@android:color/white"
+                android:orientation="vertical"
+                android:padding="@dimen/x10">
+
+                <TextView
+                    style="@style/style_tv_smalltitle_goods_screen"
+                    android:text="店铺类型" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/x5"
+                        android:orientation="horizontal">
+
+                        <CheckBox
+                            android:id="@+id/cb_goods_screen_platformselfsupport"
+                            style="@style/style_checkbox_goods_screen"
+                            android:text="平台自营" />
+
+                    </LinearLayout>
+
+                </HorizontalScrollView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/x1"
+                android:background="@android:color/white"
+                android:orientation="vertical"
+                android:padding="@dimen/x10">
+
+                <TextView
+                    style="@style/style_tv_smalltitle_goods_screen"
+                    android:text="店铺服务" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/x5"
+                        android:orientation="horizontal">
+
+                        <CheckBox
+                            android:id="@+id/cb_goods_screen_sevendayreturn"
+                            style="@style/style_checkbox_goods_screen"
+                            android:text="7天退货" />
+
+                        <CheckBox
+                            android:id="@+id/cb_goods_screen_qualitypromise"
+                            style="@style/style_checkbox_goods_screen"
+                            android:text="品质承诺" />
+
+                        <CheckBox
+                            android:id="@+id/cb_goods_screen_damagereplace"
+                            style="@style/style_checkbox_goods_screen"
+                            android:text="破损补寄" />
+
+                        <CheckBox
+                            android:id="@+id/cb_goods_screen_quickflow"
+                            style="@style/style_checkbox_goods_screen"
+                            android:text="急速物流" />
+
+                    </LinearLayout>
+
+                </HorizontalScrollView>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_goodsScreen_screen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/x10"
+                android:background="@drawable/addreceiveaddress_selector"
+                android:clickable="true"
+                android:padding="@dimen/x10">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="筛选商品"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/x15" />
+
+            </RelativeLayout>
 
         </LinearLayout>
 
