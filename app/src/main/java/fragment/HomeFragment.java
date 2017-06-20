@@ -33,6 +33,7 @@ import com.baidu.location.Poi;
 import com.gangjianwang.www.gangjianwang.ChangeCityActivity;
 import com.gangjianwang.www.gangjianwang.ClassifyActivity;
 import com.gangjianwang.www.gangjianwang.ContractProjectActivity;
+import com.gangjianwang.www.gangjianwang.GjSpecialSaleActivity;
 import com.gangjianwang.www.gangjianwang.HomeActivity;
 import com.gangjianwang.www.gangjianwang.MessageActivity;
 import com.gangjianwang.www.gangjianwang.R;
@@ -288,6 +289,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         changeCityRl.setOnClickListener(this);
         searchRl.setOnClickListener(this);
         optionRl.setOnClickListener(this);
+        mHeadLogoIv.setOnClickListener(this);
         mContactRl.setOnClickListener(this);
         mOptionPwcloseRl.setOnClickListener(this);
         mPopFirstpageRl.setOnClickListener(this);
@@ -510,6 +512,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                         }
                     });
                 }
+                break;
+            case R.id.iv_home_head_logo:
+                getActivity().startActivity(new Intent(getActivity(), GjSpecialSaleActivity.class));
                 break;
             case R.id.rl_foot_home_contact:
                 Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:400-0788-889"));
