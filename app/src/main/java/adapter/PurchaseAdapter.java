@@ -4,10 +4,8 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.R;
@@ -61,11 +59,12 @@ public class PurchaseAdapter extends BaseAdapter {
         Purchase purchase = list.get(position);
         purchaseViewHolder.mPurchaseNumberTv.setText(purchase.getPurchaseNumber());
         purchaseViewHolder.mGoodsNameTv.setText(purchase.getGoodsName());
-        purchaseViewHolder.mMaxPriceTv.setText(purchase.getMaxPrice());
+        purchaseViewHolder.mMaxPriceTv.setText("¥" + purchase.getMaxPrice());
         purchaseViewHolder.mPurchaseAmountTv.setText(purchase.getPurchaseAmount());
         purchaseViewHolder.mPurchaseNameTv.setText(purchase.getPurchaseName());
         purchaseViewHolder.mBillTypeTv.setText(purchase.getBillType());
         purchaseViewHolder.mTransportTypeTv.setText(purchase.getTransportType());
+        purchaseViewHolder.mStateDescTv.setText(purchase.getStateDesc());
         final View view = convertView;
         final int p = position;
         final int priceId = purchaseViewHolder.priceRl.getId();
@@ -87,7 +86,7 @@ public class PurchaseAdapter extends BaseAdapter {
 
     class PurchaseViewHolder {
 
-        private TextView mPurchaseNumberTv, mGoodsNameTv, mMaxPriceTv, mPurchaseAmountTv, mPurchaseNameTv, mBillTypeTv, mTransportTypeTv;
+        private TextView mPurchaseNumberTv, mGoodsNameTv, mMaxPriceTv, mPurchaseAmountTv, mPurchaseNameTv, mBillTypeTv, mTransportTypeTv, mStateDescTv;
         private RelativeLayout priceRl, cancelRl;
 
         public PurchaseViewHolder(View itemView) {
@@ -98,6 +97,7 @@ public class PurchaseAdapter extends BaseAdapter {
             mPurchaseNameTv = (TextView) itemView.findViewById(R.id.tv_purchase_purchaseName);
             mBillTypeTv = (TextView) itemView.findViewById(R.id.tv_purchase_billType);
             mTransportTypeTv = (TextView) itemView.findViewById(R.id.tv_purchase_transportType);
+            mStateDescTv = (TextView) itemView.findViewById(R.id.tv_purchase_state_desc);
             priceRl = (RelativeLayout) itemView.findViewById(R.id.rl_purchase_price);
             cancelRl = (RelativeLayout) itemView.findViewById(R.id.rl_purchase_cancel);
         }

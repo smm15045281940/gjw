@@ -10,18 +10,34 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/x10"
-        android:paddingTop="@dimen/x10">
+        android:padding="@dimen/x10">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="采购编号:" />
+            android:layout_gravity="center_vertical"
+            android:text="采购编号:"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/x13" />
 
         <TextView
             android:id="@+id/tv_purchase_purchaseNumber"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/x10"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textSize="@dimen/x13" />
+
+        <TextView
+            android:id="@+id/tv_purchase_state_desc"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@android:color/holo_red_light"
+            android:textSize="@dimen/x13" />
 
     </LinearLayout>
 
@@ -31,18 +47,23 @@
         android:layout_marginTop="@dimen/x1"
         android:background="@android:color/white"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/x10"
-        android:paddingTop="@dimen/x10">
+        android:padding="@dimen/x10">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="商品名称:" />
+            android:layout_gravity="center_vertical"
+            android:text="商品名称:"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/x13" />
 
         <TextView
             android:id="@+id/tv_purchase_goodsName"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/x10"
+            android:textSize="@dimen/x13" />
 
     </LinearLayout>
 
@@ -52,18 +73,23 @@
         android:layout_marginTop="@dimen/x1"
         android:background="@android:color/white"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/x10"
-        android:paddingTop="@dimen/x10">
+        android:padding="@dimen/x10">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="最高限价:" />
+            android:layout_gravity="center_vertical"
+            android:text="最高限价:"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/x13" />
 
         <TextView
             android:id="@+id/tv_purchase_maxPrice"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/x10"
+            android:textSize="@dimen/x13" />
 
     </LinearLayout>
 
@@ -73,18 +99,23 @@
         android:layout_marginTop="@dimen/x1"
         android:background="@android:color/white"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/x10"
-        android:paddingTop="@dimen/x10">
+        android:padding="@dimen/x10">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="采购数量:" />
+            android:layout_gravity="center_vertical"
+            android:text="采购数量:"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/x13" />
 
         <TextView
             android:id="@+id/tv_purchase_purchaseAmount"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/x10"
+            android:textSize="@dimen/x13" />
 
     </LinearLayout>
 
@@ -94,18 +125,23 @@
         android:layout_marginTop="@dimen/x1"
         android:background="@android:color/white"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/x10"
-        android:paddingTop="@dimen/x10">
+        android:padding="@dimen/x10">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="采购单名称:" />
+            android:layout_gravity="center_vertical"
+            android:text="采购单名称:"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/x13" />
 
         <TextView
             android:id="@+id/tv_purchase_purchaseName"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/x10"
+            android:textSize="@dimen/x13" />
 
     </LinearLayout>
 
@@ -115,18 +151,23 @@
         android:layout_marginTop="@dimen/x1"
         android:background="@android:color/white"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/x10"
-        android:paddingTop="@dimen/x10">
+        android:padding="@dimen/x10">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="发票类型:" />
+            android:layout_gravity="center_vertical"
+            android:text="发票类型:"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/x13" />
 
         <TextView
             android:id="@+id/tv_purchase_billType"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/x10"
+            android:textSize="@dimen/x13" />
 
     </LinearLayout>
 
@@ -136,18 +177,23 @@
         android:layout_marginTop="@dimen/x1"
         android:background="@android:color/white"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/x10"
-        android:paddingTop="@dimen/x10">
+        android:padding="@dimen/x10">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="运费类型:" />
+            android:layout_gravity="center_vertical"
+            android:text="运费类型:"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/x13" />
 
         <TextView
             android:id="@+id/tv_purchase_transportType"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/x10"
+            android:textSize="@dimen/x13" />
 
     </LinearLayout>
 

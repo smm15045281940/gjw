@@ -457,21 +457,27 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                 switch (i) {
                     case 0:
                         goodsShow3.setImgUrl1(o.optString("image"));
+                        goodsShow3.setData1(o.optString("data"));
                         break;
                     case 1:
                         goodsShow3.setImgUrl2(o.optString("image"));
+                        goodsShow3.setData2(o.optString("data"));
                         break;
                     case 2:
                         goodsShow3.setImgUrl3(o.optString("image"));
+                        goodsShow3.setData3(o.optString("data"));
                         break;
                     case 3:
                         goodsShow3.setImgUrl4(o.optString("image"));
+                        goodsShow3.setData4(o.optString("data"));
                         break;
                     case 4:
                         goodsShow3.setImgUrl5(o.optString("image"));
+                        goodsShow3.setData5(o.optString("data"));
                         break;
                     case 5:
                         goodsShow3.setImgUrl6(o.optString("image"));
+                        goodsShow3.setData6(o.optString("data"));
                         break;
                     default:
                         break;

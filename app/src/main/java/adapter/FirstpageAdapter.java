@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gangjianwang.www.gangjianwang.GoodsDetailActivity;
 import com.gangjianwang.www.gangjianwang.R;
@@ -18,6 +17,7 @@ import java.util.List;
 import bean.GoodsPost;
 import bean.GoodsRecommend;
 import bean.GoodsShow;
+import utils.ToastUtils;
 
 /**
  * Created by 孙明明 on 2017/5/15.
@@ -29,6 +29,11 @@ public class FirstpageAdapter extends BaseAdapter {
     private List<GoodsRecommend> goodsRecommendList;
     private List<GoodsPost> goodsPostList;
     private List<GoodsShow> goodsShowList;
+
+    private final int RECOMMEND_STATE = 1;
+    private final int ASKBUY_STATE = 2;
+    private final int PUPOLAR_STATE = 3;
+    private int STATE;
 
     public FirstpageAdapter(Context context, List<GoodsRecommend> goodsRecommendList, List<GoodsPost> goodsPostList, List<GoodsShow> goodsShowList) {
         this.context = context;
@@ -104,14 +109,14 @@ public class FirstpageAdapter extends BaseAdapter {
             holder1.iv1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    toast("你点击了商品推荐0");
+                    ToastUtils.toast(context, "你点击了商品推荐0");
                     context.startActivity(new Intent(context, GoodsDetailActivity.class));
                 }
             });
             holder1.iv2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    toast("你点击了商品推荐1");
+                    ToastUtils.toast(context, "你点击了商品推荐1");
                 }
             });
         } else if (getItemViewType(position) == 1) {
@@ -127,7 +132,7 @@ public class FirstpageAdapter extends BaseAdapter {
             holder2.iv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    toast("你点击了广告");
+                    ToastUtils.toast(context, "你点击了广告");
                 }
             });
         } else if (getItemViewType(position) == 2) {
@@ -160,43 +165,43 @@ public class FirstpageAdapter extends BaseAdapter {
             holder3.iv1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    toast("你点击了" + holder3.tv.getText().toString() + "0");
+                    ToastUtils.toast(context, goodsShowList.get(2).getData1());
                 }
             });
             holder3.iv2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    toast("你点击了" + holder3.tv.getText().toString() + "1");
+                    ToastUtils.toast(context, goodsShowList.get(2).getData2());
                 }
             });
             holder3.iv3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    toast("你点击了" + holder3.tv.getText().toString() + "2");
+                    ToastUtils.toast(context, goodsShowList.get(2).getData3());
                 }
             });
             holder3.iv4.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    toast("你点击了" + holder3.tv.getText().toString() + "3");
+                    ToastUtils.toast(context, goodsShowList.get(2).getData4());
                 }
             });
             holder3.iv5.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    toast("你点击了" + holder3.tv.getText().toString() + "4");
+                    ToastUtils.toast(context, goodsShowList.get(2).getData5());
                 }
             });
             holder3.iv6.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    toast("你点击了" + holder3.tv.getText().toString() + "5");
+                    ToastUtils.toast(context, goodsShowList.get(2).getData6());
                 }
             });
             holder3.tvMore.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    toast("你点击了" + holder3.tv.getText().toString() + "查看更多");
+                    ToastUtils.toast(context, holder3.tv.getText().toString() + "查看更多");
                 }
             });
         }
@@ -245,7 +250,4 @@ public class FirstpageAdapter extends BaseAdapter {
         }
     }
 
-    private void toast(String s) {
-        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
-    }
 }

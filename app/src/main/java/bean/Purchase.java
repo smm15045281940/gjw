@@ -6,6 +6,7 @@ package bean;
 
 public class Purchase {
 
+    private String purchaseId;
     private String purchaseNumber;
     private String goodsName;
     private String maxPrice;
@@ -13,6 +14,7 @@ public class Purchase {
     private String purchaseName;
     private String billType;
     private String transportType;
+    private String stateDesc;
 
     public Purchase() {
     }
@@ -25,6 +27,22 @@ public class Purchase {
         this.purchaseName = purchaseName;
         this.billType = billType;
         this.transportType = transportType;
+    }
+
+    public String getPurchaseId() {
+        return purchaseId;
+    }
+
+    public void setPurchaseId(String purchaseId) {
+        this.purchaseId = purchaseId;
+    }
+
+    public String getStateDesc() {
+        return stateDesc;
+    }
+
+    public void setStateDesc(String stateDesc) {
+        this.stateDesc = stateDesc;
     }
 
     public String getPurchaseNumber() {
