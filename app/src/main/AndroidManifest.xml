@@ -92,7 +92,8 @@
             android:name=".GoodsScreenActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".GjSpecialSaleActivity" />
-        <activity android:name=".DigouStoreActivity"></activity>
+        <activity android:name=".DigouStoreActivity" />
+        <activity android:name=".PurchaseDetailActivity"></activity>
     </application>
 
 </manifest>

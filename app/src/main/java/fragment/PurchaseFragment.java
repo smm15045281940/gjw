@@ -1,6 +1,7 @@
 package fragment;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,6 +16,7 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
+import com.gangjianwang.www.gangjianwang.PurchaseDetailActivity;
 import com.gangjianwang.www.gangjianwang.R;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
@@ -250,6 +252,8 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        ToastUtils.toast(getActivity(), mDataList.get(position - 1).getPurchaseId());
+        Intent intent = new Intent(getActivity(), PurchaseDetailActivity.class);
+        intent.putExtra("purchaseId", mDataList.get(position - 1).getPurchaseId());
+        startActivity(intent);
     }
 }
