@@ -46,14 +46,14 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
     private View rootView, mMultiRankPopView;
     private RelativeLayout mBackRl, mSearchRl, mChangeStyleRl, mSceenRl, mPriorityRl, mMutiRankRl;
     private EditText mEtSearchContentEt;
-    private TextView mMultiRankTv, mSalesPriorityTv, mScreenTv;
+    private TextView mMultiRankTv;
     private ImageView mChangeStyleIv;
     private PopupWindow mMultiRankPop;
     private TextView mPopMultiRankTv, mPopUptoDownTv, mPopDowntoUpTv, mPopPopularityTv;
     private RelativeLayout mPopMultiRankRl, mPopUptoDownRl, mPopDowntoUpRl, mPopPopularityRl;
     private ListView mContractProjectLv;
     private GridView mContractProjectGv;
-    private List<ContractCompany> mDataList;
+    private List<ContractCompany> mDataList = new ArrayList<>();
     private ContractCompanyListAdapter mListAdapter;
     private ContractCompanyGridAdapter mGridAdapter;
     private int CURRENT_STYLE_STATE;
@@ -61,6 +61,10 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
     private final int GRID_STATE = 1;
     private OkHttpClient okHttpClient;
     private ProgressDialog mPd;
+    private final int SHOP_LIST_STATE = 1;
+    private final int CONTRACT_PROJECT_STATE = 2;
+    private int STATE;
+
 
     Handler handler = new Handler() {
         @Override
@@ -94,7 +98,7 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
         initData();
         setData();
         setListener();
-        loadData(1);
+        loadData(1, STATE);
     }
 
     private void initView() {
@@ -107,8 +111,6 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
         mEtSearchContentEt = (EditText) rootView.findViewById(R.id.et_contractproject_searchcontent);
         mMultiRankTv = (TextView) rootView.findViewById(R.id.tv_contractProject_multiRank);
         mMultiRankTv.setTextColor(Color.RED);
-        mSalesPriorityTv = (TextView) rootView.findViewById(R.id.tv_contractProject_salesPriority);
-        mScreenTv = (TextView) rootView.findViewById(R.id.tv_contractProject_screen);
         mChangeStyleIv = (ImageView) rootView.findViewById(R.id.iv_contractProject_changeStyle);
         mContractProjectLv = (ListView) rootView.findViewById(R.id.lv_contractProject);
         mContractProjectGv = (GridView) rootView.findViewById(R.id.gv_contractProject);
@@ -128,7 +130,18 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
     }
 
     private void initData() {
-        mDataList = new ArrayList<>();
+        Intent intent = getIntent();
+        int stateId = intent.getIntExtra("stateId", 0);
+        switch (stateId) {
+            case 1:
+                STATE = SHOP_LIST_STATE;
+                break;
+            case 2:
+                STATE = CONTRACT_PROJECT_STATE;
+                break;
+            default:
+                break;
+        }
         mPd = new ProgressDialog(this);
         mPd.setMessage("加载中..");
         okHttpClient = new OkHttpClient();
@@ -155,24 +168,51 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
         mPopPopularityRl.setOnClickListener(this);
     }
 
-    private void loadData(int pageIndex) {
-        mPd.show();
-        Request request = new Request.Builder().url(NetConfig.contractprojectUrl + pageIndex).get().build();
-        okHttpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Request request, IOException e) {
-                handler.sendEmptyMessage(0);
-            }
+    private void loadData(int pageIndex, int state) {
+        switch (state) {
+            case SHOP_LIST_STATE:
+                mPd.show();
+                Request requestShopList = new Request.Builder().url(NetConfig.shopListUrl).get().build();
+                okHttpClient.newCall(requestShopList).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Request request, IOException e) {
+                        handler.sendEmptyMessage(0);
+                    }
 
-            @Override
-            public void onResponse(Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String json = response.body().string();
-                    if (parseJson(json))
-                        handler.sendEmptyMessage(1);
-                }
-            }
-        });
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        if (response.isSuccessful()) {
+                            String json = response.body().string();
+                            mDataList.clear();
+                            if (parseJson(json))
+                                handler.sendEmptyMessage(1);
+                        }
+                    }
+                });
+                break;
+            case CONTRACT_PROJECT_STATE:
+                mPd.show();
+                Request request = new Request.Builder().url(NetConfig.contractprojectUrl + pageIndex).get().build();
+                okHttpClient.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Request request, IOException e) {
+                        handler.sendEmptyMessage(0);
+                    }
+
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        if (response.isSuccessful()) {
+                            String json = response.body().string();
+                            mDataList.clear();
+                            if (parseJson(json))
+                                handler.sendEmptyMessage(1);
+                        }
+                    }
+                });
+                break;
+            default:
+                break;
+        }
     }
 
     private boolean parseJson(String json) {

@@ -546,10 +546,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                 startActivity(new Intent(getActivity(), ClassifyActivity.class));
                 break;
             case R.id.rl_homehead_shoplist:
-                ToastUtils.toast(getActivity(), "店铺推荐");
+                Intent shoplistIntent = new Intent(getActivity(), ContractProjectActivity.class);
+                shoplistIntent.putExtra("stateId", 1);
+                startActivity(shoplistIntent);
                 break;
             case R.id.rl_homehead_contract:
-                startActivity(new Intent(getActivity(), ContractProjectActivity.class));
+                Intent contractIntent = new Intent(getActivity(), ContractProjectActivity.class);
+                contractIntent.putExtra("stateId", 2);
+                startActivity(contractIntent);
                 break;
             case R.id.rl_homehead_digoucity:
                 ToastUtils.toast(getActivity(), "底购商城");
