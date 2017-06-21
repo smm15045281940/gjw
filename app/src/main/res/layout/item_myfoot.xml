@@ -1,40 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="@dimen/x10">
 
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="80dp"
+            android:id="@+id/iv_item_myfoot_goodsImg"
+            android:layout_width="@dimen/x100"
+            android:layout_height="@dimen/x80"
             android:scaleType="fitXY"
-            android:src="@mipmap/ic_launcher"
-            android:id="@+id/iv_item_myfoot_goodsImg"/>
+            android:src="@mipmap/img_default" />
+
         <TextView
+            android:id="@+id/tv_item_myfoot_goodsName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/x10"
+            android:layout_weight="1"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/x18" />
+
+        <TextView
+            android:id="@+id/tv_item_myfoot_goodsPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="goodsName"
-            android:textSize="20sp"
-            android:textColor="@android:color/black"
-            android:id="@+id/tv_item_myfoot_goodsName"/>
-        <TextView
             android:layout_gravity="center_vertical"
             android:gravity="right"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingRight="10dp"
-            android:text="goodsPrice"
-            android:textColor="@android:color/holo_red_dark"
-            android:id="@+id/tv_item_myfoot_goodsPrice"/>
+            android:textColor="@android:color/holo_red_dark" />
 
     </LinearLayout>
-
 
 
 </LinearLayout>

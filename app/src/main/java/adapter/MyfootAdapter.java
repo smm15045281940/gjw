@@ -1,12 +1,10 @@
 package adapter;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.R;
@@ -31,9 +29,9 @@ public class MyfootAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        if(list == null || list.size() == 0){
+        if (list == null || list.size() == 0) {
             return 0;
-        }else{
+        } else {
             return list.size();
         }
     }
@@ -55,19 +53,18 @@ public class MyfootAdapter extends BaseAdapter {
             convertView = View.inflate(context, R.layout.item_myfoot, null);
             vh = new ViewHolder(convertView);
             convertView.setTag(vh);
-        }else{
+        } else {
             vh = (ViewHolder) convertView.getTag();
         }
         Myfoot myfoot = list.get(position);
         vh.goodsNameTv.setText(myfoot.goodsName);
         vh.goodsPriceTv.setText(myfoot.goodsPrice);
-        vh.goodsImgIv.setImageResource(R.mipmap.ic_launcher);
         return convertView;
     }
 
     class ViewHolder {
 
-        private TextView goodsNameTv,goodsPriceTv;
+        private TextView goodsNameTv, goodsPriceTv;
         private ImageView goodsImgIv;
 
         public ViewHolder(View itemView) {

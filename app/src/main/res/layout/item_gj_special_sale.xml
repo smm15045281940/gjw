@@ -12,7 +12,7 @@
         <ImageView
             android:id="@+id/iv_item_gj_special_sale_icon"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/x160"
+            android:layout_height="@dimen/x200"
             android:scaleType="fitXY"
             android:src="@mipmap/img_default" />
 

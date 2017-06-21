@@ -56,7 +56,7 @@ public class GjSpecialAdapter extends BaseAdapter {
         GjSpecial gjSpecial = list.get(position);
         Picasso.with(context).load(gjSpecial.getImgUrl()).placeholder(holder.iconIv.getDrawable()).into(holder.iconIv);
         holder.nameTv.setText(gjSpecial.getName());
-        holder.priceTv.setText(gjSpecial.getPrice());
+        holder.priceTv.setText("¥" + gjSpecial.getPrice());
         return convertView;
     }
 
