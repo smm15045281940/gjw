@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.PurchaseDetailActivity;
 import com.gangjianwang.www.gangjianwang.R;
+import com.gangjianwang.www.gangjianwang.StoreOfferActivity;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -268,7 +269,7 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
     public void onClick(View item, View widget, int position, int which, boolean isChecked) {
         switch (which) {
             case R.id.rl_purchase_price:
-                ToastUtils.toast(getActivity(), "查询报价" + position);
+                getActivity().startActivity(new Intent(getActivity(), StoreOfferActivity.class));
                 break;
             case R.id.rl_purchase_cancel:
                 purchaseNumberTv.setText(mDataList.get(position).getPurchaseNumber());
