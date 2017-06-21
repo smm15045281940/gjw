@@ -37,7 +37,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/x5"
                     android:layout_weight="1"
-                    android:text="报价设置"
+                    android:text="商务条款"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/x15" />
 
@@ -57,12 +57,12 @@
                     android:ellipsize="end"
                     android:gravity="right"
                     android:singleLine="true"
-                    android:text="发票要求："
+                    android:text="收货地："
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/x12" />
 
                 <TextView
-                    android:id="@+id/tv_item_purchasedetail_offerset_billrequire"
+                    android:id="@+id/tv_item_purchasedetail_businessclause_receivearea"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -85,12 +85,89 @@
                     android:ellipsize="end"
                     android:gravity="right"
                     android:singleLine="true"
-                    android:text="运费要求："
+                    android:text="详细地址："
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/x12" />
 
                 <TextView
-                    android:id="@+id/tv_item_purchasedetail_offerset_transportrequire"
+                    android:id="@+id/tv_item_purchasedetail_businessclause_detailarea"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="@dimen/x12" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/x1"
+                android:background="@android:color/white"
+                android:orientation="horizontal"
+                android:padding="@dimen/x10">
+
+                <TextView
+                    android:layout_width="@dimen/x100"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:ellipsize="end"
+                    android:gravity="right"
+                    android:singleLine="true"
+                    android:text="交货期："
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/x12" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="下单后"
+                        android:textSize="@dimen/x12" />
+
+                    <TextView
+                        android:id="@+id/tv_item_purchasedetail_businessclause_delivertime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="@android:color/holo_red_light"
+                        android:textSize="@dimen/x12" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="天内交货"
+                        android:textSize="@dimen/x12" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/x1"
+                android:background="@android:color/white"
+                android:orientation="horizontal"
+                android:padding="@dimen/x10">
+
+                <TextView
+                    android:layout_width="@dimen/x100"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:ellipsize="end"
+                    android:gravity="right"
+                    android:singleLine="true"
+                    android:text="详细说明："
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/x12" />
+
+                <TextView
+                    android:id="@+id/tv_item_purchasedetail_businessclause_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"

@@ -37,7 +37,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/x5"
                     android:layout_weight="1"
-                    android:text="报价设置"
+                    android:text="竞价规则"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/x15" />
 
@@ -57,12 +57,12 @@
                     android:ellipsize="end"
                     android:gravity="right"
                     android:singleLine="true"
-                    android:text="发票要求："
+                    android:text="出价截止时间："
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/x12" />
 
                 <TextView
-                    android:id="@+id/tv_item_purchasedetail_offerset_billrequire"
+                    android:id="@+id/tv_item_purchasedetail_bitrule_bidendtime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -85,15 +85,53 @@
                     android:ellipsize="end"
                     android:gravity="right"
                     android:singleLine="true"
-                    android:text="运费要求："
+                    android:text="公布结果时间："
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/x12" />
 
                 <TextView
-                    android:id="@+id/tv_item_purchasedetail_offerset_transportrequire"
+                    android:id="@+id/tv_item_purchasedetail_bitrule_resulttime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:textSize="@dimen/x12" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/x1"
+                android:background="@android:color/white"
+                android:orientation="horizontal"
+                android:padding="@dimen/x10">
+
+                <TextView
+                    android:layout_width="@dimen/x100"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:ellipsize="end"
+                    android:gravity="right"
+                    android:singleLine="true"
+                    android:text="最高限价："
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/x12" />
+
+                <TextView
+                    android:id="@+id/tv_item_purchasedetail_bitrule_maxprice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="@dimen/x12" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="（单品最高限价，不包含税费和运费）"
+                    android:textColor="@android:color/holo_red_light"
                     android:textSize="@dimen/x12" />
 
             </LinearLayout>

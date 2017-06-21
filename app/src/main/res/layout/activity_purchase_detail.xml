@@ -38,4 +38,10 @@
 
     </RelativeLayout>
 
+    <ListView
+        android:id="@+id/lv_purchase_detail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@null" />
+
 </LinearLayout>
