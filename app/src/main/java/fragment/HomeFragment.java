@@ -33,6 +33,7 @@ import com.baidu.location.Poi;
 import com.gangjianwang.www.gangjianwang.ChangeCityActivity;
 import com.gangjianwang.www.gangjianwang.ClassifyActivity;
 import com.gangjianwang.www.gangjianwang.ContractProjectActivity;
+import com.gangjianwang.www.gangjianwang.DigouStoreActivity;
 import com.gangjianwang.www.gangjianwang.GjSpecialSaleActivity;
 import com.gangjianwang.www.gangjianwang.HomeActivity;
 import com.gangjianwang.www.gangjianwang.MessageActivity;
@@ -493,7 +494,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                 startActivityForResult(new Intent(getActivity(), ChangeCityActivity.class), 1);
                 break;
             case R.id.rl_home_search:
-                startActivity(new Intent(getActivity(), SearchActivity.class));
+                getActivity().startActivity(new Intent(getActivity(), SearchActivity.class));
                 break;
             case R.id.rl_home_option:
                 if (mOptionPw.isShowing()) {
@@ -540,23 +541,23 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                 break;
             case R.id.rl_home_pop_message:
                 mOptionPw.dismiss();
-                startActivity(new Intent(getActivity(), MessageActivity.class));
+                getActivity().startActivity(new Intent(getActivity(), MessageActivity.class));
                 break;
             case R.id.rl_homehead_classify:
-                startActivity(new Intent(getActivity(), ClassifyActivity.class));
+                getActivity().startActivity(new Intent(getActivity(), ClassifyActivity.class));
                 break;
             case R.id.rl_homehead_shoplist:
                 Intent shoplistIntent = new Intent(getActivity(), ContractProjectActivity.class);
                 shoplistIntent.putExtra("stateId", 1);
-                startActivity(shoplistIntent);
+                getActivity().startActivity(shoplistIntent);
                 break;
             case R.id.rl_homehead_contract:
                 Intent contractIntent = new Intent(getActivity(), ContractProjectActivity.class);
                 contractIntent.putExtra("stateId", 2);
-                startActivity(contractIntent);
+                getActivity().startActivity(contractIntent);
                 break;
             case R.id.rl_homehead_digoucity:
-                ToastUtils.toast(getActivity(), "底购商城");
+                getActivity().startActivity(new Intent(getActivity(), DigouStoreActivity.class));
                 break;
             case R.id.tv_dialog_sure:
                 if (cityName != null) {

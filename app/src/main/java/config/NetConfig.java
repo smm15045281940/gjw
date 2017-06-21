@@ -22,5 +22,6 @@ public interface NetConfig {
     public static final String classifyLeftUrl = "http://www.gangjianwang.com/mobile/index.php?act=goods_class";
     //分类右
     public static final String classifyRightUrl = "http://www.gangjianwang.com/mobile/index.php?act=goods_class&op=get_child_all&gc_id=";
-
+    //底购商城
+    public static final String digouStoreUrl = "http://eshop.gangjianwang.com/mobile/";
 }
