@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.PurchaseDetailActivity;
@@ -44,7 +46,10 @@ import utils.ToastUtils;
 
 public class PurchaseFragment extends Fragment implements View.OnClickListener, OnRefreshListener, ListItemClickHelp, AdapterView.OnItemClickListener {
 
-    private View rootView;
+    private View rootView, purchaseCancelDialogView;
+    private TextView purchaseNumberTv;
+    private EditText cancelReasonEt;
+    private RelativeLayout cancelDialogSureRl, cancelDialogCancelRl;
     private EditText mSearchEt;
     private RelativeLayout mSearchRl;
     private MyRefreshListView mLv;
@@ -52,6 +57,7 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
     private PurchaseAdapter mAdapter;
     private OkHttpClient okHttpClient;
     private ProgressDialog mPd;
+    private AlertDialog mAd;
     private final int FIRST_LOAD = 1;
     private final int REFRESH_LOAD = 2;
     private final int LOAD_LOAD = 3;
@@ -61,6 +67,7 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
     private final int FIRST_DONE = 4;
     private final int REFRESH_DONE = 5;
     private final int LOAD_DONE = 6;
+    private int cancelIndex;
 
     Handler handler = new Handler() {
         @Override
@@ -115,6 +122,14 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
         mSearchEt = (EditText) rootView.findViewById(R.id.et_purchase_search);
         mSearchRl = (RelativeLayout) rootView.findViewById(R.id.rl_purchase_search);
         mLv = (MyRefreshListView) rootView.findViewById(R.id.lv_purchase);
+        purchaseCancelDialogView = View.inflate(getActivity(), R.layout.dialog_purchase_cancel, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(purchaseCancelDialogView);
+        mAd = builder.create();
+        purchaseNumberTv = (TextView) purchaseCancelDialogView.findViewById(R.id.tv_dialog_purchase_cancel_purchasenumber);
+        cancelReasonEt = (EditText) purchaseCancelDialogView.findViewById(R.id.et_dialog_purchase_cancel_reason);
+        cancelDialogSureRl = (RelativeLayout) purchaseCancelDialogView.findViewById(R.id.rl_dialog_purchase_cancel_sure);
+        cancelDialogCancelRl = (RelativeLayout) purchaseCancelDialogView.findViewById(R.id.rl_dialog_purchase_cancel_cancel);
     }
 
     private void initData() {
@@ -208,6 +223,8 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
         mSearchRl.setOnClickListener(this);
         mLv.setOnRefreshListener(this);
         mLv.setOnItemClickListener(this);
+        cancelDialogSureRl.setOnClickListener(this);
+        cancelDialogCancelRl.setOnClickListener(this);
     }
 
     @Override
@@ -216,7 +233,20 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
             case R.id.rl_purchase_search:
                 if (!TextUtils.isEmpty(mSearchEt.getText().toString())) {
                     ToastUtils.toast(getActivity(), "正在搜索" + mSearchEt.getText().toString());
+                } else {
+                    ToastUtils.toast(getActivity(), "搜索内容不能为空");
                 }
+                break;
+            case R.id.rl_dialog_purchase_cancel_sure:
+                mAd.dismiss();
+                mDataList.remove(cancelIndex);
+                mAdapter.notifyDataSetChanged();
+                ToastUtils.toast(getActivity(), "取消理由：" + cancelReasonEt.getText().toString());
+                cancelReasonEt.setText("");
+                break;
+            case R.id.rl_dialog_purchase_cancel_cancel:
+                cancelReasonEt.setText("");
+                mAd.dismiss();
                 break;
             default:
                 break;
@@ -241,9 +271,9 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
                 ToastUtils.toast(getActivity(), "查询报价" + position);
                 break;
             case R.id.rl_purchase_cancel:
-                mDataList.remove(position);
-                mAdapter.notifyDataSetChanged();
-                ToastUtils.toast(getActivity(), "已取消");
+                purchaseNumberTv.setText(mDataList.get(position).getPurchaseNumber());
+                cancelIndex = position;
+                mAd.show();
                 break;
             default:
                 break;

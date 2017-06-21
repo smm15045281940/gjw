@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -65,6 +66,11 @@ public class PurchaseAdapter extends BaseAdapter {
         purchaseViewHolder.mBillTypeTv.setText(purchase.getBillType());
         purchaseViewHolder.mTransportTypeTv.setText(purchase.getTransportType());
         purchaseViewHolder.mStateDescTv.setText(purchase.getStateDesc());
+        if (purchase.getStateDesc().equals("已取消")) {
+            purchaseViewHolder.lookCancelLl.setVisibility(View.INVISIBLE);
+        } else {
+            purchaseViewHolder.lookCancelLl.setVisibility(View.VISIBLE);
+        }
         final View view = convertView;
         final int p = position;
         final int priceId = purchaseViewHolder.priceRl.getId();
@@ -88,6 +94,7 @@ public class PurchaseAdapter extends BaseAdapter {
 
         private TextView mPurchaseNumberTv, mGoodsNameTv, mMaxPriceTv, mPurchaseAmountTv, mPurchaseNameTv, mBillTypeTv, mTransportTypeTv, mStateDescTv;
         private RelativeLayout priceRl, cancelRl;
+        private LinearLayout lookCancelLl;
 
         public PurchaseViewHolder(View itemView) {
             mPurchaseNumberTv = (TextView) itemView.findViewById(R.id.tv_purchase_purchaseNumber);
@@ -100,6 +107,7 @@ public class PurchaseAdapter extends BaseAdapter {
             mStateDescTv = (TextView) itemView.findViewById(R.id.tv_purchase_state_desc);
             priceRl = (RelativeLayout) itemView.findViewById(R.id.rl_purchase_price);
             cancelRl = (RelativeLayout) itemView.findViewById(R.id.rl_purchase_cancel);
+            lookCancelLl = (LinearLayout) itemView.findViewById(R.id.ll_item_purchase_lookcancel);
         }
     }
 }
