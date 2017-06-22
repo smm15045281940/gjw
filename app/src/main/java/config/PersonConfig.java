@@ -14,7 +14,7 @@ public interface PersonConfig {
     //轮播切换时间（单位：秒）
     public static final int rotateCut_time = 3;
     //退出提示
-    public static final String exitHint = "再次点击退出";
+    public static final String exitHint = "再次点击退出钢建网";
     //白色
     public static final int white = Color.parseColor("#FFFFFF");
     //登录按钮默认颜色

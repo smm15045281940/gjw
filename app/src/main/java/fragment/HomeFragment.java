@@ -80,7 +80,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
     private RelativeLayout mPopFirstpageRl, mPopShopcarRl, mPopMymallRl, mPopMessageRl;
     private View diglogView;
     private AlertDialog ad;
-    private TextView mDialogSureTv, mDialogCancelTv;
+    private TextView mCityNameTv, mDialogSureTv, mDialogCancelTv;
     private View headView;
     private ViewPager mVp;
     private List<View> viewList;
@@ -105,7 +105,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
     private final int LOAD_REFRESH = 1;
     private OkHttpClient okHttpClient;
     private ProgressDialog mPd;
-
     private final int FIRSTLOAD_NONET = 0;
     private final int REFRESHLOAD_NONET = 1;
     private final int FIRSTLOAD_DONE = 2;
@@ -131,7 +130,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                         Picasso.with(getActivity()).load(imgurlList.get(1)).placeholder(mHeadImageView2.getDrawable()).error(R.mipmap.img_default).into(mHeadImageView2);
                         Picasso.with(getActivity()).load(imgurlList.get(2)).placeholder(mHeadLogoIv.getDrawable()).error(R.mipmap.img_default).into(mHeadLogoIv);
                         myhomeAdapter.notifyDataSetChanged();
-                        ToastUtils.toast(getActivity(), "首次加载完成");
                         break;
                     case REFRESHLOAD_DONE://刷新加载完成
                         mLv.hideHeadView();
@@ -139,7 +137,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                         Picasso.with(getActivity()).load(imgurlList.get(1)).placeholder(mHeadImageView2.getDrawable()).error(R.mipmap.img_default).into(mHeadImageView2);
                         Picasso.with(getActivity()).load(imgurlList.get(2)).placeholder(mHeadLogoIv.getDrawable()).error(R.mipmap.img_default).into(mHeadLogoIv);
                         myhomeAdapter.notifyDataSetChanged();
-                        ToastUtils.toast(getActivity(), "刷新加载完成");
                         break;
                     default:
                         break;
@@ -154,6 +151,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
             super.handleMessage(msg);
             if (msg != null) {
                 if (msg.what == 1) {
+                    mCityNameTv.setText(cityName);
                     ad.show();
                 }
             }
@@ -209,7 +207,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         initAnim();
         setData();
         setListener();
-        loadData(LOAD_FIRST);
         mLocationClient.start();
         return rootView;
     }
@@ -234,6 +231,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         mPopMymallRl = (RelativeLayout) optionPopWindowView.findViewById(R.id.rl_home_pop_mymall);
         mPopMessageRl = (RelativeLayout) optionPopWindowView.findViewById(R.id.rl_home_pop_message);
         diglogView = View.inflate(getContext(), R.layout.dialog_city, null);
+        mCityNameTv = (TextView) diglogView.findViewById(R.id.tv_dialog_city_cityname);
         mDialogSureTv = (TextView) diglogView.findViewById(R.id.tv_dialog_sure);
         mDialogCancelTv = (TextView) diglogView.findViewById(R.id.tv_dialog_cancel);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -569,6 +567,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                 if (cityName != null) {
                     ad.dismiss();
                     mCityTv.setText(cityName);
+                    loadData(LOAD_FIRST);
                 }
                 break;
             case R.id.tv_dialog_cancel:
@@ -615,8 +614,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         //可选，默认高精度，设置定位模式，高精度，低功耗，仅设备
         option.setCoorType("bd09ll");
         //可选，默认gcj02，设置返回的定位结果坐标系
-        int span = 1000;
-        option.setScanSpan(0);
+        int span = 0;
+        option.setScanSpan(span);
         //可选，默认0，即仅定位一次，设置发起定位请求的间隔需要大于等于1000ms才是有效的
         option.setIsNeedAddress(true);
         //可选，设置是否需要地址信息，默认不需要

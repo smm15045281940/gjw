@@ -32,8 +32,8 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
     private Fragment mHomeFragment, mPurchaseFragment, mCalculateFragment, mShopcarFragment, mMineFragment;
     private List<Fragment> mFragmentList = new ArrayList<>();
     private FragmentManager mFragmentManager;
-    private int curIndex, tarIndex;
-    private long exitTime;
+    private int curIndex = 0, tarIndex = 0;
+    private long exitTime = 0;
 
     public Handler mChangeFragHandler = new Handler() {
 

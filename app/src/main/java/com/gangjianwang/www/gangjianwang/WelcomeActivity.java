@@ -173,7 +173,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private boolean haveAdvertisement() {
-        return false;
+        return true;
     }
 
     private boolean advertisementLoaded() {
