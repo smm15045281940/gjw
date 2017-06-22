@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/x10">
+
+        <ImageView
+            android:id="@+id/iv_item_calculate_choosefile_delete"
+            android:layout_width="@dimen/x15"
+            android:layout_height="@dimen/x15"
+            android:layout_gravity="center_vertical"
+            android:src="@mipmap/pop_close" />
+
+        <ImageView
+            android:id="@+id/iv_item_calculate_choosefile_content"
+            android:layout_width="@dimen/x80"
+            android:layout_height="@dimen/x60"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/x10"
+            android:layout_marginRight="@dimen/x10"
+            android:scaleType="fitXY"
+            android:src="@mipmap/img_default" />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="@dimen/x60"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:background="@drawable/shape_et_calculate">
+
+            <EditText
+                android:id="@+id/et_item_calculate_choosefile_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/x5"
+                android:background="@null"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:textSize="@dimen/x15" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

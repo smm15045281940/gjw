@@ -60,7 +60,6 @@
         <activity android:name=".VoucherActivity" />
         <activity android:name=".RedBagActivity" />
         <activity android:name=".KindActivity" />
-        <activity android:name=".AddOrderActivity" />
         <activity android:name=".SupplyActivity" />
         <activity
             android:name=".ClassifyActivity"
@@ -94,7 +93,7 @@
         <activity android:name=".GjSpecialSaleActivity" />
         <activity android:name=".DigouStoreActivity" />
         <activity android:name=".PurchaseDetailActivity" />
-        <activity android:name=".StoreOfferActivity"></activity>
+        <activity android:name=".StoreOfferActivity" />
     </application>
 
 </manifest>

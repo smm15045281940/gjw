@@ -9,16 +9,31 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/x40">
 
-        <ImageView
-            style="@style/iv_back"
-            android:src="@mipmap/back_black"
-            android:id="@+id/iv_back"/>
+        <RelativeLayout
+            android:id="@+id/rl_kind_back"
+            android:layout_width="@dimen/x40"
+            android:layout_height="match_parent"
+            android:background="@drawable/default_gray_selector"
+            android:clickable="true"
+            android:padding="@dimen/x10">
+
+            <ImageView
+                android:id="@+id/iv_back"
+                android:layout_width="@dimen/x20"
+                android:layout_height="@dimen/x20"
+                android:src="@mipmap/back_black" />
+
+        </RelativeLayout>
 
         <TextView
-            style="@style/tv_title"
-            android:text="选择分类"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="选择分类"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/x18" />
 
     </RelativeLayout>
 
@@ -28,77 +43,86 @@
         android:orientation="horizontal">
 
         <RelativeLayout
+            android:id="@+id/rl_kind_first"
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
 
             <TextView
+                android:id="@+id/tv_kind_first"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_marginTop="@dimen/x5"
                 android:layout_marginBottom="@dimen/x5"
+                android:layout_marginTop="@dimen/x5"
                 android:text="一级分类"
-                android:textSize="@dimen/x15"
-                android:textColor="@android:color/holo_red_light"
-                android:id="@+id/tv_kind_first"/>
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/x15" />
+
             <View
+                android:id="@+id/v_kind_first"
                 android:layout_width="@dimen/x40"
                 android:layout_height="@dimen/x1"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@+id/tv_kind_first"
+                android:layout_centerHorizontal="true"
                 android:background="@android:color/holo_red_light"
-                android:id="@+id/v_kind_first"/>
+                android:visibility="invisible" />
 
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/rl_kind_second"
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
 
             <TextView
+                android:id="@+id/tv_kind_second"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_marginTop="@dimen/x5"
                 android:layout_marginBottom="@dimen/x5"
+                android:layout_marginTop="@dimen/x5"
                 android:text="二级分类"
-                android:textSize="@dimen/x15"
-                android:id="@+id/tv_kind_second"/>
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/x15" />
+
             <View
+                android:id="@+id/v_kind_second"
                 android:layout_width="@dimen/x40"
                 android:layout_height="@dimen/x1"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@+id/tv_kind_second"
+                android:layout_centerHorizontal="true"
                 android:background="@android:color/holo_red_light"
-                android:visibility="invisible"
-                android:id="@+id/v_kind_second"/>
+                android:visibility="invisible" />
 
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/rl_kind_third"
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
 
             <TextView
+                android:id="@+id/tv_kind_third"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_marginTop="@dimen/x5"
                 android:layout_marginBottom="@dimen/x5"
+                android:layout_marginTop="@dimen/x5"
                 android:text="三级分类"
-                android:textSize="@dimen/x15"
-                android:id="@+id/tv_kind_third"/>
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/x15" />
+
             <View
+                android:id="@+id/v_kind_third"
                 android:layout_width="@dimen/x40"
                 android:layout_height="@dimen/x1"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@+id/tv_kind_third"
+                android:layout_centerHorizontal="true"
                 android:background="@android:color/holo_red_light"
-                android:visibility="invisible"
-                android:id="@+id/v_kind_third"/>
+                android:visibility="invisible" />
 
         </RelativeLayout>
 
@@ -107,12 +131,11 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/x5"
-        android:background="#F5F5F5"/>
+        android:background="#F5F5F5" />
 
-    <LinearLayout
+    <customview.MyRefreshListView
+        android:id="@+id/lv_calculate_ofkind"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:id="@+id/ll_kind_sit"/>
+        android:layout_height="match_parent" />
 
 </LinearLayout>
