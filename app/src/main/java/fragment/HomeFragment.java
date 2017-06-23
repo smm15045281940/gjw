@@ -208,6 +208,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         setData();
         setListener();
         mLocationClient.start();
+        loadData(LOAD_FIRST);
         return rootView;
     }
 
@@ -567,7 +568,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                 if (cityName != null) {
                     ad.dismiss();
                     mCityTv.setText(cityName);
-                    loadData(LOAD_FIRST);
                 }
                 break;
             case R.id.tv_dialog_cancel:

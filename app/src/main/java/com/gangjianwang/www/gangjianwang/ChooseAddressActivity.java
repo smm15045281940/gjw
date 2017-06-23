@@ -1,108 +1,215 @@
 package com.gangjianwang.www.gangjianwang;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import adapter.ChooseAddressAdapter;
+import adapter.OfKindAdapter;
+import bean.OfKind;
+import config.NetConfig;
+import customview.MyRefreshListView;
+import customview.OnRefreshListener;
 import utils.ToastUtils;
 
-public class ChooseAddressActivity extends AppCompatActivity implements View.OnClickListener,AdapterView.OnItemClickListener{
+public class ChooseAddressActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, OnRefreshListener {
 
     private View rootView;
-    private ImageView backIv;
-    private TextView firstAddressTv,secondAddressTv,thirdAddressTv;
-    private View firstAddressV,secondAddressV,thirdAddressV;
-    private ListView mLv;
-    private ChooseAddressAdapter mAdapter;
-    private List<String> firstAddressList = new ArrayList<>();
-    private List<String> secondAddressList = new ArrayList<>();
-    private List<String> thirdAddressList = new ArrayList<>();
-    private List<String> mDataList = new ArrayList<>();
-    private final int CHOOSE_FIRST = 0;
-    private final int CHOOSE_SECOND = 1;
-    private final int CHOOSE_THIRD = 2;
-    private int CHOOSE_STATE = CHOOSE_FIRST;
+    private RelativeLayout backRl;
+    private TextView firstAddressTv, secondAddressTv, thirdAddressTv;
+    private View firstAddressV, secondAddressV, thirdAddressV;
+    private MyRefreshListView mLv;
+    private OfKindAdapter mChooseAddressAdapter;
+    private List<OfKind> mFirstList = new ArrayList<>();
+    private List<OfKind> mSecondList = new ArrayList<>();
+    private List<OfKind> mThirdList = new ArrayList<>();
+    private List<OfKind> mDataList = new ArrayList<>();
+    private final int FIRST = 1;
+    private final int SECOND = 2;
+    private final int THIRD = 3;
+    private int STATE = FIRST;
+    private OkHttpClient okHttpClient;
+    private ProgressDialog mPd;
+
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg != null) {
+                switch (msg.what) {
+                    case 0:
+                        mPd.dismiss();
+                        ToastUtils.toast(ChooseAddressActivity.this, "无网络");
+                        break;
+                    case 1:
+                        mPd.dismiss();
+                        mChooseAddressAdapter.notifyDataSetChanged();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        rootView = View.inflate(this,R.layout.activity_choose_address,null);
+        rootView = View.inflate(this, R.layout.activity_choose_address, null);
         setContentView(rootView);
-        initView(rootView);
+        initView();
+        initData();
         setData();
-        loadData();
         setListener();
+        loadData("0");
     }
 
-    private void initView(View rootView) {
-        backIv = (ImageView) rootView.findViewById(R.id.iv_chooseaddress_back);
+    private void initView() {
+        backRl = (RelativeLayout) rootView.findViewById(R.id.rl_chooseaddress_back);
         firstAddressTv = (TextView) rootView.findViewById(R.id.tv_chooseaddress_first);
         secondAddressTv = (TextView) rootView.findViewById(R.id.tv_chooseaddress_second);
         thirdAddressTv = (TextView) rootView.findViewById(R.id.tv_chooseaddress_third);
         firstAddressV = rootView.findViewById(R.id.v_chooseaddress_first);
         secondAddressV = rootView.findViewById(R.id.v_chooseaddress_second);
         thirdAddressV = rootView.findViewById(R.id.v_chooseaddress_third);
-        mLv = (ListView) rootView.findViewById(R.id.lv_chooseaddress);
+        mLv = (MyRefreshListView) rootView.findViewById(R.id.lv_chooseaddress);
     }
 
-    private void setData(){
-        mAdapter = new ChooseAddressAdapter(this,mDataList);
-        mLv.setAdapter(mAdapter);
+    private void initData() {
+        okHttpClient = new OkHttpClient();
+        mPd = new ProgressDialog(this);
+        mPd.setMessage("加载中..");
+        mChooseAddressAdapter = new OfKindAdapter(this, mDataList);
     }
 
-    private void loadData(){
-        firstAddressList.add("北京");
-        firstAddressList.add("天津");
-        firstAddressList.add("河北");
-        firstAddressList.add("山西");
-        mDataList.addAll(firstAddressList);
-        mAdapter.notifyDataSetChanged();
+    private void setData() {
+        mLv.setAdapter(mChooseAddressAdapter);
     }
 
-    private void setListener(){
-        backIv.setOnClickListener(this);
+    private void setListener() {
+        backRl.setOnClickListener(this);
         firstAddressTv.setOnClickListener(this);
         secondAddressTv.setOnClickListener(this);
         mLv.setOnItemClickListener(this);
+        mLv.setOnRefreshListener(this);
+    }
+
+    private void loadData(String id) {
+        mPd.show();
+        Request requestFirst = new Request.Builder().url(NetConfig.receiveAreaUrl + id).get().build();
+        okHttpClient.newCall(requestFirst).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    mDataList.clear();
+                    String json = response.body().string();
+                    if (parseJson(json, STATE))
+                        handler.sendEmptyMessage(1);
+                }
+            }
+        });
+    }
+
+    private boolean parseJson(String json, int LOAD_STATE) {
+        boolean b = false;
+        try {
+            JSONObject objBean = new JSONObject(json);
+            JSONObject objDatas = objBean.optJSONObject("datas");
+            JSONArray arrAreaList = objDatas.optJSONArray("area_list");
+            for (int i = 0; i < arrAreaList.length(); i++) {
+                JSONObject o = arrAreaList.optJSONObject(i);
+                OfKind ofKind = new OfKind();
+                ofKind.setId(o.optString("area_id"));
+                ofKind.setName(o.optString("area_name"));
+                switch (LOAD_STATE) {
+                    case FIRST:
+                        mFirstList.add(ofKind);
+                        break;
+                    case SECOND:
+                        mSecondList.add(ofKind);
+                        break;
+                    case THIRD:
+                        mThirdList.add(ofKind);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            switch (LOAD_STATE) {
+                case FIRST:
+                    mDataList.addAll(mFirstList);
+                    break;
+                case SECOND:
+                    mDataList.addAll(mSecondList);
+                    break;
+                case THIRD:
+                    mDataList.addAll(mThirdList);
+                    break;
+                default:
+                    break;
+            }
+            b = true;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return b;
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.iv_chooseaddress_back:
+        switch (v.getId()) {
+            case R.id.rl_chooseaddress_back:
                 finish();
                 break;
             case R.id.tv_chooseaddress_first:
-                if(CHOOSE_STATE != CHOOSE_FIRST){
+                if (STATE != FIRST) {
+                    mDataList.clear();
+                    mDataList.addAll(mFirstList);
+                    mChooseAddressAdapter.notifyDataSetChanged();
                     firstAddressTv.setText("一级地区");
                     secondAddressTv.setText("二级地区");
-                    mDataList.clear();
-                    mDataList.addAll(firstAddressList);
-                    mAdapter.notifyDataSetChanged();
-                    CHOOSE_STATE = CHOOSE_FIRST;
-                    changeColor(CHOOSE_STATE);
+                    mSecondList.clear();
+                    mThirdList.clear();
+                    STATE = FIRST;
+                    changeColor(STATE);
                 }
                 break;
             case R.id.tv_chooseaddress_second:
-                if(CHOOSE_STATE == CHOOSE_THIRD){
-                    secondAddressTv.setText("二级地区");
+                if (STATE == THIRD) {
                     mDataList.clear();
-                    mDataList.addAll(secondAddressList);
-                    mAdapter.notifyDataSetChanged();
-                    CHOOSE_STATE = CHOOSE_SECOND;
-                    changeColor(CHOOSE_STATE);
+                    mDataList.addAll(mSecondList);
+                    mChooseAddressAdapter.notifyDataSetChanged();
+                    secondAddressTv.setText("二级地区");
+                    mThirdList.clear();
+                    STATE = SECOND;
+                    changeColor(STATE);
                 }
                 break;
             default:
@@ -112,38 +219,24 @@ public class ChooseAddressActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        switch (CHOOSE_STATE){
-            case CHOOSE_FIRST:
-                if(firstAddressList.get(position).equals("北京")){
-                    firstAddressTv.setText(firstAddressList.get(position));
-                    secondAddressList.clear();
-                    secondAddressList.add("北京市");
-                    mDataList.clear();
-                    mDataList.addAll(secondAddressList);
-                    mAdapter.notifyDataSetChanged();
-                    CHOOSE_STATE = CHOOSE_SECOND;
-                    changeColor(CHOOSE_STATE);
-                }
+        switch (STATE) {
+            case FIRST:
+                STATE = SECOND;
+                firstAddressTv.setText(mDataList.get(position - 1).getName());
+                loadData(mDataList.get(position - 1).getId());
+                changeColor(STATE);
                 break;
-            case CHOOSE_SECOND:
-                if(secondAddressList.get(position).equals("北京市")){
-                    secondAddressTv.setText(secondAddressList.get(position));
-                    thirdAddressList.clear();
-                    thirdAddressList.add("东城区");
-                    thirdAddressList.add("西城区");
-                    thirdAddressList.add("朝阳区");
-                    mDataList.clear();
-                    mDataList.addAll(thirdAddressList);
-                    mAdapter.notifyDataSetChanged();
-                    CHOOSE_STATE = CHOOSE_THIRD;
-                    changeColor(CHOOSE_STATE);
-                }
+            case SECOND:
+                STATE = THIRD;
+                secondAddressTv.setText(mDataList.get(position - 1).getName());
+                loadData(mDataList.get(position - 1).getId());
+                changeColor(STATE);
                 break;
-            case CHOOSE_THIRD:
+            case THIRD:
                 Intent intent = new Intent();
-                String sendAddress = firstAddressTv.getText().toString()+" "+secondAddressTv.getText().toString()+" "+thirdAddressList.get(position);
-                intent.putExtra("sendAddress",sendAddress);
-                setResult(1,intent);
+                String sendAddress = firstAddressTv.getText().toString() + " " + secondAddressTv.getText().toString() + " " + mDataList.get(position - 1).getName();
+                intent.putExtra("sendAddress", sendAddress);
+                setResult(1, intent);
                 finish();
                 break;
             default:
@@ -151,9 +244,9 @@ public class ChooseAddressActivity extends AppCompatActivity implements View.OnC
         }
     }
 
-    private void changeColor(int CHOOSE_STATE){
-        switch (CHOOSE_STATE){
-            case CHOOSE_FIRST:
+    private void changeColor(int CHOOSE_STATE) {
+        switch (CHOOSE_STATE) {
+            case FIRST:
                 firstAddressTv.setTextColor(Color.RED);
                 secondAddressTv.setTextColor(Color.BLACK);
                 thirdAddressTv.setTextColor(Color.BLACK);
@@ -161,7 +254,7 @@ public class ChooseAddressActivity extends AppCompatActivity implements View.OnC
                 secondAddressV.setVisibility(View.INVISIBLE);
                 thirdAddressV.setVisibility(View.INVISIBLE);
                 break;
-            case CHOOSE_SECOND:
+            case SECOND:
                 firstAddressTv.setTextColor(Color.BLACK);
                 secondAddressTv.setTextColor(Color.RED);
                 thirdAddressTv.setTextColor(Color.BLACK);
@@ -169,7 +262,7 @@ public class ChooseAddressActivity extends AppCompatActivity implements View.OnC
                 secondAddressV.setVisibility(View.VISIBLE);
                 thirdAddressV.setVisibility(View.INVISIBLE);
                 break;
-            case CHOOSE_THIRD:
+            case THIRD:
                 firstAddressTv.setTextColor(Color.BLACK);
                 secondAddressTv.setTextColor(Color.BLACK);
                 thirdAddressTv.setTextColor(Color.RED);
@@ -180,5 +273,15 @@ public class ChooseAddressActivity extends AppCompatActivity implements View.OnC
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onDownPullRefresh() {
+        mLv.hideHeadView();
+    }
+
+    @Override
+    public void onLoadingMore() {
+        mLv.hideFootView();
     }
 }

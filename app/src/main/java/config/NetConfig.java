@@ -28,8 +28,14 @@ public interface NetConfig {
     public static final String purchaseUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_purchase&op=purchase_list&page=10&curpage=1&key=fc54fe6ad977b6f8c16f05d3aad5edbc&member_id=5&purchase_key=";
     //采购单详情
     public static final String purchaseDetailUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_purchase&op=purchase_info&key=fc54fe6ad977b6f8c16f05d3aad5edbc&purchase_id=";
-    //采购单所属分类头
+    //采购单所属类目头
     public static final String ofKindHeadUrl = "http://www.gangjianwang.com/mobile/index.php?act=goods_class&op=index&callback=jsonp1&gc_id=";
-    //采购单所属分类尾
+    //采购单所属类目尾
     public static final String ofKindFootUrl = "&_=1498116253258";
+    //指定供货商头
+    public static final String specialSupplyHeadUrl = "http://www.gangjianwang.com/shop/index.php?act=index&op=json_seller&callback=jsonp4&gc_id=";
+    //指定供货商尾
+    public static final String specialSupplyFootUrl = "&_=1498182762846";
+    //收货地头
+    public static final String receiveAreaUrl = "http://www.gangjianwang.com/mobile/index.php?act=area&op=area_list&area_id=";
 }

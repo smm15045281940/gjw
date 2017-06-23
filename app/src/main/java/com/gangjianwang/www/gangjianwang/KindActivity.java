@@ -1,6 +1,7 @@
 package com.gangjianwang.www.gangjianwang;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -353,7 +354,12 @@ public class KindActivity extends AppCompatActivity implements View.OnClickListe
                 loadData(STATE, gc_id2);
                 break;
             case LOAD_THIRD:
-                ToastUtils.toast(KindActivity.this, mDataList.get(position - 1).getName());
+                String resultStr = mFirstTv.getText().toString() + " " + mSecondTv.getText().toString() + " " + mDataList.get(position - 1).getName();
+                Intent intent = new Intent();
+                intent.putExtra("kind", resultStr);
+                intent.putExtra("kindId", mDataList.get(position - 1).getId());
+                setResult(0, intent);
+                finish();
                 break;
             default:
                 break;

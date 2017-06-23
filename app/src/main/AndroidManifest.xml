@@ -60,7 +60,6 @@
         <activity android:name=".VoucherActivity" />
         <activity android:name=".RedBagActivity" />
         <activity android:name=".KindActivity" />
-        <activity android:name=".SupplyActivity" />
         <activity
             android:name=".ClassifyActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />

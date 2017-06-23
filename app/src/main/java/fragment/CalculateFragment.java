@@ -1,12 +1,15 @@
 package fragment;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,18 +19,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.gangjianwang.www.gangjianwang.ChooseAddressActivity;
 import com.gangjianwang.www.gangjianwang.KindActivity;
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.R;
-import com.gangjianwang.www.gangjianwang.SupplyActivity;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,6 +52,7 @@ import java.util.Locale;
 import adapter.CalculateChooseFileAdapter;
 import adapter.UnitPopAdapter;
 import bean.ChooseFile;
+import config.NetConfig;
 import utils.HeightUtils;
 import utils.ToastUtils;
 
@@ -51,10 +67,12 @@ public class CalculateFragment extends Fragment implements View.OnClickListener,
     private View rootView;
     private View mUnitPopView;
     private PopupWindow mUnitPopWindow;
+    private Spinner mSpecialSupplySp;
+    private ArrayAdapter<String> mSpecialSupplyAdapter;
+    private List<String> mSpecialSupplyList = new ArrayList<>();
     private ListView mUnitLv;
     private RelativeLayout mUnitCancelRl, mSaveRl;
     private static int RESULT_LOAD_IMAGE = 1;
-    private TextView ofKindTv, specialSupplyTv, unitTv, billRequireTv, tranRequireTv, bidEndTimeTv, resultTimeTv, receiveAreaTv;
     private RelativeLayout chooseFileRl;
     private ListView mChooseFileLv;
     private List<String> mUnitList = new ArrayList<>();
@@ -72,6 +90,37 @@ public class CalculateFragment extends Fragment implements View.OnClickListener,
 
     private Bitmap bitmap;
 
+    private OkHttpClient okHttpClient;
+    private ProgressDialog mPd;
+
+    private EditText purchaseNameEt, goodsNameEt, purchaseAmountEt, goodsDescriptionEt, detailAreaEt, deliverTimeEt;
+    private EditText detailDescriptionEt, maxPriceEt, memberNameEt, memberPhoneEt, memberMobileEt;
+    private TextView ofKindTv, unitTv, billRequireTv, tranRequireTv, bidEndTimeTv, resultTimeTv, receiveAreaTv;
+    private String purchaseName, goodsName, ofKind, specialSupply, purchaseAmount, unit, goodsDescription;
+    private String billRequire, tranRequire, receiveArea, detailArea, deliverTime, detailDescription;
+    private String bidendTime, resultTime, maxPrice, memberName, memberPhone, memberMobile;
+
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg != null) {
+                switch (msg.what) {
+                    case 0:
+                        mPd.dismiss();
+                        ToastUtils.toast(getActivity(), "无网络");
+                        break;
+                    case 1:
+                        mPd.dismiss();
+                        mSpecialSupplyAdapter.notifyDataSetChanged();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    };
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -80,13 +129,14 @@ public class CalculateFragment extends Fragment implements View.OnClickListener,
         initData();
         setData();
         setListener();
+        loadSpinner(false, "");
         return rootView;
     }
 
     private void initView() {
+        mSpecialSupplySp = (Spinner) rootView.findViewById(R.id.sp_calculate_specialsupply);
         mChooseFileLv = (ListView) rootView.findViewById(R.id.lv_calculate_choosefile);
         ofKindTv = (TextView) rootView.findViewById(R.id.tv_calculate_ofkind);
-        specialSupplyTv = (TextView) rootView.findViewById(R.id.tv_calculate_specialsupply);
         unitTv = (TextView) rootView.findViewById(R.id.tv_calculate_unit);
         chooseFileRl = (RelativeLayout) rootView.findViewById(R.id.rl_calculate_choosefile);
         billRequireTv = (TextView) rootView.findViewById(R.id.tv_calculate_billrequire);
@@ -111,21 +161,37 @@ public class CalculateFragment extends Fragment implements View.OnClickListener,
         });
         mUnitLv = (ListView) mUnitPopView.findViewById(R.id.lv_unit);
         mUnitCancelRl = (RelativeLayout) mUnitPopView.findViewById(R.id.rl_pop_unit_cancel);
+
+        purchaseNameEt = (EditText) rootView.findViewById(R.id.et_calculate_purchasename);
+        goodsNameEt = (EditText) rootView.findViewById(R.id.et_calculate_goodsname);
+        purchaseAmountEt = (EditText) rootView.findViewById(R.id.et_calculate_purchaseamount);
+        goodsDescriptionEt = (EditText) rootView.findViewById(R.id.et_calculate_goodsdescription);
+        detailAreaEt = (EditText) rootView.findViewById(R.id.et_calculate_detailarea);
+        deliverTimeEt = (EditText) rootView.findViewById(R.id.et_calculate_delivertime);
+        detailDescriptionEt = (EditText) rootView.findViewById(R.id.et_calculate_detaildescription);
+        maxPriceEt = (EditText) rootView.findViewById(R.id.et_calculate_maxprice);
+        memberNameEt = (EditText) rootView.findViewById(R.id.et_calculate_membername);
+        memberPhoneEt = (EditText) rootView.findViewById(R.id.et_calculate_memberphone);
+        memberMobileEt = (EditText) rootView.findViewById(R.id.et_calculate_membermobile);
     }
 
     private void initData() {
+        okHttpClient = new OkHttpClient();
+        mPd = new ProgressDialog(getActivity());
+        mPd.setMessage("加载中..");
+        mSpecialSupplyAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, mSpecialSupplyList);
         mUnitPopAdapter = new UnitPopAdapter(getActivity(), mUnitList);
         mCalculateChooseFileAdapter = new CalculateChooseFileAdapter(getActivity(), mChooseFileList, this);
     }
 
     private void setData() {
+        mSpecialSupplySp.setAdapter(mSpecialSupplyAdapter);
         mUnitLv.setAdapter(mUnitPopAdapter);
         mChooseFileLv.setAdapter(mCalculateChooseFileAdapter);
     }
 
     private void setListener() {
         ofKindTv.setOnClickListener(this);
-        specialSupplyTv.setOnClickListener(this);
         unitTv.setOnClickListener(this);
         chooseFileRl.setOnClickListener(this);
         billRequireTv.setOnClickListener(this);
@@ -138,14 +204,61 @@ public class CalculateFragment extends Fragment implements View.OnClickListener,
         mSaveRl.setOnClickListener(this);
     }
 
+    private void loadSpinner(boolean b, String id) {
+        if (!b) {
+            mSpecialSupplyList.clear();
+            mSpecialSupplyList.add("请选择");
+            mSpecialSupplyAdapter.notifyDataSetChanged();
+        } else {
+            mPd.show();
+            Request request = new Request.Builder().url(NetConfig.specialSupplyHeadUrl + id + NetConfig.specialSupplyFootUrl).get().build();
+            okHttpClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    handler.sendEmptyMessage(0);
+                }
+
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        mSpecialSupplyList.clear();
+                        mSpecialSupplyList.add("请选择");
+                        String result = response.body().string();
+                        String json = cutJson(result);
+                        if (parseJson(json))
+                            handler.sendEmptyMessage(1);
+                    }
+                }
+            });
+        }
+    }
+
+    private String cutJson(String json) {
+        int a = json.indexOf("(");
+        int b = json.lastIndexOf(")");
+        String s = json.substring(a + 1, b);
+        return s;
+    }
+
+    private boolean parseJson(String json) {
+        try {
+            JSONArray arrBean = new JSONArray(json);
+            for (int i = 0; i < arrBean.length(); i++) {
+                JSONObject o = arrBean.optJSONObject(i);
+                mSpecialSupplyList.add(o.optString("store_name"));
+            }
+            return true;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_calculate_ofkind:
                 startActivityForResult(new Intent(getActivity(), KindActivity.class), 0);
-                break;
-            case R.id.tv_calculate_specialsupply:
-                startActivityForResult(new Intent(getActivity(), SupplyActivity.class), 0);
                 break;
             case R.id.tv_calculate_unit:
                 POP_STATE = POP_STATE_UNIT;
@@ -200,7 +313,7 @@ public class CalculateFragment extends Fragment implements View.OnClickListener,
                 mUnitPopWindow.showAtLocation(rootView, Gravity.BOTTOM, 0, 0);
                 break;
             case R.id.tv_calculate_receivearea:
-                ToastUtils.toast(getActivity(), "收货地");
+                startActivityForResult(new Intent(getActivity(), ChooseAddressActivity.class), 0);
                 break;
             case R.id.tv_calculate_bidendtime:
                 DATE_STATE = DATE_STATE_OFFEREND;
@@ -211,7 +324,30 @@ public class CalculateFragment extends Fragment implements View.OnClickListener,
                 showDateDialog();
                 break;
             case R.id.rl_calculate_save:
-                ToastUtils.toast(getActivity(), "保存");
+                purchaseName = "采购单名称：" + purchaseNameEt.getText().toString();
+                goodsName = "商品名称：" + goodsNameEt.getText().toString();
+                ofKind = "所属类目：" + ofKindTv.getText().toString();
+                specialSupply = "指定供应商：" + mSpecialSupplySp.getSelectedItem().toString();
+                purchaseAmount = "采购数量：" + purchaseAmountEt.getText().toString();
+                unit = "单位：" + unitTv.getText().toString();
+                goodsDescription = "产品描述：" + goodsDescriptionEt.getText().toString();
+                billRequire = "发票要求：" + billRequireTv.getText().toString();
+                tranRequire = "邮费要求：" + tranRequireTv.getText().toString();
+                receiveArea = "收货地" + receiveAreaTv.getText().toString();
+                detailArea = "详细地址：" + detailAreaEt.getText().toString();
+                deliverTime = "交货期：" + deliverTimeEt.getText().toString();
+                detailDescription = "详细说明：" + detailDescriptionEt.getText().toString();
+                bidendTime = "出价截止时间：" + bidEndTimeTv.getText().toString();
+                resultTime = "公布结果时间：" + resultTimeTv.getText().toString();
+                maxPrice = "最高限价" + maxPriceEt.getText().toString();
+                memberName = "联系人：" + memberNameEt.getText().toString();
+                memberPhone = "手机号：" + memberPhoneEt.getText().toString();
+                memberMobile = "固定电话：" + memberMobileEt.getText().toString();
+                ToastUtils.toast(getActivity(), purchaseName + "\n" + goodsName + "\n" + ofKind + "\n" +
+                        specialSupply + "\n" + purchaseAmount + "\n" + unit + "\n" + goodsDescription + "\n" +
+                        billRequire + "\n" + tranRequire + "\n" + receiveArea + "\n" + detailArea + "\n" + deliverTime + "\n" +
+                        detailDescription + "\n" + bidendTime + "\n" + resultTime + "\n" + maxPrice + "\n" + memberName + "\n" +
+                        memberPhone + "\n" + memberMobile);
                 break;
             case R.id.rl_pop_unit_cancel:
                 mUnitPopWindow.dismiss();
@@ -228,9 +364,10 @@ public class CalculateFragment extends Fragment implements View.OnClickListener,
             switch (resultCode) {
                 case 0:
                     ofKindTv.setText(data.getStringExtra("kind"));
+                    loadSpinner(true, data.getStringExtra("kindId"));
                     break;
                 case 1:
-                    specialSupplyTv.setText(data.getStringExtra("supply"));
+                    receiveAreaTv.setText(data.getStringExtra("sendAddress"));
                     break;
                 default:
                     break;
