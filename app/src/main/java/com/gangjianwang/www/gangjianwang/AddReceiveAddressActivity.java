@@ -61,7 +61,7 @@ public class AddReceiveAddressActivity extends AppCompatActivity implements View
                 finish();
                 break;
             case R.id.et_addreceiveaddress_addresschoose:
-                startActivityForResult(new Intent(AddReceiveAddressActivity.this,ChooseAddressActivity.class),1);
+                startActivityForResult(new Intent(AddReceiveAddressActivity.this,ReceiveAreaActivity.class),1);
                 break;
             case R.id.rl_addreceiveaddress_save:
                 if(TextUtils.isEmpty(nameEt.getText().toString())){

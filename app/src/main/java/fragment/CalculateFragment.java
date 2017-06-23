@@ -29,7 +29,7 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.gangjianwang.www.gangjianwang.ChooseAddressActivity;
+import com.gangjianwang.www.gangjianwang.ReceiveAreaActivity;
 import com.gangjianwang.www.gangjianwang.KindActivity;
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.R;
@@ -313,7 +313,7 @@ public class CalculateFragment extends Fragment implements View.OnClickListener,
                 mUnitPopWindow.showAtLocation(rootView, Gravity.BOTTOM, 0, 0);
                 break;
             case R.id.tv_calculate_receivearea:
-                startActivityForResult(new Intent(getActivity(), ChooseAddressActivity.class), 0);
+                startActivityForResult(new Intent(getActivity(), ReceiveAreaActivity.class), 0);
                 break;
             case R.id.tv_calculate_bidendtime:
                 DATE_STATE = DATE_STATE_OFFEREND;

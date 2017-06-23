@@ -1,20 +1,17 @@
 package adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.gangjianwang.www.gangjianwang.ChooseAddressActivity;
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.R;
 
 import java.util.List;
 
 import bean.GoodsDetailGoods;
-import utils.ToastUtils;
 
 /**
  * Created by Administrator on 2017/5/23.

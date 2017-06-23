@@ -6,12 +6,10 @@ import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -27,7 +25,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.gangjianwang.www.gangjianwang.ChooseAddressActivity;
+import com.gangjianwang.www.gangjianwang.ReceiveAreaActivity;
 import com.gangjianwang.www.gangjianwang.HomeActivity;
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.MakeSureOrderActivity;
@@ -46,8 +44,6 @@ import customview.LazyFragment;
 import customview.SizeThickTextView;
 import utils.HeightUtils;
 import utils.ToastUtils;
-
-import static com.gangjianwang.www.gangjianwang.R.drawable.size_thick_shape;
 
 /**
  * Created by Administrator on 2017/5/23.
@@ -529,7 +525,7 @@ public class GoodsDetailGoodsFragment extends LazyFragment implements View.OnCli
                 ToastUtils.toast(getActivity(), gridList.get(position) + ":" + position);
                 break;
             case R.id.tv_item_goodsdetailgoods_address:
-                startActivityForResult(new Intent(getActivity(), ChooseAddressActivity.class), 1);
+                startActivityForResult(new Intent(getActivity(), ReceiveAreaActivity.class), 1);
                 break;
             default:
                 break;

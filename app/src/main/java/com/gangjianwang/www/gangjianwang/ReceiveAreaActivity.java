@@ -33,7 +33,7 @@ import customview.MyRefreshListView;
 import customview.OnRefreshListener;
 import utils.ToastUtils;
 
-public class ChooseAddressActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, OnRefreshListener {
+public class ReceiveAreaActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, OnRefreshListener {
 
     private View rootView;
     private RelativeLayout backRl;
@@ -41,9 +41,6 @@ public class ChooseAddressActivity extends AppCompatActivity implements View.OnC
     private View firstAddressV, secondAddressV, thirdAddressV;
     private MyRefreshListView mLv;
     private OfKindAdapter mChooseAddressAdapter;
-    private List<OfKind> mFirstList = new ArrayList<>();
-    private List<OfKind> mSecondList = new ArrayList<>();
-    private List<OfKind> mThirdList = new ArrayList<>();
     private List<OfKind> mDataList = new ArrayList<>();
     private final int FIRST = 1;
     private final int SECOND = 2;
@@ -51,6 +48,7 @@ public class ChooseAddressActivity extends AppCompatActivity implements View.OnC
     private int STATE = FIRST;
     private OkHttpClient okHttpClient;
     private ProgressDialog mPd;
+    private String secondId;
 
     Handler handler = new Handler() {
         @Override
@@ -60,7 +58,8 @@ public class ChooseAddressActivity extends AppCompatActivity implements View.OnC
                 switch (msg.what) {
                     case 0:
                         mPd.dismiss();
-                        ToastUtils.toast(ChooseAddressActivity.this, "无网络");
+                        mChooseAddressAdapter.notifyDataSetChanged();
+                        ToastUtils.toast(ReceiveAreaActivity.this, "无网络");
                         break;
                     case 1:
                         mPd.dismiss();
@@ -130,15 +129,14 @@ public class ChooseAddressActivity extends AppCompatActivity implements View.OnC
                 if (response.isSuccessful()) {
                     mDataList.clear();
                     String json = response.body().string();
-                    if (parseJson(json, STATE))
+                    if (parseJson(json))
                         handler.sendEmptyMessage(1);
                 }
             }
         });
     }
 
-    private boolean parseJson(String json, int LOAD_STATE) {
-        boolean b = false;
+    private boolean parseJson(String json) {
         try {
             JSONObject objBean = new JSONObject(json);
             JSONObject objDatas = objBean.optJSONObject("datas");
@@ -148,38 +146,13 @@ public class ChooseAddressActivity extends AppCompatActivity implements View.OnC
                 OfKind ofKind = new OfKind();
                 ofKind.setId(o.optString("area_id"));
                 ofKind.setName(o.optString("area_name"));
-                switch (LOAD_STATE) {
-                    case FIRST:
-                        mFirstList.add(ofKind);
-                        break;
-                    case SECOND:
-                        mSecondList.add(ofKind);
-                        break;
-                    case THIRD:
-                        mThirdList.add(ofKind);
-                        break;
-                    default:
-                        break;
-                }
+                mDataList.add(ofKind);
             }
-            switch (LOAD_STATE) {
-                case FIRST:
-                    mDataList.addAll(mFirstList);
-                    break;
-                case SECOND:
-                    mDataList.addAll(mSecondList);
-                    break;
-                case THIRD:
-                    mDataList.addAll(mThirdList);
-                    break;
-                default:
-                    break;
-            }
-            b = true;
+            return true;
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return b;
+        return false;
     }
 
     @Override
@@ -190,26 +163,19 @@ public class ChooseAddressActivity extends AppCompatActivity implements View.OnC
                 break;
             case R.id.tv_chooseaddress_first:
                 if (STATE != FIRST) {
-                    mDataList.clear();
-                    mDataList.addAll(mFirstList);
-                    mChooseAddressAdapter.notifyDataSetChanged();
-                    firstAddressTv.setText("一级地区");
-                    secondAddressTv.setText("二级地区");
-                    mSecondList.clear();
-                    mThirdList.clear();
                     STATE = FIRST;
                     changeColor(STATE);
+                    firstAddressTv.setText("一级地区");
+                    secondAddressTv.setText("二级地区");
+                    loadData("0");
                 }
                 break;
             case R.id.tv_chooseaddress_second:
                 if (STATE == THIRD) {
-                    mDataList.clear();
-                    mDataList.addAll(mSecondList);
-                    mChooseAddressAdapter.notifyDataSetChanged();
-                    secondAddressTv.setText("二级地区");
-                    mThirdList.clear();
                     STATE = SECOND;
                     changeColor(STATE);
+                    secondAddressTv.setText("二级地区");
+                    loadData(secondId);
                 }
                 break;
             default:
@@ -229,7 +195,8 @@ public class ChooseAddressActivity extends AppCompatActivity implements View.OnC
             case SECOND:
                 STATE = THIRD;
                 secondAddressTv.setText(mDataList.get(position - 1).getName());
-                loadData(mDataList.get(position - 1).getId());
+                secondId = mDataList.get(position - 1).getId();
+                loadData(secondId);
                 changeColor(STATE);
                 break;
             case THIRD:

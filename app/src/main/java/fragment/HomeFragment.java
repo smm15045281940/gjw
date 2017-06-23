@@ -5,6 +5,8 @@ import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,7 +22,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -55,6 +59,7 @@ import java.util.List;
 
 import adapter.FirstpageAdapter;
 import adapter.HomePagerAdapter;
+import adapter.HomeTestPagerAdapter;
 import bean.GoodsPost;
 import bean.GoodsRecommend;
 import bean.GoodsShow;
@@ -70,33 +75,26 @@ import utils.ToastUtils;
 
 public class HomeFragment extends Fragment implements View.OnClickListener, ViewPager.OnPageChangeListener, OnRefreshListener {
 
-    private View rootView, footView;
-    private RelativeLayout mTopRl, mContactRl;
-    private RelativeLayout changeCityRl, searchRl, optionRl;
-    private TextView mCityTv;
-    private View optionPopWindowView;
+    private View rootView, headView, footView, diglogView, optionPopWindowView;//根、头、尾、对话、弹窗
+    private RelativeLayout mTopRl, mContactRl, mOptionPwcloseRl;//Bar、Tel、关弹窗
+    private RelativeLayout mClassifyRl, mShopListRl, mContractRl, mDigouCityRl;//分类、店铺、承揽、底购
+    private RelativeLayout changeCityRl, searchRl, optionRl, mPopFirstpageRl, mPopShopcarRl, mPopMymallRl, mPopMessageRl;//城市、搜索、选项、弹窗首页、弹窗购物车、弹窗商城、弹窗消息
+    private TextView mCityTv, mCityNameTv, mDialogSureTv, mDialogCancelTv, mOnlineTv;//城市、对话城市、对话确定、对话取消、上线
+    private ImageView mHeadImageView1, mHeadImageView2, mHeadLogoIv;//轮播图1、轮播图2
     private PopupWindow mOptionPw;
-    private RelativeLayout mOptionPwcloseRl;
-    private RelativeLayout mPopFirstpageRl, mPopShopcarRl, mPopMymallRl, mPopMessageRl;
-    private View diglogView;
     private AlertDialog ad;
-    private TextView mCityNameTv, mDialogSureTv, mDialogCancelTv;
-    private View headView;
     private ViewPager mVp;
-    private List<View> viewList;
     private HomePagerAdapter mHomePagerAdapter;
-    private ImageView mHeadImageView1, mHeadImageView2, mHeadLogoIv;
-    private RelativeLayout mClassifyRl, mShopListRl, mContractRl, mDigouCityRl;
-    private TextView mOnlineTv;
     private ObjectAnimator mOnlineOa;
     private MyRefreshListView mLv;
+    private List<View> viewList;
     private List<GoodsRecommend> goodsRecommendList = new ArrayList<>();
     private List<GoodsPost> goodsPostList = new ArrayList<>();
     private List<GoodsShow> goodsShowList = new ArrayList<>();
     private List<String> imgurlList = new ArrayList<>();
     private FirstpageAdapter myhomeAdapter;
     private Handler mChangeFragHandler;
-    public LocationClient mLocationClient = null;
+    public LocationClient mLocationClient;
     public BDLocationListener myListener = new MyLocationListener();
     private int pageIndex = 1;
     private String cityName;
@@ -110,7 +108,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
     private final int FIRSTLOAD_DONE = 2;
     private final int REFRESHLOAD_DONE = 3;
 
-    Handler mainHandler = new Handler() {
+    //测试
+    private ViewPager testVp;
+    private LinearLayout testLl;
+    private List<View> testViewList = new ArrayList<>();
+    private HomeTestPagerAdapter testPagerAdapter;
+    private List<String> testList = new ArrayList<>();
+    private int testPageIndex = 1;
+
+    Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -126,6 +132,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                         break;
                     case FIRSTLOAD_DONE://首次加载完成
                         mPd.dismiss();
+                        testList.add(imgurlList.get(0));
+                        testList.add(imgurlList.get(1));
+                        slideShow(testList.size());
                         Picasso.with(getActivity()).load(imgurlList.get(0)).placeholder(mHeadImageView1.getDrawable()).error(R.mipmap.img_default).into(mHeadImageView1);
                         Picasso.with(getActivity()).load(imgurlList.get(1)).placeholder(mHeadImageView2.getDrawable()).error(R.mipmap.img_default).into(mHeadImageView2);
                         Picasso.with(getActivity()).load(imgurlList.get(2)).placeholder(mHeadLogoIv.getDrawable()).error(R.mipmap.img_default).into(mHeadLogoIv);
@@ -165,13 +174,37 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
             if (msg != null) {
                 if (msg.what == 666) {
                     pageIndex++;
-                    if (pageIndex == 3) {
+                    if (pageIndex == viewList.size() - 1) {
                         pageIndex = 1;
                         mVp.setCurrentItem(pageIndex, false);
                     } else {
                         mVp.setCurrentItem(pageIndex);
                     }
                     this.sendEmptyMessageDelayed(666, PersonConfig.rotateCut_time * 1000);
+                }
+            }
+        }
+    };
+
+    //测试handler
+    Handler testHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg != null) {
+                switch (msg.what) {
+                    case 1:
+                        testPageIndex++;
+                        if (testPageIndex == testList.size() + 1) {
+                            testPageIndex = 1;
+                            testVp.setCurrentItem(testPageIndex, false);
+                        } else {
+                            testVp.setCurrentItem(testPageIndex);
+                        }
+                        this.sendEmptyMessageDelayed(1, 1000);
+                        break;
+                    default:
+                        break;
                 }
             }
         }
@@ -210,6 +243,44 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         mLocationClient.start();
         loadData(LOAD_FIRST);
         return rootView;
+    }
+
+    //测试viewpager
+    private void slideShow(int count) {
+        testVp = (ViewPager) rootView.findViewById(R.id.vp_home_test);
+        testPagerAdapter = new HomeTestPagerAdapter(testViewList);
+        testVp.setAdapter(testPagerAdapter);
+        ImageView ivF = new ImageView(getActivity());
+        ivF.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        ivF.setScaleType(ImageView.ScaleType.FIT_XY);
+        ivF.setImageResource(R.mipmap.img_default);
+        testViewList.add(ivF);
+        Picasso.with(getActivity()).load(testList.get(testList.size() - 1)).placeholder(ivF.getDrawable()).into(ivF);
+        for (int i = 0; i < count; i++) {
+            ImageView iv = new ImageView(getActivity());
+            iv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            iv.setScaleType(ImageView.ScaleType.FIT_XY);
+            iv.setImageResource(R.mipmap.img_default);
+            testViewList.add(iv);
+            Picasso.with(getActivity()).load(testList.get(i)).placeholder(iv.getDrawable()).into(iv);
+        }
+        ImageView ivL = new ImageView(getActivity());
+        ivL.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        ivL.setScaleType(ImageView.ScaleType.FIT_XY);
+        ivL.setImageResource(R.mipmap.img_default);
+        testViewList.add(ivL);
+        Picasso.with(getActivity()).load(testList.get(0)).placeholder(ivL.getDrawable()).into(ivL);
+        testPagerAdapter.notifyDataSetChanged();
+        testVp.setCurrentItem(testPageIndex);
+        testHandler.sendEmptyMessage(1);
+        testLl = (LinearLayout) rootView.findViewById(R.id.ll_test_points);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.points_off);
+        for (int i = 0; i < count; i++) {
+            Button bt = new Button(getActivity());
+            bt.setLayoutParams(new ViewGroup.LayoutParams(bitmap.getWidth(), bitmap.getHeight()));
+            bt.setBackgroundResource(R.drawable.points_off);
+            testLl.addView(bt);
+        }
     }
 
     private void initView() {
@@ -270,7 +341,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
     private void initData() {
         okHttpClient = new OkHttpClient();
         mPd = new ProgressDialog(getActivity());
-        mPd.setMessage("加载中..");
         myhomeAdapter = new FirstpageAdapter(getActivity(), goodsRecommendList, goodsPostList, goodsShowList);
     }
 
@@ -314,7 +384,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                 okHttpClient.newCall(requestFirst).enqueue(new Callback() {
                     @Override
                     public void onFailure(Request request, IOException e) {
-                        mainHandler.sendEmptyMessage(FIRSTLOAD_NONET);
+                        handler.sendEmptyMessage(FIRSTLOAD_NONET);
                     }
 
                     @Override
@@ -322,7 +392,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                         if (response.isSuccessful()) {
                             String json = response.body().string();
                             if (parseJson(json))
-                                mainHandler.sendEmptyMessage(FIRSTLOAD_DONE);
+                                handler.sendEmptyMessage(FIRSTLOAD_DONE);
                         }
                     }
                 });
@@ -332,7 +402,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                 okHttpClient.newCall(requestRefresh).enqueue(new Callback() {
                     @Override
                     public void onFailure(Request request, IOException e) {
-                        mainHandler.sendEmptyMessage(REFRESHLOAD_NONET);
+                        handler.sendEmptyMessage(REFRESHLOAD_NONET);
                     }
 
                     @Override
@@ -344,7 +414,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                             goodsShowList.clear();
                             String json = response.body().string();
                             if (parseJson(json))
-                                mainHandler.sendEmptyMessage(REFRESHLOAD_DONE);
+                                handler.sendEmptyMessage(REFRESHLOAD_DONE);
                         }
                     }
                 });

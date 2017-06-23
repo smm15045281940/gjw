@@ -77,7 +77,7 @@
         <activity android:name=".AddressManagerActivity" />
         <activity android:name=".AddAddressActivity" />
         <activity android:name=".GoodsDetailActivity" />
-        <activity android:name=".ChooseAddressActivity" />
+        <activity android:name=".ReceiveAreaActivity" />
         <activity android:name=".ShopDetailActivity" />
         <activity android:name=".MakeSureOrderActivity" />
         <activity android:name=".ReceiveAddressManageActivity" />
