@@ -112,6 +112,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
     private HomeTestPagerAdapter testPagerAdapter;
     private List<String> testList = new ArrayList<>();
     private int testPageIndex = 1;
+    private List<ImageView> testPointsList = new ArrayList<>();
 
     Handler handler = new Handler() {
         @Override
@@ -195,8 +196,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                         if (testPageIndex == testList.size() + 1) {
                             testPageIndex = 1;
                             testVp.setCurrentItem(testPageIndex, false);
+                            changePoints(0);
                         } else {
                             testVp.setCurrentItem(testPageIndex);
+                            changePoints(testPageIndex - 1);
                         }
                         this.sendEmptyMessageDelayed(1, 1000);
                         break;
@@ -269,16 +272,53 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         Picasso.with(getActivity()).load(testList.get(0)).placeholder(ivL.getDrawable()).into(ivL);
         testPagerAdapter.notifyDataSetChanged();
         testVp.setCurrentItem(testPageIndex);
-        testHandler.sendEmptyMessage(1);
+//        testHandler.sendEmptyMessage(1);
         testLl = (LinearLayout) rootView.findViewById(R.id.ll_test_points);
         for (int i = 0; i < count; i++) {
             ImageView ivPoint = new ImageView(getActivity());
-//            ViewGroup.LayoutParams layoutParams = ivPoint.getLayoutParams();
-//            layoutParams.width = 5;
-//            layoutParams.height = 5;
             ivPoint.setScaleType(ImageView.ScaleType.FIT_XY);
-            ivPoint.setImageResource(R.drawable.points_off);
+            ivPoint.setPadding(5, 0, 5, 0);
+            if (i == 0) {
+                ivPoint.setImageResource(R.drawable.points_on);
+            } else {
+                ivPoint.setImageResource(R.drawable.points_off);
+            }
             testLl.addView(ivPoint);
+            testPointsList.add(ivPoint);
+        }
+        testVp.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 0) {
+                    testVp.setCurrentItem(testViewList.size() - 2, false);
+                    changePoints(testViewList.size() - 3);
+                } else if (position == testViewList.size() - 1) {
+                    testVp.setCurrentItem(1, false);
+                    changePoints(0);
+                } else {
+                    changePoints(position - 1);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+    }
+
+    private void changePoints(int pointIndex) {
+        for (int i = 0; i < testPointsList.size(); i++) {
+            if (i == pointIndex) {
+                testPointsList.get(i).setImageResource(R.drawable.points_on);
+            } else {
+                testPointsList.get(i).setImageResource(R.drawable.points_off);
+            }
         }
     }
 

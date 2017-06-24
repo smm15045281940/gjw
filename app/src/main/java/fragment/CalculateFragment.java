@@ -29,10 +29,10 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.gangjianwang.www.gangjianwang.ReceiveAreaActivity;
 import com.gangjianwang.www.gangjianwang.KindActivity;
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.R;
+import com.gangjianwang.www.gangjianwang.ReceiveAreaActivity;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -315,8 +315,13 @@ public class CalculateFragment extends Fragment implements View.OnClickListener,
                 showDateDialog();
                 break;
             case R.id.tv_calculate_resulttime:
-                DATE_STATE = DATE_STATE_PUBLISHRESULT;
-                showDateDialog();
+                String s = bidEndTimeTv.getText().toString();
+                if (s.equals("请选择")) {
+                    ToastUtils.toast(getActivity(), "请选择出价截止时间");
+                } else {
+                    DATE_STATE = DATE_STATE_PUBLISHRESULT;
+                    showDateDialog();
+                }
                 break;
             case R.id.rl_calculate_save:
                 purchaseName = "采购单名称：" + purchaseNameEt.getText().toString();
