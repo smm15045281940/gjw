@@ -15,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -113,6 +114,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
     private List<String> testList = new ArrayList<>();
     private int testPageIndex = 1;
     private List<ImageView> testPointsList = new ArrayList<>();
+    private int scrollState;
 
     Handler handler = new Handler() {
         @Override
@@ -194,6 +196,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                     case 1:
                         testPageIndex++;
                         if (testPageIndex == testList.size() + 1) {
+                            testVp.setCurrentItem(testPageIndex, true);
                             testPageIndex = 1;
                             testVp.setCurrentItem(testPageIndex, false);
                             changePoints(0);
@@ -272,7 +275,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         Picasso.with(getActivity()).load(testList.get(0)).placeholder(ivL.getDrawable()).into(ivL);
         testPagerAdapter.notifyDataSetChanged();
         testVp.setCurrentItem(testPageIndex);
-//        testHandler.sendEmptyMessage(1);
+        testHandler.sendEmptyMessage(1);
         testLl = (LinearLayout) rootView.findViewById(R.id.ll_test_points);
         for (int i = 0; i < count; i++) {
             ImageView ivPoint = new ImageView(getActivity());
@@ -294,20 +297,23 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
 
             @Override
             public void onPageSelected(int position) {
-                if (position == 0) {
-                    testVp.setCurrentItem(testViewList.size() - 2, false);
-                    changePoints(testViewList.size() - 3);
-                } else if (position == testViewList.size() - 1) {
-                    testVp.setCurrentItem(1, false);
-                    changePoints(0);
-                } else {
-                    changePoints(position - 1);
+                if (scrollState == 2) {
+                    Log.e("Selected", position + "");
+                    if (position == 0) {
+                        testVp.setCurrentItem(testViewList.size() - 2, false);
+                        changePoints(testViewList.size() - 3);
+                    } else if (position == testViewList.size() - 1) {
+                        testVp.setCurrentItem(1, false);
+                        changePoints(0);
+                    } else {
+                        changePoints(position - 1);
+                    }
                 }
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
+                scrollState = state;
             }
         });
     }
