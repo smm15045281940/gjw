@@ -5,8 +5,6 @@ import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,7 +20,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -274,12 +271,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         testVp.setCurrentItem(testPageIndex);
         testHandler.sendEmptyMessage(1);
         testLl = (LinearLayout) rootView.findViewById(R.id.ll_test_points);
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.points_off);
         for (int i = 0; i < count; i++) {
-            Button bt = new Button(getActivity());
-            bt.setLayoutParams(new ViewGroup.LayoutParams(bitmap.getWidth(), bitmap.getHeight()));
-            bt.setBackgroundResource(R.drawable.points_off);
-            testLl.addView(bt);
+            ImageView ivPoint = new ImageView(getActivity());
+//            ViewGroup.LayoutParams layoutParams = ivPoint.getLayoutParams();
+//            layoutParams.width = 5;
+//            layoutParams.height = 5;
+            ivPoint.setScaleType(ImageView.ScaleType.FIT_XY);
+            ivPoint.setImageResource(R.drawable.points_off);
+            testLl.addView(ivPoint);
         }
     }
 

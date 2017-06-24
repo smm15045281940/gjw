@@ -86,7 +86,7 @@ public class KindActivity extends AppCompatActivity implements View.OnClickListe
         initData();
         setData();
         setListener();
-        loadData(LOAD_FIRST, 0);
+        loadData(LOAD_FIRST, "0");
     }
 
     private void initView() {
@@ -122,7 +122,7 @@ public class KindActivity extends AppCompatActivity implements View.OnClickListe
         mLv.setOnItemClickListener(this);
     }
 
-    private void loadData(int LOAD_STATE, int id) {
+    private void loadData(int LOAD_STATE, String id) {
         switch (LOAD_STATE) {
             case LOAD_FIRST:
                 mPd.show();
@@ -341,17 +341,13 @@ public class KindActivity extends AppCompatActivity implements View.OnClickListe
                 STATE = LOAD_SECOND;
                 setTop();
                 mFirstTv.setText(mDataList.get(position - 1).getName());
-                String str1 = mDataList.get(position - 1).getId();
-                int gc_id1 = Integer.parseInt(str1);
-                loadData(STATE, gc_id1);
+                loadData(STATE, mDataList.get(position - 1).getId());
                 break;
             case LOAD_SECOND:
                 STATE = LOAD_THIRD;
                 setTop();
                 mSecondTv.setText(mDataList.get(position - 1).getName());
-                String str2 = mDataList.get(position - 1).getId();
-                int gc_id2 = Integer.parseInt(str2);
-                loadData(STATE, gc_id2);
+                loadData(STATE, mDataList.get(position - 1).getId());
                 break;
             case LOAD_THIRD:
                 String resultStr = mFirstTv.getText().toString() + " " + mSecondTv.getText().toString() + " " + mDataList.get(position - 1).getName();

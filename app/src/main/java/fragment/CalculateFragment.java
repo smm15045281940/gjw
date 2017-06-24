@@ -83,16 +83,12 @@ public class CalculateFragment extends Fragment implements View.OnClickListener,
     private final int POP_STATE_BILL = 2;
     private final int POP_STATE_POST = 3;
     private int POP_STATE;
-
     private final int DATE_STATE_OFFEREND = 1;
     private final int DATE_STATE_PUBLISHRESULT = 2;
     private int DATE_STATE;
-
     private Bitmap bitmap;
-
     private OkHttpClient okHttpClient;
     private ProgressDialog mPd;
-
     private EditText purchaseNameEt, goodsNameEt, purchaseAmountEt, goodsDescriptionEt, detailAreaEt, deliverTimeEt;
     private EditText detailDescriptionEt, maxPriceEt, memberNameEt, memberPhoneEt, memberMobileEt;
     private TextView ofKindTv, unitTv, billRequireTv, tranRequireTv, bidEndTimeTv, resultTimeTv, receiveAreaTv;
@@ -113,6 +109,7 @@ public class CalculateFragment extends Fragment implements View.OnClickListener,
                     case 1:
                         mPd.dismiss();
                         mSpecialSupplyAdapter.notifyDataSetChanged();
+                        mSpecialSupplySp.setSelection(0);
                         break;
                     default:
                         break;
@@ -161,7 +158,6 @@ public class CalculateFragment extends Fragment implements View.OnClickListener,
         });
         mUnitLv = (ListView) mUnitPopView.findViewById(R.id.lv_unit);
         mUnitCancelRl = (RelativeLayout) mUnitPopView.findViewById(R.id.rl_pop_unit_cancel);
-
         purchaseNameEt = (EditText) rootView.findViewById(R.id.et_calculate_purchasename);
         goodsNameEt = (EditText) rootView.findViewById(R.id.et_calculate_goodsname);
         purchaseAmountEt = (EditText) rootView.findViewById(R.id.et_calculate_purchaseamount);
@@ -282,7 +278,6 @@ public class CalculateFragment extends Fragment implements View.OnClickListener,
                 Intent i = new Intent(
                         Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
                 startActivityForResult(i, RESULT_LOAD_IMAGE);
                 break;
             case R.id.tv_calculate_billrequire:

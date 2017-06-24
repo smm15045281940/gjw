@@ -164,7 +164,7 @@ public class ReceiveAreaActivity extends AppCompatActivity implements View.OnCli
             case R.id.tv_chooseaddress_first:
                 if (STATE != FIRST) {
                     STATE = FIRST;
-                    changeColor(STATE);
+                    changeColor();
                     firstAddressTv.setText("一级地区");
                     secondAddressTv.setText("二级地区");
                     loadData("0");
@@ -173,7 +173,7 @@ public class ReceiveAreaActivity extends AppCompatActivity implements View.OnCli
             case R.id.tv_chooseaddress_second:
                 if (STATE == THIRD) {
                     STATE = SECOND;
-                    changeColor(STATE);
+                    changeColor();
                     secondAddressTv.setText("二级地区");
                     loadData(secondId);
                 }
@@ -189,15 +189,13 @@ public class ReceiveAreaActivity extends AppCompatActivity implements View.OnCli
             case FIRST:
                 STATE = SECOND;
                 firstAddressTv.setText(mDataList.get(position - 1).getName());
+                secondId = mDataList.get(position - 1).getId();
                 loadData(mDataList.get(position - 1).getId());
-                changeColor(STATE);
                 break;
             case SECOND:
                 STATE = THIRD;
                 secondAddressTv.setText(mDataList.get(position - 1).getName());
-                secondId = mDataList.get(position - 1).getId();
-                loadData(secondId);
-                changeColor(STATE);
+                loadData(mDataList.get(position - 1).getId());
                 break;
             case THIRD:
                 Intent intent = new Intent();
@@ -209,10 +207,11 @@ public class ReceiveAreaActivity extends AppCompatActivity implements View.OnCli
             default:
                 break;
         }
+        changeColor();
     }
 
-    private void changeColor(int CHOOSE_STATE) {
-        switch (CHOOSE_STATE) {
+    private void changeColor() {
+        switch (STATE) {
             case FIRST:
                 firstAddressTv.setTextColor(Color.RED);
                 secondAddressTv.setTextColor(Color.BLACK);
