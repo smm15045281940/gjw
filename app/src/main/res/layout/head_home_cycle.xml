@@ -10,12 +10,12 @@
         android:layout_height="@dimen/x160">
 
         <android.support.v4.view.ViewPager
-            android:id="@+id/vp_home_test"
+            android:id="@+id/vp_home_cycle"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/x160" />
+            android:layout_height="match_parent" />
 
         <LinearLayout
-            android:id="@+id/ll_test_points"
+            android:id="@+id/ll_home_cycle_dot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -27,10 +27,6 @@
 
     </RelativeLayout>
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/vp_home_cycle"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/x160" />
 
     <LinearLayout
         android:layout_width="match_parent"

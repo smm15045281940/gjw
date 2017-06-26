@@ -10,14 +10,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -56,13 +57,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adapter.FirstpageAdapter;
-import adapter.HomePagerAdapter;
-import adapter.HomeTestPagerAdapter;
+import adapter.MyPagerAdapter;
 import bean.GoodsPost;
 import bean.GoodsRecommend;
 import bean.GoodsShow;
 import config.NetConfig;
-import config.PersonConfig;
 import customview.MyRefreshListView;
 import customview.OnRefreshListener;
 import utils.ToastUtils;
@@ -71,50 +70,52 @@ import utils.ToastUtils;
  * Created by 孙明明 on 2017/4/10 0010.
  */
 
-public class HomeFragment extends Fragment implements View.OnClickListener, ViewPager.OnPageChangeListener, OnRefreshListener {
+public class HomeFragment extends Fragment implements View.OnClickListener, OnRefreshListener {
 
     private View rootView, headView, footView, diglogView, optionPopWindowView;//根、头、尾、对话、弹窗
     private RelativeLayout mTopRl, mContactRl, mOptionPwcloseRl;//Bar、Tel、关弹窗
     private RelativeLayout mClassifyRl, mShopListRl, mContractRl, mDigouCityRl;//分类、店铺、承揽、底购
     private RelativeLayout changeCityRl, searchRl, optionRl, mPopFirstpageRl, mPopShopcarRl, mPopMymallRl, mPopMessageRl;//城市、搜索、选项、弹窗首页、弹窗购物车、弹窗商城、弹窗消息
     private TextView mCityTv, mCityNameTv, mDialogSureTv, mDialogCancelTv, mOnlineTv;//城市、对话城市、对话确定、对话取消、上线
-    private ImageView mHeadImageView1, mHeadImageView2, mHeadLogoIv;//轮播图1、轮播图2
-    private PopupWindow mOptionPw;
-    private AlertDialog ad;
+    private ImageView mHeadLogoIv;//头Logo
+    private PopupWindow mOptionPw;//弹窗
+    private AlertDialog ad;//对话框
+
+    //轮播图
     private ViewPager mVp;
-    private HomePagerAdapter mHomePagerAdapter;
+    private LinearLayout mVpLl;
+    private MyPagerAdapter mMyPagerAdapter;
+    private List<String> imgurlList = new ArrayList<>();
+    private List<ImageView> mImageViewList = new ArrayList<>();
+    private List<ImageView> mImageViewDotList = new ArrayList<>();
+    private int curPosition = 1;
+    private int dotPosition = 0;
+    private int prePosition = 0;
+    private boolean isLoop = true;
+
+    private String logoUrl;
     private ObjectAnimator mOnlineOa;
     private MyRefreshListView mLv;
-    private List<View> viewList;
     private List<GoodsRecommend> goodsRecommendList = new ArrayList<>();
     private List<GoodsPost> goodsPostList = new ArrayList<>();
     private List<GoodsShow> goodsShowList = new ArrayList<>();
-    private List<String> imgurlList = new ArrayList<>();
     private FirstpageAdapter myhomeAdapter;
     private Handler mChangeFragHandler;
     public LocationClient mLocationClient;
     public BDLocationListener myListener = new MyLocationListener();
-    private int pageIndex = 1;
     private String cityName;
     private boolean isHidden = true;
     private final int LOAD_FIRST = 0;
     private final int LOAD_REFRESH = 1;
-    private OkHttpClient okHttpClient;
+    private OkHttpClient okHttpClient = new OkHttpClient();
     private ProgressDialog mPd;
     private final int FIRSTLOAD_NONET = 0;
     private final int REFRESHLOAD_NONET = 1;
     private final int FIRSTLOAD_DONE = 2;
     private final int REFRESHLOAD_DONE = 3;
-
-    //测试
-    private ViewPager testVp;
-    private LinearLayout testLl;
-    private List<View> testViewList = new ArrayList<>();
-    private HomeTestPagerAdapter testPagerAdapter;
-    private List<String> testList = new ArrayList<>();
-    private int testPageIndex = 1;
-    private List<ImageView> testPointsList = new ArrayList<>();
-    private int scrollState;
+    private final int VIEWPAGER_SHOW = 4;
+    private final int VIEWPAGER_RESHOW = 5;
+    private final int CHANGE_CITY = 6;
 
     Handler handler = new Handler() {
         @Override
@@ -132,79 +133,23 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
                         break;
                     case FIRSTLOAD_DONE://首次加载完成
                         mPd.dismiss();
-                        testList.add(imgurlList.get(0));
-                        testList.add(imgurlList.get(1));
-                        slideShow(testList.size());
-                        Picasso.with(getActivity()).load(imgurlList.get(0)).placeholder(mHeadImageView1.getDrawable()).error(R.mipmap.img_default).into(mHeadImageView1);
-                        Picasso.with(getActivity()).load(imgurlList.get(1)).placeholder(mHeadImageView2.getDrawable()).error(R.mipmap.img_default).into(mHeadImageView2);
-                        Picasso.with(getActivity()).load(imgurlList.get(2)).placeholder(mHeadLogoIv.getDrawable()).error(R.mipmap.img_default).into(mHeadLogoIv);
                         myhomeAdapter.notifyDataSetChanged();
+                        Picasso.with(getActivity()).load(logoUrl).placeholder(mHeadLogoIv.getDrawable()).into(mHeadLogoIv);
+                        loadVp();
                         break;
                     case REFRESHLOAD_DONE://刷新加载完成
                         mLv.hideHeadView();
-                        Picasso.with(getActivity()).load(imgurlList.get(0)).placeholder(mHeadImageView1.getDrawable()).error(R.mipmap.img_default).into(mHeadImageView1);
-                        Picasso.with(getActivity()).load(imgurlList.get(1)).placeholder(mHeadImageView2.getDrawable()).error(R.mipmap.img_default).into(mHeadImageView2);
-                        Picasso.with(getActivity()).load(imgurlList.get(2)).placeholder(mHeadLogoIv.getDrawable()).error(R.mipmap.img_default).into(mHeadLogoIv);
                         myhomeAdapter.notifyDataSetChanged();
                         break;
-                    default:
+                    case VIEWPAGER_SHOW://自动轮播
+                        mVp.setCurrentItem(curPosition, true);
                         break;
-                }
-            }
-        }
-    };
-
-    Handler mCityHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg != null) {
-                if (msg.what == 1) {
-                    mCityNameTv.setText(cityName);
-                    ad.show();
-                }
-            }
-        }
-    };
-
-    Handler homePagerHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg != null) {
-                if (msg.what == 666) {
-                    pageIndex++;
-                    if (pageIndex == viewList.size() - 1) {
-                        pageIndex = 1;
-                        mVp.setCurrentItem(pageIndex, false);
-                    } else {
-                        mVp.setCurrentItem(pageIndex);
-                    }
-                    this.sendEmptyMessageDelayed(666, PersonConfig.rotateCut_time * 1000);
-                }
-            }
-        }
-    };
-
-    //测试handler
-    Handler testHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg != null) {
-                switch (msg.what) {
-                    case 1:
-                        testPageIndex++;
-                        if (testPageIndex == testList.size() + 1) {
-                            testVp.setCurrentItem(testPageIndex, true);
-                            testPageIndex = 1;
-                            testVp.setCurrentItem(testPageIndex, false);
-                            changePoints(0);
-                        } else {
-                            testVp.setCurrentItem(testPageIndex);
-                            changePoints(testPageIndex - 1);
-                        }
-                        this.sendEmptyMessageDelayed(1, 1000);
+                    case VIEWPAGER_RESHOW://重新轮播
+                        isLoop = true;
+                        break;
+                    case CHANGE_CITY:
+                        mCityNameTv.setText(cityName);
+                        ad.dismiss();
                         break;
                     default:
                         break;
@@ -213,6 +158,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         }
     };
 
+    /**
+     * 钢建网上线动画开始or停止
+     */
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
@@ -229,9 +177,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         super.onCreate(savedInstanceState);
         HomeActivity homeActivity = (HomeActivity) getActivity();
         mChangeFragHandler = homeActivity.mChangeFragHandler;
-        mLocationClient = new LocationClient(getContext());
-        mLocationClient.registerLocationListener(myListener);
-        initLocation();
     }
 
     @Nullable
@@ -240,92 +185,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         rootView = inflater.inflate(R.layout.fragment_home, null);
         initView();
         initData();
-        initAnim();
+        initLoc();
         setData();
         setListener();
         mLocationClient.start();
         loadData(LOAD_FIRST);
         return rootView;
-    }
-
-    //测试viewpager
-    private void slideShow(int count) {
-        testVp = (ViewPager) rootView.findViewById(R.id.vp_home_test);
-        testPagerAdapter = new HomeTestPagerAdapter(testViewList);
-        testVp.setAdapter(testPagerAdapter);
-        ImageView ivF = new ImageView(getActivity());
-        ivF.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        ivF.setScaleType(ImageView.ScaleType.FIT_XY);
-        ivF.setImageResource(R.mipmap.img_default);
-        testViewList.add(ivF);
-        Picasso.with(getActivity()).load(testList.get(testList.size() - 1)).placeholder(ivF.getDrawable()).into(ivF);
-        for (int i = 0; i < count; i++) {
-            ImageView iv = new ImageView(getActivity());
-            iv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            iv.setScaleType(ImageView.ScaleType.FIT_XY);
-            iv.setImageResource(R.mipmap.img_default);
-            testViewList.add(iv);
-            Picasso.with(getActivity()).load(testList.get(i)).placeholder(iv.getDrawable()).into(iv);
-        }
-        ImageView ivL = new ImageView(getActivity());
-        ivL.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        ivL.setScaleType(ImageView.ScaleType.FIT_XY);
-        ivL.setImageResource(R.mipmap.img_default);
-        testViewList.add(ivL);
-        Picasso.with(getActivity()).load(testList.get(0)).placeholder(ivL.getDrawable()).into(ivL);
-        testPagerAdapter.notifyDataSetChanged();
-        testVp.setCurrentItem(testPageIndex);
-        testHandler.sendEmptyMessage(1);
-        testLl = (LinearLayout) rootView.findViewById(R.id.ll_test_points);
-        for (int i = 0; i < count; i++) {
-            ImageView ivPoint = new ImageView(getActivity());
-            ivPoint.setScaleType(ImageView.ScaleType.FIT_XY);
-            ivPoint.setPadding(5, 0, 5, 0);
-            if (i == 0) {
-                ivPoint.setImageResource(R.drawable.points_on);
-            } else {
-                ivPoint.setImageResource(R.drawable.points_off);
-            }
-            testLl.addView(ivPoint);
-            testPointsList.add(ivPoint);
-        }
-        testVp.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                if (scrollState == 2) {
-                    Log.e("Selected", position + "");
-                    if (position == 0) {
-                        testVp.setCurrentItem(testViewList.size() - 2, false);
-                        changePoints(testViewList.size() - 3);
-                    } else if (position == testViewList.size() - 1) {
-                        testVp.setCurrentItem(1, false);
-                        changePoints(0);
-                    } else {
-                        changePoints(position - 1);
-                    }
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                scrollState = state;
-            }
-        });
-    }
-
-    private void changePoints(int pointIndex) {
-        for (int i = 0; i < testPointsList.size(); i++) {
-            if (i == pointIndex) {
-                testPointsList.get(i).setImageResource(R.drawable.points_on);
-            } else {
-                testPointsList.get(i).setImageResource(R.drawable.points_off);
-            }
-        }
     }
 
     private void initView() {
@@ -335,6 +200,29 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         searchRl = (RelativeLayout) rootView.findViewById(R.id.rl_home_search);
         optionRl = (RelativeLayout) rootView.findViewById(R.id.rl_home_option);
         mLv = (MyRefreshListView) rootView.findViewById(R.id.mlv_home);
+        initHead();
+        initPop();
+        initDia();
+        initAnim();
+        mLv.addHeaderView(headView);
+        mLv.addFooterView(footView);
+    }
+
+    private void initHead() {
+        headView = View.inflate(getActivity(), R.layout.head_home_cycle, null);
+        mHeadLogoIv = (ImageView) headView.findViewById(R.id.iv_home_head_logo);
+        mVp = (ViewPager) headView.findViewById(R.id.vp_home_cycle);
+        mVpLl = (LinearLayout) headView.findViewById(R.id.ll_home_cycle_dot);
+        footView = View.inflate(getActivity(), R.layout.foot_home_contact, null);
+        mContactRl = (RelativeLayout) footView.findViewById(R.id.rl_foot_home_contact);
+        mClassifyRl = (RelativeLayout) headView.findViewById(R.id.rl_homehead_classify);
+        mShopListRl = (RelativeLayout) headView.findViewById(R.id.rl_homehead_shoplist);
+        mContractRl = (RelativeLayout) headView.findViewById(R.id.rl_homehead_contract);
+        mDigouCityRl = (RelativeLayout) headView.findViewById(R.id.rl_homehead_digoucity);
+        mOnlineTv = (TextView) headView.findViewById(R.id.tv_home_head_online);
+    }
+
+    private void initPop() {
         optionPopWindowView = getActivity().getLayoutInflater().inflate(R.layout.popupwindow_home_option, null);
         mOptionPw = new PopupWindow(optionPopWindowView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         mOptionPw.setFocusable(true);
@@ -347,6 +235,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         mPopShopcarRl = (RelativeLayout) optionPopWindowView.findViewById(R.id.rl_home_pop_shopcar);
         mPopMymallRl = (RelativeLayout) optionPopWindowView.findViewById(R.id.rl_home_pop_mymall);
         mPopMessageRl = (RelativeLayout) optionPopWindowView.findViewById(R.id.rl_home_pop_message);
+    }
+
+    private void initDia() {
         diglogView = View.inflate(getContext(), R.layout.dialog_city, null);
         mCityNameTv = (TextView) diglogView.findViewById(R.id.tv_dialog_city_cityname);
         mDialogSureTv = (TextView) diglogView.findViewById(R.id.tv_dialog_sure);
@@ -354,42 +245,20 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(diglogView);
         ad = builder.create();
-        headView = View.inflate(getActivity(), R.layout.head_home_cycle, null);
-        mHeadLogoIv = (ImageView) headView.findViewById(R.id.iv_home_head_logo);
-        mVp = (ViewPager) headView.findViewById(R.id.vp_home_cycle);
-        footView = View.inflate(getActivity(), R.layout.foot_home_contact, null);
-        mContactRl = (RelativeLayout) footView.findViewById(R.id.rl_foot_home_contact);
-        mClassifyRl = (RelativeLayout) headView.findViewById(R.id.rl_homehead_classify);
-        mShopListRl = (RelativeLayout) headView.findViewById(R.id.rl_homehead_shoplist);
-        mContractRl = (RelativeLayout) headView.findViewById(R.id.rl_homehead_contract);
-        mDigouCityRl = (RelativeLayout) headView.findViewById(R.id.rl_homehead_digoucity);
-        mOnlineTv = (TextView) headView.findViewById(R.id.tv_home_head_online);
-        View viewF = View.inflate(getActivity(), R.layout.cycle_view2, null);
-        View view1 = View.inflate(getActivity(), R.layout.cycle_view1, null);
-        View view2 = View.inflate(getActivity(), R.layout.cycle_view2, null);
-        View viewL = View.inflate(getActivity(), R.layout.cycle_view1, null);
-        mHeadImageView1 = (ImageView) view1.findViewById(R.id.iv_homehead_1);
-        mHeadImageView2 = (ImageView) view2.findViewById(R.id.iv_homehead_2);
-        viewList = new ArrayList<>();
-        viewList.add(viewF);
-        viewList.add(view1);
-        viewList.add(view2);
-        viewList.add(viewL);
-        mHomePagerAdapter = new HomePagerAdapter(viewList);
-        mVp.setAdapter(mHomePagerAdapter);
-        mVp.setCurrentItem(1);
-        mLv.addHeaderView(headView);
-        mLv.addFooterView(footView);
-        homePagerHandler.sendEmptyMessageDelayed(666, 3000);
     }
 
     private void initData() {
-        okHttpClient = new OkHttpClient();
-        mPd = new ProgressDialog(getActivity());
         myhomeAdapter = new FirstpageAdapter(getActivity(), goodsRecommendList, goodsPostList, goodsShowList);
     }
 
+    private void initLoc() {
+        mLocationClient = new LocationClient(getContext());
+        mLocationClient.registerLocationListener(myListener);
+        initLocation();
+    }
+
     private void initAnim() {
+        mPd = new ProgressDialog(getActivity());
         mOnlineOa = ObjectAnimator.ofFloat(mOnlineTv, "translationY", 0.0F, -100.0F);
         mOnlineOa.setDuration(8000);
         mOnlineOa.setRepeatCount(-1);
@@ -411,7 +280,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         mPopShopcarRl.setOnClickListener(this);
         mPopMymallRl.setOnClickListener(this);
         mPopMessageRl.setOnClickListener(this);
-        mVp.setOnPageChangeListener(this);
         mClassifyRl.setOnClickListener(this);
         mShopListRl.setOnClickListener(this);
         mContractRl.setOnClickListener(this);
@@ -469,6 +337,112 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
         }
     }
 
+    private void loadVp() {
+        ImageView imageView;
+        ImageView imageViewDot;
+        for (int i = 0; i < imgurlList.size() + 2; i++) {
+            if (i == 0) {
+                imageView = new ImageView(getActivity());
+                imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                imageView.setImageResource(R.mipmap.img_default);
+                Picasso.with(getActivity()).load(imgurlList.get(imgurlList.size() - 1)).placeholder(imageView.getDrawable()).into(imageView);
+                mImageViewList.add(imageView);
+            } else if (i == imgurlList.size() + 1) {
+                imageView = new ImageView(getActivity());
+                imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                imageView.setImageResource(R.mipmap.img_default);
+                Picasso.with(getActivity()).load(imgurlList.get(0)).placeholder(imageView.getDrawable()).into(imageView);
+                mImageViewList.add(imageView);
+            } else {
+                imageView = new ImageView(getActivity());
+                imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                imageView.setImageResource(R.mipmap.img_default);
+                Picasso.with(getActivity()).load(imgurlList.get(i - 1)).placeholder(imageView.getDrawable()).into(imageView);
+                mImageViewList.add(imageView);
+            }
+        }
+        for (int i = 0; i < imgurlList.size(); i++) {
+            imageViewDot = new ImageView(getActivity());
+            imageViewDot.setImageResource(R.drawable.points_off);
+            imageViewDot.setPadding(5, 0, 5, 0);
+            mVpLl.addView(imageViewDot);
+            mImageViewDotList.add(imageViewDot);
+        }
+        mImageViewDotList.get(dotPosition).setImageResource(R.drawable.points_on);
+        mMyPagerAdapter = new MyPagerAdapter(mImageViewList);
+        mVp.setAdapter(mMyPagerAdapter);
+        mVp.setCurrentItem(curPosition);
+        mVp.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 0) {
+                    curPosition = imgurlList.size();
+                    dotPosition = imgurlList.size() - 1;
+                } else if (position == imgurlList.size() + 1) {
+                    curPosition = 1;
+                    dotPosition = 0;
+                } else {
+                    curPosition = position;
+                    dotPosition = position - 1;
+                }
+                mImageViewDotList.get(prePosition).setImageResource(R.drawable.points_off);
+                mImageViewDotList.get(dotPosition).setImageResource(R.drawable.points_on);
+                prePosition = dotPosition;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                if (state == ViewPager.SCROLL_STATE_IDLE) {
+                    mVp.setCurrentItem(curPosition, false);
+                }
+            }
+        });
+        mVp.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        isLoop = false;
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        isLoop = false;
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        handler.sendEmptyMessageDelayed(VIEWPAGER_RESHOW, 5000);
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        });
+        autoPlay();
+    }
+
+    private void autoPlay() {
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                while (true) {
+                    if (isLoop) {
+                        SystemClock.sleep(3000);
+                        curPosition++;
+                        handler.sendEmptyMessage(VIEWPAGER_SHOW);
+                    }
+                }
+            }
+        }.start();
+    }
+
     private boolean parseJson(String json) {
         try {
             JSONObject objBean = new JSONObject(json);
@@ -482,7 +456,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
             }
             JSONObject objHome1 = arrDatas.optJSONObject(1).optJSONObject("home1");
             String image = objHome1.optString("image");
-            imgurlList.add(image);
+            logoUrl = image;
             GoodsRecommend goodsRecommend = new GoodsRecommend();
             JSONObject objGoods = arrDatas.optJSONObject(2).optJSONObject("goods");
             goodsRecommend.setTitle(objGoods.optString("title"));
@@ -694,28 +668,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
     }
 
     @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-        switch (position) {
-            case 0:
-                mVp.setCurrentItem(2, false);
-                break;
-            case 3:
-                mVp.setCurrentItem(1, false);
-                break;
-        }
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
-
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == 1) {
@@ -830,7 +782,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, View
             String s = str.substring(provinceIndex + 1, cityIndex);
             if (!s.equals(mCityTv.getText().toString())) {
                 cityName = s;
-                mCityHandler.sendEmptyMessage(1);
+                handler.sendEmptyMessage(CHANGE_CITY);
             }
         }
 
