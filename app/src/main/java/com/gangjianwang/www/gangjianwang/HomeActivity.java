@@ -1,14 +1,16 @@
 package com.gangjianwang.www.gangjianwang;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
 import android.widget.RadioButton;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import bean.UserInfo;
 import config.PersonConfig;
 import fragment.CalculateFragment;
 import fragment.HomeFragment;
@@ -69,17 +72,32 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        int a = intent.getIntExtra("what", 0);
-        switch (a) {
-            case 0:
-                tarIndex = 0;
-                break;
-            case 3:
-                tarIndex = 3;
-                break;
+        if (intent != null) {
+            UserInfo userInfo = (UserInfo) intent.getSerializableExtra("userInfo");
+            if (userInfo != null) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("userInfo", userInfo);
+                mMineFragment.setArguments(bundle);
+                tarIndex = 4;
+                ((RadioButton) homeRg.getChildAt(tarIndex)).setChecked(true);
+                changeFragment();
+                return;
+            }
+            int a = intent.getIntExtra("what", 0);
+            switch (a) {
+                case 0:
+                    tarIndex = 0;
+                    ((RadioButton) homeRg.getChildAt(tarIndex)).setChecked(true);
+                    changeFragment();
+                    break;
+                case 3:
+                    tarIndex = 3;
+                    ((RadioButton) homeRg.getChildAt(tarIndex)).setChecked(true);
+                    changeFragment();
+                    break;
+            }
         }
-        ((RadioButton) homeRg.getChildAt(tarIndex)).setChecked(true);
-        changeFragment();
+
     }
 
     @Override
@@ -176,7 +194,15 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
                         tarIndex = 2;
                         break;
                     case R.id.rb_home_shopcar:
-                        tarIndex = 3;
+                        SharedPreferences sp = getSharedPreferences("data", MODE_PRIVATE);
+                        if (sp != null) {
+                            boolean login = sp.getBoolean("login", false);
+                            if (login) {
+                                tarIndex = 3;
+                            } else {
+                                startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+                            }
+                        }
                         break;
                     case R.id.rb_home_me:
                         tarIndex = 4;
@@ -205,5 +231,15 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
             transaction.commit();
             curIndex = tarIndex;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.e("HomeActivity", "onDestory");
+        SharedPreferences sp = getSharedPreferences("data", MODE_PRIVATE);
+        SharedPreferences.Editor et = sp.edit();
+        et.remove("login");
+        et.commit();
     }
 }

@@ -6,9 +6,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,20 @@ import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.LoginActivity;
 import com.gangjianwang.www.gangjianwang.R;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import bean.UserInfo;
+import config.NetConfig;
 import config.PersonConfig;
 import utils.ToastUtils;
 
@@ -33,25 +45,34 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private View rootView;
     private TextView mForgetpwdTv;
     private EditText mUsernameEt, mPasswordEt;
-    private int userNameLength, passwordLength;
     private CheckBox mAutoLoginCb;
     private Button mLoginBtn;
     private GradientDrawable mLoginBtnGd;
     private Handler mForgetpwdHandler;
+    private Handler userDataHandler;
+    private String username;
+    private String password;
+    private String client;
+    private String key;
+    private UserInfo userInfo;
 
-    Handler canButtonHandler = new Handler() {
+    private OkHttpClient okHttpClient = new OkHttpClient();
+
+    Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg != null) {
                 switch (msg.what) {
                     case 0:
-                        mLoginBtn.setEnabled(false);
-                        mLoginBtnGd.setColor(PersonConfig.loginBtnDefaultColor);
+                        ToastUtils.toast(getActivity(), "无网络");
                         break;
                     case 1:
-                        mLoginBtn.setEnabled(true);
-                        mLoginBtnGd.setColor(PersonConfig.loginBtnChooseColor);
+                        getUserData();
+                        break;
+                    case 2:
+                        Log.e("TAG", userInfo.toString());
+                        tranUserData();
                         break;
                     default:
                         break;
@@ -65,6 +86,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         LoginActivity loginActivity = (LoginActivity) getActivity();
         mForgetpwdHandler = loginActivity.forgetpwdHandler;
+        userDataHandler = loginActivity.userDataHandler;
     }
 
     @Nullable
@@ -83,14 +105,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         mPasswordEt = (EditText) rootView.findViewById(R.id.et_login_password);
         mAutoLoginCb = (CheckBox) rootView.findViewById(R.id.cb_sevenday_autologin);
         mLoginBtn = (Button) rootView.findViewById(R.id.btn_login_login);
-        mLoginBtn.setEnabled(false);
         mLoginBtnGd = (GradientDrawable) mLoginBtn.getBackground();
         mLoginBtnGd.setColor(PersonConfig.loginBtnDefaultColor);
     }
 
     private void setListener() {
-        mUsernameEt.addTextChangedListener(userNameWatcher);
-        mPasswordEt.addTextChangedListener(passWordWatcher);
         mForgetpwdTv.setOnClickListener(this);
         mLoginBtn.setOnClickListener(this);
     }
@@ -118,56 +137,101 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             return;
         } else {
             ToastUtils.toast(getActivity(), "用户名:" + mUsernameEt.getText().toString() + "\n" + "密码:" + mPasswordEt.getText().toString() + "\n" + "七天自动登陆:" + mAutoLoginCb.isChecked() + "\n" + "正在登陆...");
+            username = mUsernameEt.getText().toString();
+            password = mPasswordEt.getText().toString();
+            client = "wap";
+            toLogin();
         }
     }
 
-    TextWatcher userNameWatcher = new TextWatcher() {
+    private void toLogin() {
+        RequestBody body = new FormEncodingBuilder()
+                .add("username", username)
+                .add("password", password)
+                .add("client", client)
+                .build();
+        Request request = new Request.Builder()
+                .url(NetConfig.loginUrl)
+                .post(body)
+                .build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
 
-        private CharSequence temp;
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String result = response.body().string();
+                    if (parseJson(result))
+                        handler.sendEmptyMessage(1);
+                }
+            }
+        });
+    }
 
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+    private boolean parseJson(String json) {
+        try {
+            JSONObject objBean = new JSONObject(json);
+            JSONObject objDatas = objBean.optJSONObject("datas");
+            key = objDatas.optString("key");
+            return true;
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        return false;
+    }
 
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            temp = s;
+    private void getUserData() {
+        RequestBody body = new FormEncodingBuilder()
+                .add("key", key)
+                .build();
+        Request request = new Request.Builder()
+                .url(NetConfig.loginAfterUrl)
+                .post(body)
+                .build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String result = response.body().string();
+                    Log.e("TAG", result);
+                    if (parseUserData(result))
+                        handler.sendEmptyMessage(2);
+                }
+            }
+        });
+    }
+
+    private boolean parseUserData(String json) {
+        try {
+            JSONObject objBean = new JSONObject(json);
+            JSONObject objDatas = objBean.optJSONObject("datas");
+            JSONObject objInfo = objDatas.optJSONObject("member_info");
+            userInfo = new UserInfo();
+            userInfo.setUserName(objInfo.optString("user_name"));
+            userInfo.setAvatar(objInfo.optString("avatar"));
+            userInfo.setLevelName(objInfo.optString("level_name"));
+            userInfo.setFavoritesStore(objInfo.optString("favorites_store"));
+            userInfo.setFavoritersGoods(objInfo.optString("favorites_goods"));
+            return true;
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        return false;
+    }
 
-        @Override
-        public void afterTextChanged(Editable s) {
-            userNameLength = temp.length();
-            sendHandler();
-        }
-    };
-
-    TextWatcher passWordWatcher = new TextWatcher() {
-
-        private CharSequence temp;
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            temp = s;
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            passwordLength = temp.length();
-            sendHandler();
-        }
-    };
-
-    private void sendHandler() {
-        if (userNameLength != 0 && passwordLength != 0) {
-            canButtonHandler.sendEmptyMessage(1);
-        } else {
-            canButtonHandler.sendEmptyMessage(0);
-        }
+    private void tranUserData() {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("userInfo", userInfo);
+        Message message = new Message();
+        message.setData(bundle);
+        userDataHandler.sendMessage(message);
     }
 }

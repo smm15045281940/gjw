@@ -4,13 +4,13 @@ import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,24 +21,25 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gangjianwang.www.gangjianwang.AddressManagerActivity;
+import com.gangjianwang.www.gangjianwang.FootActivity;
 import com.gangjianwang.www.gangjianwang.GoodsStoreCollectActivity;
 import com.gangjianwang.www.gangjianwang.HomeActivity;
 import com.gangjianwang.www.gangjianwang.IntegrateActivity;
 import com.gangjianwang.www.gangjianwang.LoginActivity;
-import com.gangjianwang.www.gangjianwang.FootActivity;
 import com.gangjianwang.www.gangjianwang.MessageActivity;
 import com.gangjianwang.www.gangjianwang.OrderActivity;
 import com.gangjianwang.www.gangjianwang.PropertyActivity;
 import com.gangjianwang.www.gangjianwang.R;
 import com.gangjianwang.www.gangjianwang.RefundActivity;
 import com.gangjianwang.www.gangjianwang.SettingActivity;
+import com.squareup.picasso.Picasso;
 
-import customview.ElasticScrollView;
+import bean.UserInfo;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by Administrator on 2017/4/10 0010.
@@ -57,7 +58,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     private RelativeLayout mIntegrateRl;
     private RelativeLayout mLoginRl;
     private RelativeLayout mMyorderRl;
-    private TextView mLoginTv;
+    private TextView mLoginTv, mGoodsCollectCountTv, mStoreCollectCountTv;
 
     private boolean isHidden = true;
     private AnimatorSet animSet;
@@ -84,6 +85,19 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         initAnim();
         setListener();
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            UserInfo userInfo = (UserInfo) bundle.getSerializable("userInfo");
+            if (userInfo != null) {
+                loadData(userInfo);
+            }
+
+        }
     }
 
     @Override
@@ -122,6 +136,8 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         mRefundRl = (RelativeLayout) rootView.findViewById(R.id.rl_mine_refundreturn);
         mIntegrateRl = (RelativeLayout) rootView.findViewById(R.id.rl_mine_integrate);
         mLoginTv = (TextView) rootView.findViewById(R.id.tv_mine_face);
+        mGoodsCollectCountTv = (TextView) rootView.findViewById(R.id.tv_mine_goodscollect_count);
+        mStoreCollectCountTv = (TextView) rootView.findViewById(R.id.tv_mine_storecollect_count);
     }
 
     private void initPopView() {
@@ -191,6 +207,22 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         oa.start();
     }
 
+    private void loadData(UserInfo userInfo) {
+        mLoginTv.setText(userInfo.getUserName());
+        Picasso.with(getActivity()).load(userInfo.getAvatar()).placeholder(mMineCircleFaceIv.getDrawable()).into(mMineCircleFaceIv);
+        mGoodsCollectCountTv.setText(userInfo.getFavoritersGoods());
+        mStoreCollectCountTv.setText(userInfo.getFavoritesStore());
+        mLoginTv.setEnabled(false);
+        saveLogin();
+    }
+
+    private void saveLogin() {
+        SharedPreferences sp = getActivity().getSharedPreferences("data", MODE_PRIVATE);
+        SharedPreferences.Editor et = sp.edit();
+        et.putBoolean("login", true);
+        et.commit();
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -210,6 +242,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 10;
             options.inTempStorage = new byte[1024];
+            mMineCircleFaceIv.setImageResource(R.mipmap.img_default);
             mMineCircleFaceIv.setImageBitmap(BitmapFactory.decodeFile(picturePath, options));
         }
     }

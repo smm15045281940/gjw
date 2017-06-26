@@ -1,21 +1,22 @@
 package com.gangjianwang.www.gangjianwang;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import bean.UserInfo;
 import fragment.ForgetpasswordFragment;
 import fragment.LoginFragment;
 import fragment.RegisterFragment;
@@ -43,6 +44,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     TODOSTATE = FORGETPWD;
                     changeFragment();
                 }
+            }
+        }
+    };
+
+    public Handler userDataHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg != null) {
+                Bundle bundle = msg.getData();
+                UserInfo userInfo = (UserInfo) bundle.getSerializable("userInfo");
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                intent.putExtra("userInfo", userInfo);
+                startActivity(intent);
             }
         }
     };

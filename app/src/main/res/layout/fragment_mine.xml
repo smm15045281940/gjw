@@ -89,15 +89,30 @@
                     </RelativeLayout>
 
                     <TextView
+                        android:background="@android:color/holo_red_light"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rl_mine_face"
+                        android:layout_toLeftOf="@+id/tv_mine_face"
+                        android:text="V100"/>
+
+                    <TextView
                         android:id="@+id/tv_mine_face"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/rl_mine_face"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="@dimen/x5"
                         android:text="点击登录"
+                        android:layout_centerHorizontal="true"
                         android:textColor="@android:color/white"
                         android:textSize="@dimen/x15" />
+
+                    <TextView
+                        android:background="@android:color/holo_red_light"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rl_mine_face"
+                        android:layout_toRightOf="@+id/tv_mine_face"
+                        android:text="V100"/>
 
                 </RelativeLayout>
 
@@ -116,10 +131,14 @@
 
                         <LinearLayout style="@style/ll_mine_midgray">
 
-                            <ImageView
-                                android:id="@+id/iv_mine_goodscollect"
-                                style="@style/iv_mine_midgray"
-                                android:src="@mipmap/goodscollect_white" />
+                            <TextView
+                                android:id="@+id/tv_mine_goodscollect_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:text="0"
+                                android:textColor="@android:color/white"
+                                android:textSize="@dimen/x15" />
 
                             <TextView
                                 android:id="@+id/tv_mine_goodscollect"
@@ -136,10 +155,14 @@
 
                         <LinearLayout style="@style/ll_mine_midgray">
 
-                            <ImageView
-                                android:id="@+id/iv_mine_shopcollect"
-                                style="@style/iv_mine_midgray"
-                                android:src="@mipmap/shopcollect_white" />
+                            <TextView
+                                android:id="@+id/tv_mine_storecollect_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:text="0"
+                                android:textColor="@android:color/white"
+                                android:textSize="@dimen/x15" />
 
                             <TextView
                                 android:id="@+id/tv_mine_shopcollect"

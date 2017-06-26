@@ -1,18 +1,20 @@
 package com.gangjianwang.www.gangjianwang;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import utils.ToastUtils;
 
 public class SettingActivity extends AppCompatActivity implements View.OnClickListener {
 
     private View rootView;
     private RelativeLayout mBackRl;
-    private RelativeLayout mLoginpasswordRl, mPhoneproveRl, mPaypwdRl, mUserfeedback;
+    private RelativeLayout mLoginpasswordRl, mPhoneproveRl, mPaypwdRl, mUserfeedback, mQuitRl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         mPhoneproveRl = (RelativeLayout) rootView.findViewById(R.id.rl_setting_phoneprove);
         mPaypwdRl = (RelativeLayout) rootView.findViewById(R.id.rl_setting_paypassword);
         mUserfeedback = (RelativeLayout) rootView.findViewById(R.id.rl_setting_userfeedback);
+        mQuitRl = (RelativeLayout) rootView.findViewById(R.id.rl_setting_safequit);
     }
 
     private void setListener() {
@@ -38,6 +41,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         mPhoneproveRl.setOnClickListener(this);
         mPaypwdRl.setOnClickListener(this);
         mUserfeedback.setOnClickListener(this);
+        mQuitRl.setOnClickListener(this);
     }
 
     @Override
@@ -57,6 +61,13 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.rl_setting_userfeedback:
                 startActivity(new Intent(SettingActivity.this, FeedbackActivity.class));
+                break;
+            case R.id.rl_setting_safequit:
+                SharedPreferences sp = getSharedPreferences("data", MODE_PRIVATE);
+                SharedPreferences.Editor et = sp.edit();
+                et.remove("login");
+                et.commit();
+                ToastUtils.toast(SettingActivity.this,"退出成功");
                 break;
             default:
                 break;
