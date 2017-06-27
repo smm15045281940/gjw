@@ -21,4 +21,7 @@ public interface PersonConfig {
     public static final int loginBtnDefaultColor = Color.parseColor("#EEEEEE");
     //登录按钮选中颜色
     public static final int loginBtnChooseColor = Color.parseColor("#ED5564");
+    //首页TextView默认/选中颜色
+    public static int TV_HOME_DEFAULT = Color.parseColor("#909090");
+    public static int TV_HOME_CHOOSE = Color.parseColor("#FF6207");
 }

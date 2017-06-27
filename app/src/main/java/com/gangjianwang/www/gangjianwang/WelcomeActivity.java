@@ -22,8 +22,8 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
 
     private ImageView mWelcomeIv, mAdvertisementIv;
     private Button mJumpBtn;
-    private int mWelcomeTime;
-    private int mCountTime;
+    private int mWelcomeTime = PersonConfig.welcome_time * 1000;
+    private int mCountTime = PersonConfig.poster_time;
     private int WELCOME_STATE = 0;
     private final int FIRST_IN = 1;
     private final int NONET = 2;
@@ -67,7 +67,6 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_welcome);
         initView();
-        initData();
         jumpByWelcomeState();
         setListener();
     }
@@ -77,11 +76,6 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         mAdvertisementIv = (ImageView) findViewById(R.id.iv_advertisement);
         mJumpBtn = (Button) findViewById(R.id.btn_jump);
         mJumpBtn.setText(mCountTime + "秒跳转");
-    }
-
-    private void initData() {
-        mWelcomeTime = PersonConfig.welcome_time * 1000;
-        mCountTime = PersonConfig.poster_time;
     }
 
     private void jumpByWelcomeState() {
@@ -173,7 +167,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private boolean haveAdvertisement() {
-        return true;
+        return false;
     }
 
     private boolean advertisementLoaded() {

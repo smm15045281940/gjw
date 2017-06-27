@@ -100,19 +100,6 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if (isHidden) {
-            animSet.cancel();
-            oa.cancel();
-        } else {
-            animSet.start();
-            oa.start();
-        }
-        isHidden = !isHidden;
-    }
-
     private void initView() {
         mSettingRl = (RelativeLayout) rootView.findViewById(R.id.rl_mine_setting);
         mOptionRl = (RelativeLayout) rootView.findViewById(R.id.rl_mine_option);

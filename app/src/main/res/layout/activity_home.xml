@@ -15,49 +15,116 @@
         android:layout_weight="1"
         android:orientation="vertical" />
 
-    <RadioGroup
-        android:id="@+id/rg_home"
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x1"
+        android:background="#BCBCBC" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/rg_home_shape"
         android:orientation="horizontal">
 
-        <RadioButton
-            android:id="@+id/rb_home_firstpage"
-            style="@style/rb_home"
-            android:drawableTop="@drawable/rb_first_selector"
-            android:text="首页"
-            android:textColor="@color/home_radiobutton_textcolor_selector" />
+        <RelativeLayout
+            android:id="@+id/rl_home_firstpage"
+            style="@style/style_rl_home">
 
-        <RadioButton
-            android:id="@+id/rb_home_purchase"
-            style="@style/rb_home"
-            android:drawableTop="@drawable/rb_purchase_selector"
-            android:text="采购单"
-            android:textColor="@color/home_radiobutton_textcolor_selector" />
+            <LinearLayout style="@style/style_ll_home">
 
-        <RadioButton
-            android:id="@+id/rb_home_calculate"
-            style="@style/rb_home"
-            android:background="#FF6207"
-            android:drawableTop="@drawable/rb_calculate_selector"
-            android:text="用量计算"
-            android:textColor="@android:color/white" />
+                <ImageView
+                    android:id="@+id/iv_home_firstpage"
+                    style="@style/style_iv_home"
+                    android:src="@mipmap/firstpage_default" />
 
-        <RadioButton
-            android:id="@+id/rb_home_shopcar"
-            style="@style/rb_home"
-            android:drawableTop="@drawable/rb_shopcar_selector"
-            android:text="购物车"
-            android:textColor="@color/home_radiobutton_textcolor_selector" />
+                <TextView
+                    android:id="@+id/tv_home_firstpage"
+                    style="@style/style_tv_home"
+                    android:text="首页" />
 
-        <RadioButton
-            android:id="@+id/rb_home_me"
-            style="@style/rb_home"
-            android:drawableTop="@drawable/rb_me_selector"
-            android:text="我的"
-            android:textColor="@color/home_radiobutton_textcolor_selector" />
+            </LinearLayout>
 
-    </RadioGroup>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_home_purchase"
+            style="@style/style_rl_home">
+
+            <LinearLayout style="@style/style_ll_home">
+
+                <ImageView
+                    android:id="@+id/iv_home_purchase"
+                    style="@style/style_iv_home"
+                    android:src="@mipmap/purchase_default" />
+
+                <TextView
+                    android:id="@+id/tv_home_purchase"
+                    style="@style/style_tv_home"
+                    android:text="采购单" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_home_calculate"
+            style="@style/style_rl_home"
+            android:background="#FF6207">
+
+            <LinearLayout style="@style/style_ll_home">
+
+                <ImageView
+                    style="@style/style_iv_home"
+                    android:src="@mipmap/calculate_bottom" />
+
+                <TextView
+                    style="@style/style_tv_home"
+                    android:text="用量计算"
+                    android:textColor="@android:color/white" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_home_shopcar"
+            style="@style/style_rl_home">
+
+            <LinearLayout style="@style/style_ll_home">
+
+                <ImageView
+                    android:id="@+id/iv_home_shopcar"
+                    style="@style/style_iv_home"
+                    android:src="@mipmap/shopcar_default" />
+
+                <TextView
+                    android:id="@+id/tv_home_shopcar"
+                    style="@style/style_tv_home"
+                    android:text="购物车" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_home_me"
+            style="@style/style_rl_home">
+
+            <LinearLayout style="@style/style_ll_home">
+
+                <ImageView
+                    android:id="@+id/iv_home_me"
+                    style="@style/style_iv_home"
+                    android:src="@mipmap/mine_default" />
+
+                <TextView
+                    android:id="@+id/tv_home_me"
+                    style="@style/style_tv_home"
+                    android:text="我的" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -7,6 +7,42 @@
         <item name="colorPrimaryDark">#FF6207</item>
         <item name="colorAccent">#FF6207</item>
     </style>
+
+    <!--首页RelativeLayout样式-->
+    <style name="style_rl_home">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <!--首页LinearLayout样式-->
+    <style name="style_ll_home">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <!--首页ImageView样式-->
+    <style name="style_iv_home">
+        <item name="android:layout_width">@dimen/x25</item>
+        <item name="android:layout_height">@dimen/x25</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:layout_marginTop">@dimen/x5</item>
+    </style>
+    <!--首页TextView样式-->
+    <style name="style_tv_home">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:textSize">@dimen/x10</item>
+        <item name="android:layout_marginTop">@dimen/x2</item>
+        <item name="android:layout_marginBottom">@dimen/x5</item>
+        <item name="android:textColor">@color/tv_home_default</item>
+    </style>
+
     <!--首页RadioButton样式-->
     <style name="rb_home">
         <item name="android:layout_width">0dp</item>
