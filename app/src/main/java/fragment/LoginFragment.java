@@ -35,6 +35,7 @@ import bean.UserInfo;
 import config.NetConfig;
 import config.PersonConfig;
 import utils.ToastUtils;
+import utils.UserUtils;
 
 /**
  * Created by Administrator on 2017/4/10 0010.
@@ -49,7 +50,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private Button mLoginBtn;
     private GradientDrawable mLoginBtnGd;
     private Handler mForgetpwdHandler;
-    private Handler userDataHandler;
+    private Handler mLoginHandler;
     private String username;
     private String password;
     private String client;
@@ -71,8 +72,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                         getUserData();
                         break;
                     case 2:
-                        Log.e("TAG", userInfo.toString());
-                        tranUserData();
+                        UserUtils.writeLogin(getActivity(), userInfo);
+                        mLoginHandler.sendEmptyMessage(1);
                         break;
                     default:
                         break;
@@ -86,7 +87,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         LoginActivity loginActivity = (LoginActivity) getActivity();
         mForgetpwdHandler = loginActivity.forgetpwdHandler;
-        userDataHandler = loginActivity.userDataHandler;
+        mLoginHandler = loginActivity.loginHandler;
     }
 
     @Nullable
@@ -225,13 +226,5 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             e.printStackTrace();
         }
         return false;
-    }
-
-    private void tranUserData() {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("userInfo", userInfo);
-        Message message = new Message();
-        message.setData(bundle);
-        userDataHandler.sendMessage(message);
     }
 }

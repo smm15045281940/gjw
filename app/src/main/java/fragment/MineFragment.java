@@ -4,7 +4,6 @@ import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -18,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -37,9 +35,9 @@ import com.gangjianwang.www.gangjianwang.SettingActivity;
 import com.squareup.picasso.Picasso;
 
 import bean.UserInfo;
+import utils.UserUtils;
 
 import static android.app.Activity.RESULT_OK;
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by Administrator on 2017/4/10 0010.
@@ -48,8 +46,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class MineFragment extends Fragment implements View.OnClickListener {
 
     private View rootView;
-    private RelativeLayout mSettingRl, mOptionRl;
-    private PopupWindow mPopWindow;
+    private RelativeLayout mSettingRl;
     private ImageView mMineFaceIv, mMineCircleFaceIv;
     private RelativeLayout mBackcoloranimRl;
     private RelativeLayout mGoodscollectRl, mShopcollectRl, mMyfootRl;
@@ -58,16 +55,11 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     private RelativeLayout mIntegrateRl;
     private RelativeLayout mLoginRl;
     private RelativeLayout mMyorderRl;
-    private TextView mLoginTv, mGoodsCollectCountTv, mStoreCollectCountTv;
-
-    private boolean isHidden = true;
+    private TextView mLoginTv, mLevelTv, mGoodsCollectCountTv, mStoreCollectCountTv;
     private AnimatorSet animSet;
     private ObjectAnimator oa;
-
     private static int RESULT_LOAD_IMAGE = 1;
-
     private Handler mChangeFragHandler;
-    private RelativeLayout mOptionFirstpageRl, mOptionShopcarRl;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,7 +73,6 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_mine, null);
         initView();
-        initPopView();
         initAnim();
         setListener();
         return rootView;
@@ -90,19 +81,26 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            UserInfo userInfo = (UserInfo) bundle.getSerializable("userInfo");
-            if (userInfo != null) {
-                loadData(userInfo);
-            }
-
+        boolean isLogined = UserUtils.isLogined(getActivity());
+        UserInfo userInfo = UserUtils.readLogin(getActivity(), isLogined);
+        mLoginTv.setText(userInfo.getUserName());
+        mLevelTv.setText(userInfo.getLevelName());
+        mGoodsCollectCountTv.setText(userInfo.getFavoritersGoods());
+        mStoreCollectCountTv.setText(userInfo.getFavoritesStore());
+        if (isLogined) {
+            mLoginTv.setEnabled(false);
+            mLevelTv.setVisibility(View.VISIBLE);
+            mMineCircleFaceIv.setVisibility(View.VISIBLE);
+            Picasso.with(getActivity()).load(userInfo.getAvatar()).placeholder(mMineCircleFaceIv.getDrawable()).into(mMineCircleFaceIv);
+        } else {
+            mLoginTv.setEnabled(true);
+            mLevelTv.setVisibility(View.INVISIBLE);
+            mMineCircleFaceIv.setVisibility(View.INVISIBLE);
         }
     }
 
     private void initView() {
         mSettingRl = (RelativeLayout) rootView.findViewById(R.id.rl_mine_setting);
-        mOptionRl = (RelativeLayout) rootView.findViewById(R.id.rl_mine_option);
         mMineFaceIv = (ImageView) rootView.findViewById(R.id.iv_mine_face);
         mMineCircleFaceIv = (ImageView) rootView.findViewById(R.id.iv_mine_circle_face);
         mLoginRl = (RelativeLayout) rootView.findViewById(R.id.rl_mine_login);
@@ -123,38 +121,13 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         mRefundRl = (RelativeLayout) rootView.findViewById(R.id.rl_mine_refundreturn);
         mIntegrateRl = (RelativeLayout) rootView.findViewById(R.id.rl_mine_integrate);
         mLoginTv = (TextView) rootView.findViewById(R.id.tv_mine_face);
+        mLevelTv = (TextView) rootView.findViewById(R.id.tv_mine_level);
         mGoodsCollectCountTv = (TextView) rootView.findViewById(R.id.tv_mine_goodscollect_count);
         mStoreCollectCountTv = (TextView) rootView.findViewById(R.id.tv_mine_storecollect_count);
     }
 
-    private void initPopView() {
-        mPopWindow = new PopupWindow(getActivity());
-        View popView = View.inflate(getActivity(), R.layout.popupwindow_setting_options, null);
-        mPopWindow.setContentView(popView);
-        mPopWindow.setFocusable(true);
-        mPopWindow.setTouchable(true);
-        mPopWindow.setOutsideTouchable(true);
-        mOptionFirstpageRl = (RelativeLayout) popView.findViewById(R.id.rl_mine_option_firstpage);
-        mOptionShopcarRl = (RelativeLayout) popView.findViewById(R.id.rl_mine_option_shopcar);
-        mOptionFirstpageRl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPopWindow.dismiss();
-                mChangeFragHandler.sendEmptyMessage(0);
-            }
-        });
-        mOptionShopcarRl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPopWindow.dismiss();
-                mChangeFragHandler.sendEmptyMessage(3);
-            }
-        });
-    }
-
     private void setListener() {
         mSettingRl.setOnClickListener(this);
-        mOptionRl.setOnClickListener(this);
         mMineFaceIv.setOnClickListener(this);
         mGoodscollectRl.setOnClickListener(this);
         mShopcollectRl.setOnClickListener(this);
@@ -194,28 +167,9 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         oa.start();
     }
 
-    private void loadData(UserInfo userInfo) {
-        mLoginTv.setText(userInfo.getUserName());
-        Picasso.with(getActivity()).load(userInfo.getAvatar()).placeholder(mMineCircleFaceIv.getDrawable()).into(mMineCircleFaceIv);
-        mGoodsCollectCountTv.setText(userInfo.getFavoritersGoods());
-        mStoreCollectCountTv.setText(userInfo.getFavoritesStore());
-        mLoginTv.setEnabled(false);
-        saveLogin();
-    }
-
-    private void saveLogin() {
-        SharedPreferences sp = getActivity().getSharedPreferences("data", MODE_PRIVATE);
-        SharedPreferences.Editor et = sp.edit();
-        et.putBoolean("login", true);
-        et.commit();
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && resultCode == 1) {
-            mLoginTv.setText(data.getStringExtra("userName"));
-        }
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -240,13 +194,6 @@ public class MineFragment extends Fragment implements View.OnClickListener {
             case R.id.rl_mine_setting:
                 startActivity(new Intent(getActivity(), SettingActivity.class));
                 break;
-            case R.id.rl_mine_option:
-                if (mPopWindow.isShowing()) {
-                    mPopWindow.dismiss();
-                } else {
-                    mPopWindow.showAsDropDown(mOptionRl, 0, 0);
-                }
-                break;
             case R.id.iv_mine_face:
                 Intent i = new Intent(
                         Intent.ACTION_PICK,
@@ -265,7 +212,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                 startActivity(new Intent(getActivity(), FootActivity.class));
                 break;
             case R.id.tv_mine_face:
-                startActivityForResult(new Intent(getActivity(), LoginActivity.class), 1);
+                startActivity(new Intent(getActivity(), LoginActivity.class));
                 break;
             case R.id.rl_mine_myorder:
                 startActivity(new Intent(getActivity(), OrderActivity.class));

@@ -16,7 +16,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import bean.UserInfo;
 import fragment.ForgetpasswordFragment;
 import fragment.LoginFragment;
 import fragment.RegisterFragment;
@@ -48,16 +47,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     };
 
-    public Handler userDataHandler = new Handler() {
+    public Handler loginHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg != null) {
-                Bundle bundle = msg.getData();
-                UserInfo userInfo = (UserInfo) bundle.getSerializable("userInfo");
-                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                intent.putExtra("userInfo", userInfo);
-                startActivity(intent);
+                if (msg.what == 1) {
+                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                    intent.putExtra("what", 4);
+                    startActivity(intent);
+                }
             }
         }
     };

@@ -14,45 +14,23 @@
             android:layout_height="wrap_content"
             android:background="@android:color/holo_blue_light">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:id="@+id/rl_mine_setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/default_gray_selector"
+                    android:padding="@dimen/x10">
 
-                    <RelativeLayout
-                        android:id="@+id/rl_mine_setting"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/default_gray_selector"
-                        android:padding="@dimen/x10">
-
-                        <ImageView
-                            android:layout_width="@dimen/x20"
-                            android:layout_height="@dimen/x20"
-                            android:scaleType="fitXY"
-                            android:src="@mipmap/setting_white" />
-
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:id="@+id/rl_mine_option"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:background="@drawable/default_gray_selector"
-                        android:padding="@dimen/x10">
-
-                        <ImageView
-                            android:layout_width="@dimen/x20"
-                            android:layout_height="@dimen/x20"
-                            android:scaleType="fitXY"
-                            android:src="@mipmap/option_white" />
-
-                    </RelativeLayout>
+                    <ImageView
+                        android:layout_width="@dimen/x20"
+                        android:layout_height="@dimen/x20"
+                        android:scaleType="fitXY"
+                        android:src="@mipmap/setting_white" />
 
                 </RelativeLayout>
 
@@ -60,8 +38,8 @@
                     android:id="@+id/rl_mine_login"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="@dimen/x5">
+                    android:layout_below="@+id/rl_mine_setting"
+                    android:layout_centerHorizontal="true">
 
                     <RelativeLayout
                         android:id="@+id/rl_mine_face"
@@ -88,38 +66,43 @@
 
                     </RelativeLayout>
 
-                    <TextView
-                        android:background="@android:color/holo_red_light"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/rl_mine_face"
-                        android:layout_toLeftOf="@+id/tv_mine_face"
-                        android:text="V100"/>
-
-                    <TextView
-                        android:id="@+id/tv_mine_face"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/rl_mine_face"
-                        android:text="点击登录"
                         android:layout_centerHorizontal="true"
-                        android:textColor="@android:color/white"
-                        android:textSize="@dimen/x15" />
+                        android:orientation="horizontal">
 
-                    <TextView
-                        android:background="@android:color/holo_red_light"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/rl_mine_face"
-                        android:layout_toRightOf="@+id/tv_mine_face"
-                        android:text="V100"/>
+                        <TextView
+                            android:id="@+id/tv_mine_face"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_gravity="center_vertical"
+                            android:text="点击登录"
+                            android:textColor="@android:color/white"
+                            android:textSize="@dimen/x15" />
+
+                        <TextView
+                            android:id="@+id/tv_mine_level"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:background="@android:color/holo_red_light"
+                            android:padding="@dimen/x1"
+                            android:textColor="@android:color/white"
+                            android:textSize="@dimen/x8" />
+
+                    </LinearLayout>
 
                 </RelativeLayout>
+
 
                 <LinearLayout
                     android:id="@+id/ll_mine_midgray"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/rl_mine_login"
                     android:layout_marginTop="@dimen/x20"
                     android:alpha="0.4"
                     android:background="@android:color/black"
@@ -195,7 +178,7 @@
 
                 </LinearLayout>
 
-            </LinearLayout>
+            </RelativeLayout>
 
         </RelativeLayout>
 

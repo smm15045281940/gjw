@@ -19,13 +19,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import bean.UserInfo;
 import config.PersonConfig;
 import fragment.CalculateFragment;
 import fragment.HomeFragment;
 import fragment.MineFragment;
 import fragment.PurchaseFragment;
 import fragment.ShopCarFragment;
+import utils.UserUtils;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -62,9 +62,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     case 4:
                         changeFrag(4);
                         break;
-                    default:
-
-                        break;
                 }
             }
         }
@@ -74,14 +71,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if (intent != null) {
-            UserInfo userInfo = (UserInfo) intent.getSerializableExtra("userInfo");
-            if (userInfo != null) {
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("userInfo", userInfo);
-                mMineFragment.setArguments(bundle);
-                changeFrag(4);
-                return;
-            }
             int a = intent.getIntExtra("what", 0);
             switch (a) {
                 case 0:
@@ -89,6 +78,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case 3:
                     changeFrag(3);
+                    break;
+                case 4:
+                    changeFrag(4);
                     break;
             }
         }
@@ -113,13 +105,25 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 changeFrag(0);
                 break;
             case R.id.rl_home_purchase:
-                changeFrag(1);
+                if (UserUtils.isLogined(this)) {
+                    changeFrag(1);
+                } else {
+                    startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+                }
                 break;
             case R.id.rl_home_calculate:
-                changeFrag(2);
+                if (UserUtils.isLogined(this)) {
+                    changeFrag(2);
+                } else {
+                    startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+                }
                 break;
             case R.id.rl_home_shopcar:
-                changeFrag(3);
+                if (UserUtils.isLogined(this)) {
+                    changeFrag(3);
+                } else {
+                    startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+                }
                 break;
             case R.id.rl_home_me:
                 changeFrag(4);
