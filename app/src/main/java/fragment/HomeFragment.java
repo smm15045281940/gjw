@@ -104,7 +104,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, OnRe
     public LocationClient mLocationClient;
     public BDLocationListener myListener = new MyLocationListener();
     private String cityName;
-    private boolean isHidden = true;
     private final int LOAD_FIRST = 0;
     private final int LOAD_REFRESH = 1;
     private OkHttpClient okHttpClient = new OkHttpClient();
@@ -185,12 +184,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener, OnRe
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (isHidden) {
-            mOnlineOa.cancel();
-        } else {
+        if (!hidden) {
             mOnlineOa.start();
+            isLoop = true;
+        } else {
+            mOnlineOa.cancel();
+            isLoop = false;
         }
-        isHidden = !isHidden;
     }
 
     @Override
@@ -374,21 +374,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener, OnRe
                 imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                 imageView.setImageResource(R.mipmap.img_default);
-                Picasso.with(getActivity()).load(imgurlList.get(imgurlList.size() - 1)).placeholder(imageView.getDrawable()).into(imageView);
                 mImageViewList.add(imageView);
             } else if (i == imgurlList.size() + 1) {
                 imageView = new ImageView(getActivity());
                 imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                 imageView.setImageResource(R.mipmap.img_default);
-                Picasso.with(getActivity()).load(imgurlList.get(0)).placeholder(imageView.getDrawable()).into(imageView);
                 mImageViewList.add(imageView);
             } else {
                 imageView = new ImageView(getActivity());
                 imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                 imageView.setImageResource(R.mipmap.img_default);
-                Picasso.with(getActivity()).load(imgurlList.get(i - 1)).placeholder(imageView.getDrawable()).into(imageView);
                 mImageViewList.add(imageView);
             }
         }
