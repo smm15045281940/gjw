@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -61,6 +62,20 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     private static int RESULT_LOAD_IMAGE = 1;
     private Handler mChangeFragHandler;
 
+    public Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg != null) {
+                switch (msg.what) {
+                    case 1:
+                        loadData();
+                        break;
+                }
+            }
+        }
+    };
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +90,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         initView();
         initAnim();
         setListener();
+        loadData();
         return rootView;
     }
 
@@ -87,27 +103,6 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         } else {
             animSet.cancel();
             oa.cancel();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        boolean isLogined = UserUtils.isLogined(getActivity());
-        UserInfo userInfo = UserUtils.readLogin(getActivity(), isLogined);
-        mLoginTv.setText(userInfo.getUserName());
-        mLevelTv.setText(userInfo.getLevelName());
-        mGoodsCollectCountTv.setText(userInfo.getFavoritersGoods());
-        mStoreCollectCountTv.setText(userInfo.getFavoritesStore());
-        if (isLogined) {
-            mLoginTv.setEnabled(false);
-            mLevelTv.setVisibility(View.VISIBLE);
-            mMineCircleFaceIv.setVisibility(View.VISIBLE);
-            Picasso.with(getActivity()).load(userInfo.getAvatar()).placeholder(mMineCircleFaceIv.getDrawable()).into(mMineCircleFaceIv);
-        } else {
-            mLoginTv.setEnabled(true);
-            mLevelTv.setVisibility(View.INVISIBLE);
-            mMineCircleFaceIv.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -185,7 +180,6 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
             Cursor cursor = getActivity().getContentResolver().query(selectedImage,
                     filePathColumn, null, null, null);
             cursor.moveToFirst();
@@ -195,7 +189,6 @@ public class MineFragment extends Fragment implements View.OnClickListener {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 10;
             options.inTempStorage = new byte[1024];
-            mMineCircleFaceIv.setImageResource(R.mipmap.img_default);
             mMineCircleFaceIv.setImageBitmap(BitmapFactory.decodeFile(picturePath, options));
         }
     }
@@ -204,13 +197,21 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.rl_mine_setting:
-                startActivity(new Intent(getActivity(), SettingActivity.class));
+                if (UserUtils.isLogined(getActivity())) {
+                    startActivity(new Intent(getActivity(), SettingActivity.class));
+                } else {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
                 break;
             case R.id.iv_mine_face:
-                Intent i = new Intent(
-                        Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(i, RESULT_LOAD_IMAGE);
+                if (UserUtils.isLogined(getActivity())) {
+                    Intent i = new Intent(
+                            Intent.ACTION_PICK,
+                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(i, RESULT_LOAD_IMAGE);
+                } else {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
                 break;
             case R.id.rl_mine_goodscollect:
                 startActivity(new Intent(getActivity(), GoodsStoreCollectActivity.class));
@@ -275,4 +276,22 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    private void loadData() {
+        boolean isLogined = UserUtils.isLogined(getActivity());
+        UserInfo userInfo = UserUtils.readLogin(getActivity(), isLogined);
+        mLoginTv.setText(userInfo.getUserName());
+        mLevelTv.setText(userInfo.getLevelName());
+        mGoodsCollectCountTv.setText(userInfo.getFavoritersGoods());
+        mStoreCollectCountTv.setText(userInfo.getFavoritesStore());
+        if (isLogined) {
+            mLoginTv.setEnabled(false);
+            mLevelTv.setVisibility(View.VISIBLE);
+            mMineCircleFaceIv.setVisibility(View.VISIBLE);
+            Picasso.with(getActivity()).load(userInfo.getAvatar()).placeholder(mMineCircleFaceIv.getDrawable()).into(mMineCircleFaceIv);
+        } else {
+            mLoginTv.setEnabled(true);
+            mLevelTv.setVisibility(View.INVISIBLE);
+            mMineCircleFaceIv.setVisibility(View.INVISIBLE);
+        }
+    }
 }

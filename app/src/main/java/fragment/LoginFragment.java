@@ -7,7 +7,6 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +42,8 @@ import utils.UserUtils;
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
 
+    private String TAG = LoginFragment.class.getSimpleName();
+
     private View rootView;
     private TextView mForgetpwdTv;
     private EditText mUsernameEt, mPasswordEt;
@@ -56,6 +57,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private String client;
     private String key;
     private UserInfo userInfo;
+    private String s;
 
     private OkHttpClient okHttpClient = new OkHttpClient();
 
@@ -141,6 +143,13 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             username = mUsernameEt.getText().toString();
             password = mPasswordEt.getText().toString();
             client = "wap";
+            if (mAutoLoginCb.isChecked()) {
+                s = "1";
+                ToastUtils.log(getActivity(), "七天自动登录");
+            } else {
+                s = "0";
+                ToastUtils.log(getActivity(), "七天不自动登录");
+            }
             toLogin();
         }
     }
@@ -202,7 +211,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             public void onResponse(Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String result = response.body().string();
-                    Log.e("TAG", result);
                     if (parseUserData(result))
                         handler.sendEmptyMessage(2);
                 }
@@ -221,6 +229,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             userInfo.setLevelName(objInfo.optString("level_name"));
             userInfo.setFavoritesStore(objInfo.optString("favorites_store"));
             userInfo.setFavoritersGoods(objInfo.optString("favorites_goods"));
+            userInfo.setAutoLogin(s);
             return true;
         } catch (JSONException e) {
             e.printStackTrace();

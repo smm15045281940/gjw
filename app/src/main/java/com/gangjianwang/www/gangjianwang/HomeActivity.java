@@ -39,6 +39,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private FragmentManager mFragmentManager;
     private int curPosition = 0;
     private long exitTime = 0;
+    private Handler mLoadUserHandler;
 
     public Handler mChangeFragHandler = new Handler() {
 
@@ -81,6 +82,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case 4:
                     changeFrag(4);
+                    mLoadUserHandler.sendEmptyMessage(1);
                     break;
             }
         }
@@ -169,6 +171,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mFragmentList.add(mCalculateFragment);
         mFragmentList.add(mShopcarFragment);
         mFragmentList.add(mMineFragment);
+        mLoadUserHandler = ((MineFragment) mMineFragment).handler;
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transaction.add(R.id.ll_home_sit, mFragmentList.get(0));
         transaction.commit();

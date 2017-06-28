@@ -6,13 +6,14 @@ import java.io.Serializable;
  * Created by Administrator on 2017/6/26.
  */
 
-public class UserInfo implements Serializable{
+public class UserInfo implements Serializable {
 
     private String userName;
     private String avatar;
     private String levelName;
     private String favoritesStore;
     private String favoritersGoods;
+    private String autoLogin;
 
     public UserInfo() {
     }
@@ -57,14 +58,12 @@ public class UserInfo implements Serializable{
         this.favoritersGoods = favoritersGoods;
     }
 
-    @Override
-    public String toString() {
-        return "UserInfo{" +
-                "userName='" + userName + '\'' +
-                ", avatar='" + avatar + '\'' +
-                ", levelName='" + levelName + '\'' +
-                ", favoritesStore='" + favoritesStore + '\'' +
-                ", favoritersGoods='" + favoritersGoods + '\'' +
-                '}';
+    public String getAutoLogin() {
+        return autoLogin;
     }
+
+    public void setAutoLogin(String autoLogin) {
+        this.autoLogin = autoLogin;
+    }
+
 }

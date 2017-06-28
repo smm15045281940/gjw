@@ -2,6 +2,7 @@ package com.gangjianwang.www.gangjianwang;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
@@ -11,9 +12,10 @@ import utils.UserUtils;
 
 public class SettingActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private View rootView;
-    private RelativeLayout mBackRl;
+    private View rootView, dialogView;
+    private RelativeLayout mBackRl, mYesRl, mNoRl;
     private RelativeLayout mLoginpasswordRl, mPhoneproveRl, mPaypwdRl, mUserfeedback, mQuitRl;
+    private AlertDialog quitAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +34,16 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         mPaypwdRl = (RelativeLayout) rootView.findViewById(R.id.rl_setting_paypassword);
         mUserfeedback = (RelativeLayout) rootView.findViewById(R.id.rl_setting_userfeedback);
         mQuitRl = (RelativeLayout) rootView.findViewById(R.id.rl_setting_safequit);
+        initDialog();
+    }
+
+    private void initDialog() {
+        dialogView = View.inflate(this, R.layout.dialog_quit, null);
+        mYesRl = (RelativeLayout) dialogView.findViewById(R.id.rl_dialog_quit_yes);
+        mNoRl = (RelativeLayout) dialogView.findViewById(R.id.rl_dialog_quit_no);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+        quitAd = builder.create();
     }
 
     private void setListener() {
@@ -41,6 +53,8 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         mPaypwdRl.setOnClickListener(this);
         mUserfeedback.setOnClickListener(this);
         mQuitRl.setOnClickListener(this);
+        mYesRl.setOnClickListener(this);
+        mNoRl.setOnClickListener(this);
     }
 
     @Override
@@ -62,8 +76,17 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(new Intent(SettingActivity.this, FeedbackActivity.class));
                 break;
             case R.id.rl_setting_safequit:
+                quitAd.show();
+                break;
+            case R.id.rl_dialog_quit_yes:
+                quitAd.dismiss();
                 UserUtils.clearLogin(this);
-                finish();
+                Intent intent = new Intent(SettingActivity.this, HomeActivity.class);
+                intent.putExtra("what", 4);
+                startActivity(intent);
+                break;
+            case R.id.rl_dialog_quit_no:
+                quitAd.dismiss();
                 break;
         }
     }
