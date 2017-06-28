@@ -149,7 +149,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, OnRe
                         break;
                     case CHANGE_CITY:
                         mCityNameTv.setText(cityName);
-                        ad.dismiss();
+                        ad.show();
                         break;
                     default:
                         break;
@@ -158,9 +158,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, OnRe
         }
     };
 
-    /**
-     * 钢建网上线动画开始or停止
-     */
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);

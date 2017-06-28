@@ -13,6 +13,27 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class UserUtils {
 
+    //判断首次打开
+    public static boolean isFirstIn(Context context) {
+        boolean b;
+        SharedPreferences sp = context.getSharedPreferences("data", MODE_PRIVATE);
+        String s = sp.getString("isFirstIn", "");
+        if (s.equals("no")) {
+            b = false;
+        } else {
+            b = true;
+        }
+        return b;
+    }
+
+    //写入首次状态
+    public static void writeFirstIn(Context context) {
+        SharedPreferences sp = context.getSharedPreferences("data", MODE_PRIVATE);
+        SharedPreferences.Editor et = sp.edit();
+        et.putString("isFirstIn", "no");
+        et.commit();
+    }
+
     //判断登录状态
     public static boolean isLogined(Context context) {
         boolean b = false;

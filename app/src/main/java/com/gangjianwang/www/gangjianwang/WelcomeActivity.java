@@ -2,7 +2,6 @@ package com.gangjianwang.www.gangjianwang;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -16,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import config.PersonConfig;
+import utils.UserUtils;
 
 
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
@@ -175,15 +175,13 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private boolean isFirstIn() {
-        SharedPreferences sp = getSharedPreferences("data", MODE_PRIVATE);
-        String s = sp.getString("isFirstIn", "default");
-        if (s.equals("no")) {
-            return false;
+        boolean b;
+        if (UserUtils.isFirstIn(this)) {
+            UserUtils.writeFirstIn(this);
+            b = true;
         } else {
-            SharedPreferences.Editor et = sp.edit();
-            et.putString("isFirstIn", "no");
-            et.commit();
-            return true;
+            b = false;
         }
+        return b;
     }
 }
