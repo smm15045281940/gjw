@@ -79,6 +79,18 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            animSet.start();
+            oa.start();
+        } else {
+            animSet.cancel();
+            oa.cancel();
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         boolean isLogined = UserUtils.isLogined(getActivity());

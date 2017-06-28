@@ -134,12 +134,36 @@ public class HomeFragment extends Fragment implements View.OnClickListener, OnRe
                     case FIRSTLOAD_DONE://首次加载完成
                         mPd.dismiss();
                         myhomeAdapter.notifyDataSetChanged();
-                        Picasso.with(getActivity()).load(logoUrl).placeholder(mHeadLogoIv.getDrawable()).into(mHeadLogoIv);
                         loadVp();
+                        int a;
+                        for (int i = 0; i < imgurlList.size() + 2; i++) {
+                            if (i == 0) {
+                                a = imgurlList.size() - 1;
+                            } else if (i == imgurlList.size() + 1) {
+                                a = 0;
+                            } else {
+                                a = i - 1;
+                            }
+                            Picasso.with(getActivity()).load(imgurlList.get(a)).placeholder(mImageViewList.get(i).getDrawable()).into(mImageViewList.get(i));
+                        }
+                        Picasso.with(getActivity()).load(logoUrl).placeholder(mHeadLogoIv.getDrawable()).into(mHeadLogoIv);
                         break;
                     case REFRESHLOAD_DONE://刷新加载完成
                         mLv.hideHeadView();
                         myhomeAdapter.notifyDataSetChanged();
+                        loadVp();
+                        int b;
+                        for (int i = 0; i < imgurlList.size() + 2; i++) {
+                            if (i == 0) {
+                                b = imgurlList.size() - 1;
+                            } else if (i == imgurlList.size() + 1) {
+                                b = 0;
+                            } else {
+                                b = i - 1;
+                            }
+                            Picasso.with(getActivity()).load(imgurlList.get(b)).placeholder(mImageViewList.get(i).getDrawable()).into(mImageViewList.get(i));
+                        }
+                        Picasso.with(getActivity()).load(logoUrl).placeholder(mHeadLogoIv.getDrawable()).into(mHeadLogoIv);
                         break;
                     case VIEWPAGER_SHOW://自动轮播
                         mVp.setCurrentItem(curPosition, true);
@@ -335,6 +359,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener, OnRe
     }
 
     private void loadVp() {
+        mImageViewList.clear();
+        mImageViewDotList.clear();
+        mVpLl.removeAllViews();
+        curPosition = 1;
+        dotPosition = 0;
+        prePosition = 0;
+        isLoop = true;
         ImageView imageView;
         ImageView imageViewDot;
         for (int i = 0; i < imgurlList.size() + 2; i++) {
