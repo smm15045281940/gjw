@@ -6,7 +6,13 @@ package bean;
 
 public class GoodsDetailGoods {
 
-    private String sendAddress;
+    private String goodsName;
+    private String goodsJingle;
+    private String goodsPrice;
+    private String goodsSalenum;
+    private String areaName;
+    private String ifStoreCn;
+    private String content;
     private String size;
     private String thick;
 
@@ -14,18 +20,60 @@ public class GoodsDetailGoods {
 
     }
 
-    public GoodsDetailGoods(String sendAddress, String size, String thick) {
-        this.sendAddress = sendAddress;
-        this.size = size;
-        this.thick = thick;
+    public String getGoodsName() {
+        return goodsName;
     }
 
-    public String getSendAddress() {
-        return sendAddress;
+    public void setGoodsName(String goodsName) {
+        this.goodsName = goodsName;
     }
 
-    public void setSendAddress(String sendAddress) {
-        this.sendAddress = sendAddress;
+    public String getGoodsJingle() {
+        return goodsJingle;
+    }
+
+    public void setGoodsJingle(String goodsJingle) {
+        this.goodsJingle = goodsJingle;
+    }
+
+    public String getGoodsPrice() {
+        return goodsPrice;
+    }
+
+    public void setGoodsPrice(String goodsPrice) {
+        this.goodsPrice = goodsPrice;
+    }
+
+    public String getGoodsSalenum() {
+        return goodsSalenum;
+    }
+
+    public void setGoodsSalenum(String goodsSalenum) {
+        this.goodsSalenum = goodsSalenum;
+    }
+
+    public String getAreaName() {
+        return areaName;
+    }
+
+    public void setAreaName(String areaName) {
+        this.areaName = areaName;
+    }
+
+    public String getIfStoreCn() {
+        return ifStoreCn;
+    }
+
+    public void setIfStoreCn(String ifStoreCn) {
+        this.ifStoreCn = ifStoreCn;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getSize() {
@@ -44,12 +92,4 @@ public class GoodsDetailGoods {
         this.thick = thick;
     }
 
-    @Override
-    public String toString() {
-        return "GoodsDetailGoods{" +
-                "sendAddress='" + sendAddress + '\'' +
-                ", size='" + size + '\'' +
-                ", thick='" + thick + '\'' +
-                '}';
-    }
 }

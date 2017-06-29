@@ -1,14 +1,14 @@
 package com.gangjianwang.www.gangjianwang;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
@@ -29,6 +29,7 @@ public class GoodsDetailActivity extends AppCompatActivity implements View.OnCli
     private List<Fragment> fragmentList;
     private Fragment goodsDetailGoodsFragment, goodsDetailDetailFragment, goodsDetailEvaluateFragment;
     private MyFragmentPagerAdapter myFragmentPagerAdapter;
+    private String goodsId = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +58,11 @@ public class GoodsDetailActivity extends AppCompatActivity implements View.OnCli
         fragmentList.add(goodsDetailGoodsFragment);
         fragmentList.add(goodsDetailDetailFragment);
         fragmentList.add(goodsDetailEvaluateFragment);
+        Intent intent = getIntent();
+        goodsId = intent.getStringExtra("goods_id");
+        Bundle bundle = new Bundle();
+        bundle.putString("goodsId", goodsId);
+        goodsDetailGoodsFragment.setArguments(bundle);
     }
 
     private void setData() {

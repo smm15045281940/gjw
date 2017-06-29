@@ -1,5 +1,6 @@
 package fragment;
 
+import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -9,14 +10,12 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.R;
 
 import customview.LazyFragment;
-import customview.MyRefreshListView;
 import utils.ToastUtils;
 
 /**
@@ -26,11 +25,10 @@ import utils.ToastUtils;
 public class GoodsDetailEvaluateFragment extends LazyFragment implements View.OnClickListener {
 
     private View rootView, emptyView;
-    private LinearLayout ll;
     private RelativeLayout allRl, goodRl, midRl, poorRl, orderphotoRl, addRl;
     private GradientDrawable allGd, goodGd, midGd, poorGd, orderphotoGd, addGd;
-    private MyRefreshListView mlv;
-    private TextView loadTv;
+    private ListView mlv;
+    private ProgressDialog mPd;
 
     Handler loadHandler = new Handler() {
         @Override
@@ -38,8 +36,7 @@ public class GoodsDetailEvaluateFragment extends LazyFragment implements View.On
             super.handleMessage(msg);
             if (msg != null) {
                 if (msg.what == 1) {
-                    loadTv.setVisibility(View.INVISIBLE);
-                    ll.setVisibility(View.VISIBLE);
+                    mPd.dismiss();
                 }
             }
         }
@@ -51,13 +48,13 @@ public class GoodsDetailEvaluateFragment extends LazyFragment implements View.On
         rootView = inflater.inflate(R.layout.fragment_goodsdetail_evaluate, null);
         emptyView = inflater.inflate(R.layout.empty_goodsdetailevaluate, null);
         emptyView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
-        initView(rootView);
+        initView();
         setListener();
         return rootView;
     }
 
-    private void initView(View rootView) {
-        ll = (LinearLayout) rootView.findViewById(R.id.ll_goodsdetailevaluate);
+    private void initView() {
+        initProgress();
         allRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsdetailevaluate_all);
         goodRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsdetailevaluate_good);
         midRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsdetailevaluate_mid);
@@ -76,11 +73,14 @@ public class GoodsDetailEvaluateFragment extends LazyFragment implements View.On
         poorGd.setColor(Color.parseColor("#AAAAAA"));
         orderphotoGd.setColor(Color.parseColor("#AAAAAA"));
         addGd.setColor(Color.parseColor("#AAAAAA"));
-        mlv = (MyRefreshListView) rootView.findViewById(R.id.mlv_goodsdetailevaluate);
-        loadTv = (TextView) rootView.findViewById(R.id.tv_goodsdetailevaluate_load);
+        mlv = (ListView) rootView.findViewById(R.id.lv_goodsdetailevaluate);
         ((ViewGroup) mlv.getParent()).addView(emptyView);
         emptyView.setVisibility(View.GONE);
         mlv.setEmptyView(emptyView);
+    }
+
+    private void initProgress() {
+        mPd = new ProgressDialog(getActivity());
     }
 
     private void setListener() {
@@ -94,8 +94,7 @@ public class GoodsDetailEvaluateFragment extends LazyFragment implements View.On
 
     @Override
     protected void onFragmentFirstVisible() {
-        ll.setVisibility(View.INVISIBLE);
-        loadTv.setVisibility(View.VISIBLE);
+        mPd.show();
         loadData();
         loadHandler.sendEmptyMessageDelayed(1, 1000);
     }
@@ -114,7 +113,7 @@ public class GoodsDetailEvaluateFragment extends LazyFragment implements View.On
                 poorGd.setColor(Color.parseColor("#AAAAAA"));
                 orderphotoGd.setColor(Color.parseColor("#AAAAAA"));
                 addGd.setColor(Color.parseColor("#AAAAAA"));
-                ToastUtils.toast(getActivity(),"全部评价");
+                ToastUtils.toast(getActivity(), "全部评价");
                 break;
             case R.id.rl_goodsdetailevaluate_good:
                 allGd.setColor(Color.parseColor("#AAAAAA"));
@@ -123,7 +122,7 @@ public class GoodsDetailEvaluateFragment extends LazyFragment implements View.On
                 poorGd.setColor(Color.parseColor("#AAAAAA"));
                 orderphotoGd.setColor(Color.parseColor("#AAAAAA"));
                 addGd.setColor(Color.parseColor("#AAAAAA"));
-                ToastUtils.toast(getActivity(),"好评");
+                ToastUtils.toast(getActivity(), "好评");
                 break;
             case R.id.rl_goodsdetailevaluate_mid:
                 allGd.setColor(Color.parseColor("#AAAAAA"));
@@ -132,7 +131,7 @@ public class GoodsDetailEvaluateFragment extends LazyFragment implements View.On
                 poorGd.setColor(Color.parseColor("#AAAAAA"));
                 orderphotoGd.setColor(Color.parseColor("#AAAAAA"));
                 addGd.setColor(Color.parseColor("#AAAAAA"));
-                ToastUtils.toast(getActivity(),"中评");
+                ToastUtils.toast(getActivity(), "中评");
                 break;
             case R.id.rl_goodsdetailevaluate_poor:
                 allGd.setColor(Color.parseColor("#AAAAAA"));
@@ -141,7 +140,7 @@ public class GoodsDetailEvaluateFragment extends LazyFragment implements View.On
                 poorGd.setColor(Color.RED);
                 orderphotoGd.setColor(Color.parseColor("#AAAAAA"));
                 addGd.setColor(Color.parseColor("#AAAAAA"));
-                ToastUtils.toast(getActivity(),"差评");
+                ToastUtils.toast(getActivity(), "差评");
                 break;
             case R.id.rl_goodsdetailevaluate_orderphoto:
                 allGd.setColor(Color.parseColor("#AAAAAA"));
@@ -150,7 +149,7 @@ public class GoodsDetailEvaluateFragment extends LazyFragment implements View.On
                 poorGd.setColor(Color.parseColor("#AAAAAA"));
                 orderphotoGd.setColor(Color.RED);
                 addGd.setColor(Color.parseColor("#AAAAAA"));
-                ToastUtils.toast(getActivity(),"订单晒图");
+                ToastUtils.toast(getActivity(), "订单晒图");
                 break;
             case R.id.rl_goodsdetailevaluate_add:
                 allGd.setColor(Color.parseColor("#AAAAAA"));
@@ -159,7 +158,7 @@ public class GoodsDetailEvaluateFragment extends LazyFragment implements View.On
                 poorGd.setColor(Color.parseColor("#AAAAAA"));
                 orderphotoGd.setColor(Color.parseColor("#AAAAAA"));
                 addGd.setColor(Color.RED);
-                ToastUtils.toast(getActivity(),"追加评价");
+                ToastUtils.toast(getActivity(), "追加评价");
                 break;
             default:
                 break;

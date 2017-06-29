@@ -11,6 +11,7 @@ public class ContractCompany {
     private String companyDuty;
     private String companyAddress1;
     private String companyAddress2;
+    private String goodsId;
 
     public ContractCompany() {
     }
@@ -53,5 +54,13 @@ public class ContractCompany {
 
     public void setCompanyAddress2(String companyAddress2) {
         this.companyAddress2 = companyAddress2;
+    }
+
+    public String getGoodsId() {
+        return goodsId;
+    }
+
+    public void setGoodsId(String goodsId) {
+        this.goodsId = goodsId;
     }
 }

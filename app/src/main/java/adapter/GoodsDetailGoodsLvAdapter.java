@@ -24,7 +24,7 @@ public class GoodsDetailGoodsLvAdapter extends BaseAdapter {
     private List<String> otherList;
     private ListItemClickHelp callback;
 
-    public GoodsDetailGoodsLvAdapter(Context context, List<GoodsDetailGoods> mainList, List<String> otherList,ListItemClickHelp callback) {
+    public GoodsDetailGoodsLvAdapter(Context context, List<GoodsDetailGoods> mainList, List<String> otherList, ListItemClickHelp callback) {
         this.context = context;
         this.mainList = mainList;
         this.otherList = otherList;
@@ -47,7 +47,11 @@ public class GoodsDetailGoodsLvAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return mainList.size() + otherList.size();
+        if (mainList.size() == 0 || otherList.size() == 0) {
+            return 0;
+        } else {
+            return mainList.size() + otherList.size();
+        }
     }
 
     @Override
@@ -77,16 +81,22 @@ public class GoodsDetailGoodsLvAdapter extends BaseAdapter {
                 holder1 = (ViewHolder1) convertView.getTag();
             }
             GoodsDetailGoods goodsDetailGoods = mainList.get(position);
-            holder1.tvAddress.setText(goodsDetailGoods.getSendAddress());
+            holder1.goodsNameTv.setText(goodsDetailGoods.getGoodsName());
+            holder1.goodsJingleTv.setText(goodsDetailGoods.getGoodsJingle());
+            holder1.goodsPriceTv.setText(goodsDetailGoods.getGoodsPrice());
+            holder1.goodsSalenumTv.setText(goodsDetailGoods.getGoodsSalenum());
+            holder1.areaNameTv.setText(goodsDetailGoods.getAreaName());
+            holder1.ifStoreCnTv.setText(goodsDetailGoods.getIfStoreCn());
+            holder1.contentTv.setText(goodsDetailGoods.getContent());
             holder1.tvSize.setText(goodsDetailGoods.getSize());
             holder1.tvThick.setText(goodsDetailGoods.getThick());
             final View view = convertView;
             final int p = position;
-            final int id = holder1.tvAddress.getId();
-            holder1.tvAddress.setOnClickListener(new View.OnClickListener() {
+            final int id = holder1.areaNameTv.getId();
+            holder1.areaNameTv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.onClick(view,parent,p,id,false);
+                    callback.onClick(view, parent, p, id, false);
                 }
             });
         } else if (getItemViewType(position) == 1) {
@@ -106,12 +116,17 @@ public class GoodsDetailGoodsLvAdapter extends BaseAdapter {
 
     class ViewHolder1 {
 
-        private TextView tvAddress;
-        private TextView tvSize;
-        private TextView tvThick;
+        private TextView goodsNameTv, goodsJingleTv, goodsPriceTv, goodsSalenumTv, areaNameTv, ifStoreCnTv;
+        private TextView contentTv, tvSize, tvThick;
 
         public ViewHolder1(View itemView) {
-            tvAddress = (TextView) itemView.findViewById(R.id.tv_item_goodsdetailgoods_address);
+            goodsNameTv = (TextView) itemView.findViewById(R.id.tv_item_goodsdetailgoods_goodsname);
+            goodsJingleTv = (TextView) itemView.findViewById(R.id.tv_item_goodsdetailgoods_goodsjingle);
+            goodsPriceTv = (TextView) itemView.findViewById(R.id.tv_item_goodsdetailgoods_goodsprice);
+            goodsSalenumTv = (TextView) itemView.findViewById(R.id.tv_item_goodsdetailgoods_goodssalenum);
+            areaNameTv = (TextView) itemView.findViewById(R.id.tv_item_goodsdetailgoods_areaname);
+            ifStoreCnTv = (TextView) itemView.findViewById(R.id.tv_item_goodsdetailgoods_ifstorecn);
+            contentTv = (TextView) itemView.findViewById(R.id.tv_item_goodsdetailgoods_content);
             tvSize = (TextView) itemView.findViewById(R.id.tv_item_goodsdetailgoods_size);
             tvThick = (TextView) itemView.findViewById(R.id.tv_item_goodsdetailgoods_thick);
         }

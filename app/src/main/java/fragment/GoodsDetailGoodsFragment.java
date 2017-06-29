@@ -3,6 +3,7 @@ package fragment;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -31,7 +32,16 @@ import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.MakeSureOrderActivity;
 import com.gangjianwang.www.gangjianwang.R;
 import com.gangjianwang.www.gangjianwang.ShopDetailActivity;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +49,7 @@ import adapter.GoodsDetailGoodsHeadGvAdapter;
 import adapter.GoodsDetailGoodsLvAdapter;
 import adapter.MyPagerAdapter;
 import bean.GoodsDetailGoods;
+import config.NetConfig;
 import customview.FlowLayout;
 import customview.LazyFragment;
 import customview.SizeThickTextView;
@@ -70,7 +81,6 @@ public class GoodsDetailGoodsFragment extends LazyFragment implements View.OnCli
     private GridView headGv;
     private ViewPager headVp;
     private LinearLayout pointsLl;
-    private TextView loadTv;
     private RelativeLayout customServiceRl, shopcarServiceRl, buyNowRl, addShopcarRl;
     private List<String> leftList = new ArrayList<>();
     private List<String> rightList = new ArrayList<>();
@@ -83,44 +93,121 @@ public class GoodsDetailGoodsFragment extends LazyFragment implements View.OnCli
     private List<GoodsDetailGoods> mMainList = new ArrayList<>();
     private List<String> mOtherList = new ArrayList<>();
     private GoodsDetailGoodsLvAdapter goodsDetailGoodsLvAdapter;
-    private GoodsDetailGoods goodsDetailGoods;
 
     private List<String> sizeList = new ArrayList<>();
     private List<String> thickList = new ArrayList<>();
 
-    Handler firstloadHandler = new Handler() {
+    private OkHttpClient okHttpClient = new OkHttpClient();
+    private ProgressDialog mPd;
+    private String goodsId;
+    private String result;
+
+    private ImageView storeAvatarIv;
+    private TextView desccreditTextTv, desccreditCreditTv;
+    private TextView servicecreditTextTv, servicecreditCreditTv;
+    private TextView deliverycreditTextTv, deliverycreditCreditTv;
+    private String storeAvatarUrl, desccreditText, desccreditCredit, servicecreditText, servicecreditCredit, deliverycreditText, deliverycreditCredit;
+
+    private GoodsDetailGoods goodsDetailGoods;
+    private List<String> goodsImageUrlList = new ArrayList<>();
+
+    public Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg != null) {
-                if (msg.what == 1) {
-                    leftAdapter.notifyDataSetChanged();
-                    gridAdapter.notifyDataSetChanged();
-                    goodsDetailGoodsLvAdapter.notifyDataSetChanged();
-                    loadTv.setVisibility(View.INVISIBLE);
-                    dataRl.setVisibility(View.VISIBLE);
+                switch (msg.what) {
+                    case 0:
+                        mPd.dismiss();
+                        ToastUtils.log(getActivity(), "无网络");
+                        break;
+                    case 1:
+                        mPd.dismiss();
+                        setView();
+                        break;
                 }
             }
         }
     };
 
+    public Handler firstloadHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg != null) {
+                if (msg.what == 1) {
+                    mPd.dismiss();
+                    leftAdapter.notifyDataSetChanged();
+                    gridAdapter.notifyDataSetChanged();
+                }
+            }
+        }
+    };
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle bundle = getArguments();
+        goodsId = bundle.getString("goodsId");
+        ToastUtils.log(getActivity(), goodsId);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_goodsdetail_goods, null);
-        headView = inflater.inflate(R.layout.head_goodsdetailgoods, null);
-        footView = inflater.inflate(R.layout.foot_goodsdetailgoods, null);
-        popView = inflater.inflate(R.layout.pop_goodsdetailgoods, null);
-        initView(rootView);
+        initView();
         initAnim();
         initData();
         setData();
-        createVp(5);
         setListener();
         return rootView;
     }
 
-    private void initView(View rootView) {
+    private void initView() {
+        initRoot();
+        initHead();
+        initFoot();
+        initPop();
+        initPro();
+    }
+
+    private void initRoot() {
+        leftTopLl = (LinearLayout) rootView.findViewById(R.id.ll_goodsdetailgoods_lefttop);
+        bottomLl = (LinearLayout) rootView.findViewById(R.id.ll_goodsdetailgoods_bottom);
+        dataRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsdetailgoods_data);
+        leftLv = (ListView) rootView.findViewById(R.id.lv_goodsdetailgoods_left);
+        rightLv = (ListView) rootView.findViewById(R.id.lv_goodsdetailgoods_right);
+        customServiceRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsdetailgoods_customservice);
+        shopcarServiceRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsdetailgoods_shopcar);
+        buyNowRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsdetailgoods_buynow);
+        addShopcarRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsdetailgoods_addshopcar);
+
+        storeAvatarIv = (ImageView) rootView.findViewById(R.id.iv_goodsdetailgoods_store_avatar);
+        desccreditTextTv = (TextView) rootView.findViewById(R.id.tv_goodsdetailgoods_store_desccredit_text);
+        desccreditCreditTv = (TextView) rootView.findViewById(R.id.tv_goodsdetailgoods_store_desccredit_credit);
+        servicecreditTextTv = (TextView) rootView.findViewById(R.id.tv_goodsdetailgoods_store_servicecredit_text);
+        servicecreditCreditTv = (TextView) rootView.findViewById(R.id.tv_goodsdetailgoods_store_servicecredit_credit);
+        deliverycreditTextTv = (TextView) rootView.findViewById(R.id.tv_goodsdetailgoods_store_deliverycredit_text);
+        deliverycreditCreditTv = (TextView) rootView.findViewById(R.id.tv_goodsdetailgoods_store_deliverycredit_credit);
+    }
+
+    private void initHead() {
+        headView = View.inflate(getActivity(), R.layout.head_goodsdetailgoods, null);
+        headGv = (GridView) headView.findViewById(R.id.gv_head_goodsdetailgoods);
+        headVp = (ViewPager) headView.findViewById(R.id.vp_head_goodsdetailgoods);
+        pointsLl = (LinearLayout) headView.findViewById(R.id.ll_head_goodsdetailgoods_points);
+        rightLv.addHeaderView(headView);
+    }
+
+    private void initFoot() {
+        footView = View.inflate(getActivity(), R.layout.foot_goodsdetailgoods, null);
+        loadMoreRl = (RelativeLayout) footView.findViewById(R.id.rl_foot_goodsdetailgoods_loadmore);
+        rightLv.addFooterView(footView);
+    }
+
+    private void initPop() {
+        popView = View.inflate(getActivity(), R.layout.pop_goodsdetailgoods, null);
         popWindow = new PopupWindow(popView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         popWindow.setFocusable(true);
         popWindow.setTouchable(true);
@@ -140,23 +227,10 @@ public class GoodsDetailGoodsFragment extends LazyFragment implements View.OnCli
         popSizeFl = (FlowLayout) popView.findViewById(R.id.fl_pop_goodsdetailgoods_size);
         popThickFl = (FlowLayout) popView.findViewById(R.id.fl_pop_goodsdetailgoods_thick);
         popAnimIv = (ImageView) popView.findViewById(R.id.iv_pop_goodsdetailgoods_icon_before);
+    }
 
-        leftTopLl = (LinearLayout) rootView.findViewById(R.id.ll_goodsdetailgoods_lefttop);
-        bottomLl = (LinearLayout) rootView.findViewById(R.id.ll_goodsdetailgoods_bottom);
-        dataRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsdetailgoods_data);
-        loadTv = (TextView) rootView.findViewById(R.id.tv_goodsdetailgoods_firstload);
-        leftLv = (ListView) rootView.findViewById(R.id.lv_goodsdetailgoods_left);
-        rightLv = (ListView) rootView.findViewById(R.id.lv_goodsdetailgoods_right);
-        customServiceRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsdetailgoods_customservice);
-        shopcarServiceRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsdetailgoods_shopcar);
-        buyNowRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsdetailgoods_buynow);
-        addShopcarRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsdetailgoods_addshopcar);
-        headGv = (GridView) headView.findViewById(R.id.gv_head_goodsdetailgoods);
-        headVp = (ViewPager) headView.findViewById(R.id.vp_head_goodsdetailgoods);
-        pointsLl = (LinearLayout) headView.findViewById(R.id.ll_head_goodsdetailgoods_points);
-        loadMoreRl = (RelativeLayout) footView.findViewById(R.id.rl_foot_goodsdetailgoods_loadmore);
-        rightLv.addHeaderView(headView);
-        rightLv.addFooterView(footView);
+    private void initPro() {
+        mPd = new ProgressDialog(getActivity());
     }
 
     private void initAnim() {
@@ -372,20 +446,77 @@ public class GoodsDetailGoodsFragment extends LazyFragment implements View.OnCli
             gridList.add("门系列");
         }
         HeightUtils.setGridViewHeight(headGv);
-        goodsDetailGoods = new GoodsDetailGoods();
-        goodsDetailGoods.setSendAddress("全国");
-        goodsDetailGoods.setSize("32");
-        goodsDetailGoods.setThick("0.55");
-        mMainList.add(goodsDetailGoods);
         for (int i = 0; i < 10; i++) {
             mOtherList.add("");
         }
+
+        mPd.show();
+        ToastUtils.log(getActivity(), NetConfig.contractprojectDetailHeadUrl + goodsId + NetConfig.contractprojectDetailFootUrl);
+        Request request = new Request.Builder().url(NetConfig.contractprojectDetailHeadUrl + goodsId + NetConfig.contractprojectDetailFootUrl).get().build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    result = response.body().string();
+                    if (parseJson(result))
+                        handler.sendEmptyMessage(1);
+                }
+            }
+        });
+    }
+
+    private boolean parseJson(String json) {
+        try {
+            JSONObject objBean = new JSONObject(json);
+            JSONObject objDatas = objBean.optJSONObject("datas");
+            JSONObject objGoodsInfo = objDatas.optJSONObject("goods_info");
+            GoodsDetailGoods goodsDetailGoods = new GoodsDetailGoods();
+            goodsDetailGoods.setGoodsName(objGoodsInfo.optString("goods_name"));
+            goodsDetailGoods.setGoodsJingle(objGoodsInfo.optString("goods_jingle"));
+            goodsDetailGoods.setGoodsPrice(objGoodsInfo.optString("goods_price"));
+            goodsDetailGoods.setGoodsSalenum(objGoodsInfo.optString("goods_salenum"));
+            JSONObject objgoodsHairInfo = objDatas.optJSONObject("goods_hair_info");
+            goodsDetailGoods.setAreaName(objgoodsHairInfo.optString("area_name"));
+            goodsDetailGoods.setIfStoreCn(objgoodsHairInfo.optString("if_store_cn"));
+            goodsDetailGoods.setContent(objgoodsHairInfo.optString("content"));
+            mMainList.add(goodsDetailGoods);
+
+            String imgStr = objDatas.optString("goods_image");
+            String[] imgArr = imgStr.split(",");
+            for (int i = 0; i < imgArr.length; i++) {
+                goodsImageUrlList.add(imgArr[i]);
+            }
+
+            JSONObject objStoreInfo = objDatas.optJSONObject("store_info");
+            storeAvatarUrl = objStoreInfo.optString("store_avatar");
+            JSONObject objStoreCredit = objStoreInfo.optJSONObject("store_credit");
+            JSONObject objStoreDesccredit = objStoreCredit.optJSONObject("store_desccredit");
+            desccreditText = objStoreDesccredit.optString("text");
+            desccreditCredit = objStoreDesccredit.optString("credit");
+            JSONObject objStoreServicecredit = objStoreCredit.optJSONObject("store_servicecredit");
+            servicecreditText = objStoreServicecredit.optString("text");
+            servicecreditCredit = objStoreServicecredit.optString("credit");
+            JSONObject objStoreDeliverycredit = objStoreCredit.optJSONObject("store_deliverycredit");
+            deliverycreditText = objStoreDeliverycredit.optString("text");
+            deliverycreditCredit = objStoreDeliverycredit.optString("credit");
+            return true;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private void createVp(int imgcount) {
         for (int i = 0; i < imgcount; i++) {
             ImageView iv = new ImageView(getActivity());
-            iv.setImageResource(R.mipmap.ic_launcher);
+            iv.setImageResource(R.mipmap.img_default);
+            iv.setScaleType(ImageView.ScaleType.FIT_XY);
+            Picasso.with(getActivity()).load(goodsImageUrlList.get(i)).placeholder(iv.getDrawable()).into(iv);
             imageList.add(iv);
             ImageView pi = new ImageView(getActivity());
             pi.setImageResource(R.drawable.points_off);
@@ -438,8 +569,7 @@ public class GoodsDetailGoodsFragment extends LazyFragment implements View.OnCli
 
     @Override
     protected void onFragmentFirstVisible() {
-        dataRl.setVisibility(View.INVISIBLE);
-        loadTv.setVisibility(View.VISIBLE);
+        mPd.show();
         loadData();
         firstloadHandler.sendEmptyMessageDelayed(1, 1000);
     }
@@ -524,7 +654,7 @@ public class GoodsDetailGoodsFragment extends LazyFragment implements View.OnCli
             case R.id.tv_item_gridview_head_goodsdetailgoods:
                 ToastUtils.toast(getActivity(), gridList.get(position) + ":" + position);
                 break;
-            case R.id.tv_item_goodsdetailgoods_address:
+            case R.id.tv_item_goodsdetailgoods_areaname:
                 startActivityForResult(new Intent(getActivity(), ReceiveAreaActivity.class), 1);
                 break;
             default:
@@ -538,10 +668,22 @@ public class GoodsDetailGoodsFragment extends LazyFragment implements View.OnCli
         if (requestCode == 1 && resultCode == 1) {
             if (data != null) {
                 String sendAddress = data.getStringExtra("sendAddress");
-                mMainList.get(0).setSendAddress(sendAddress);
+                mMainList.get(0).setAreaName(sendAddress);
                 goodsDetailGoodsLvAdapter.notifyDataSetChanged();
             }
         }
     }
 
+    private void setView() {
+        Picasso.with(getActivity()).load(storeAvatarUrl).placeholder(storeAvatarIv.getDrawable()).into(storeAvatarIv);
+        desccreditTextTv.setText(desccreditText);
+        desccreditCreditTv.setText(desccreditCredit);
+        servicecreditTextTv.setText(servicecreditText);
+        servicecreditCreditTv.setText(servicecreditCredit);
+        deliverycreditTextTv.setText(deliverycreditText);
+        deliverycreditCreditTv.setText(deliverycreditCredit);
+        goodsDetailGoodsLvAdapter.notifyDataSetChanged();
+        ToastUtils.log(getActivity(), goodsImageUrlList.toString());
+        createVp(goodsImageUrlList.size());
+    }
 }

@@ -1,11 +1,14 @@
 package adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.gangjianwang.www.gangjianwang.ContractProjectActivity;
 import com.gangjianwang.www.gangjianwang.R;
 
 import java.util.List;
@@ -51,16 +54,26 @@ public class ClassifyRightInnerGridAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        ClassifyRightInner classifyRightInner = list.get(position);
+        final ClassifyRightInner classifyRightInner = list.get(position);
         holder.nameTv.setText(classifyRightInner.getName());
+        holder.nameRl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ContractProjectActivity.class);
+                intent.putExtra("gc_id", classifyRightInner.getId());
+                context.startActivity(intent);
+            }
+        });
         return convertView;
     }
 
     class ViewHolder {
 
+        private RelativeLayout nameRl;
         private TextView nameTv;
 
         public ViewHolder(View itemView) {
+            nameRl = (RelativeLayout) itemView.findViewById(R.id.rl_item_classify_right_inner_name);
             nameTv = (TextView) itemView.findViewById(R.id.tv_item_classify_right_inner_name);
         }
     }

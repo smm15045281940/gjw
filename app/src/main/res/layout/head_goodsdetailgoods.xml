@@ -8,12 +8,13 @@
         android:id="@+id/gv_head_goodsdetailgoods"
         android:layout_width="match_parent"
         android:layout_height="@dimen/x160"
-        android:numColumns="3"
-        android:columnWidth="@dimen/x20"/>
+        android:columnWidth="@dimen/x20"
+        android:numColumns="3" />
+
     <android.support.v4.view.ViewPager
+        android:id="@+id/vp_head_goodsdetailgoods"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/x160"
-        android:id="@+id/vp_head_goodsdetailgoods"/>
+        android:layout_height="@dimen/x160" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -21,24 +22,22 @@
         android:layout_marginBottom="@dimen/x10">
 
         <LinearLayout
-            android:layout_centerInParent="true"
             android:id="@+id/ll_head_goodsdetailgoods_points"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:orientation="horizontal">
 
         </LinearLayout>
 
         <ImageView
+            android:layout_width="@dimen/x25"
+            android:layout_height="@dimen/x25"
             android:layout_alignParentRight="true"
             android:layout_marginRight="@dimen/x20"
             android:scaleType="fitXY"
-            android:layout_width="@dimen/x25"
-            android:layout_height="@dimen/x25"
-            android:src="@mipmap/ic_launcher"/>
+            android:src="@mipmap/img_default" />
 
     </RelativeLayout>
-
-
 
 </LinearLayout>

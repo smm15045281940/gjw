@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -41,7 +42,7 @@ import bean.ContractCompany;
 import config.NetConfig;
 import utils.ToastUtils;
 
-public class ContractProjectActivity extends AppCompatActivity implements View.OnClickListener {
+public class ContractProjectActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     private View rootView, mMultiRankPopView;
     private RelativeLayout mBackRl, mSearchRl, mChangeStyleRl, mSceenRl, mPriorityRl, mMutiRankRl;
@@ -64,6 +65,7 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
     private final int SHOP_LIST_STATE = 1;
     private final int CONTRACT_PROJECT_STATE = 2;
     private int STATE;
+    private String gcId = "";
 
 
     Handler handler = new Handler() {
@@ -98,7 +100,7 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
         initData();
         setData();
         setListener();
-        loadData(1, STATE);
+        loadData(1, gcId, STATE);
     }
 
     private void initView() {
@@ -132,11 +134,12 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
     private void initData() {
         Intent intent = getIntent();
         int stateId = intent.getIntExtra("stateId", 0);
+        gcId = intent.getStringExtra("gc_id");
         switch (stateId) {
-            case 1:
+            case 0:
                 STATE = SHOP_LIST_STATE;
                 break;
-            case 2:
+            case 1:
                 STATE = CONTRACT_PROJECT_STATE;
                 break;
             default:
@@ -166,13 +169,21 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
         mPopUptoDownRl.setOnClickListener(this);
         mPopDowntoUpRl.setOnClickListener(this);
         mPopPopularityRl.setOnClickListener(this);
+        mContractProjectLv.setOnItemClickListener(this);
+        mContractProjectGv.setOnItemClickListener(this);
     }
 
-    private void loadData(int pageIndex, int state) {
+    private void loadData(int pageIndex, String gcId, int state) {
         switch (state) {
             case SHOP_LIST_STATE:
+                String url;
+                if (gcId.equals("")) {
+                    url = NetConfig.shopListUrl;
+                } else {
+                    url = NetConfig.shopListUrl + "&gc_id=" + gcId;
+                }
                 mPd.show();
-                Request requestShopList = new Request.Builder().url(NetConfig.shopListUrl).get().build();
+                Request requestShopList = new Request.Builder().url(url).get().build();
                 okHttpClient.newCall(requestShopList).enqueue(new Callback() {
                     @Override
                     public void onFailure(Request request, IOException e) {
@@ -227,6 +238,7 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
                 contractCompany.setCompanyAddress1(o.optString("area_info"));
                 contractCompany.setCompanyAddress2(o.optString("store_address"));
                 contractCompany.setCompanyImgurl(o.optString("store_avatar"));
+                contractCompany.setGoodsId(o.optString("goods_id"));
                 mDataList.add(contractCompany);
             }
         } catch (JSONException e) {
@@ -305,5 +317,12 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = new Intent(ContractProjectActivity.this, GoodsDetailActivity.class);
+        intent.putExtra("goods_id", mDataList.get(position).getGoodsId());
+        startActivity(intent);
     }
 }

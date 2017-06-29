@@ -1,6 +1,7 @@
 package com.gangjianwang.www.gangjianwang;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -32,7 +33,7 @@ import bean.ClassifyRightOuter;
 import config.NetConfig;
 import utils.ToastUtils;
 
-public class ClassifyActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class ClassifyActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, ListItemClickHelp {
 
     private View rootView;
     private RelativeLayout mBackRl;
@@ -93,7 +94,7 @@ public class ClassifyActivity extends AppCompatActivity implements View.OnClickL
         mPd = new ProgressDialog(this);
         mPd.setMessage("加载中..");
         mLeftAdapter = new ClassifyLeftAdapter(this, mLeftDataList);
-        mRightAdapter = new ClassifyRightAdapter(this, mRightDataList);
+        mRightAdapter = new ClassifyRightAdapter(this, mRightDataList, this);
     }
 
     private void setData() {
@@ -210,5 +211,16 @@ public class ClassifyActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         loadRightData(mLeftDataList.get(position).getId());
+    }
+
+    @Override
+    public void onClick(View item, View widget, int position, int which, boolean isChecked) {
+        switch (which) {
+            case R.id.ll_item_classify_right_outer:
+                Intent intent = new Intent(ClassifyActivity.this, ContractProjectActivity.class);
+                intent.putExtra("gc_id", mRightDataList.get(position).getId());
+                startActivity(intent);
+                break;
+        }
     }
 }

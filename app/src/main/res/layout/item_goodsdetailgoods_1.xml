@@ -16,17 +16,17 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tv_item_goodsdetailgoods_goodsname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="圆管 32 0.55"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/x15" />
 
             <TextView
+                android:id="@+id/tv_item_goodsdetailgoods_goodsjingle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/x5"
-                android:text="价格仅供参考，具体的价格请咨询商家"
                 android:textSize="@dimen/x10" />
 
         </LinearLayout>
@@ -37,10 +37,10 @@
             android:layout_marginTop="@dimen/x10">
 
             <TextView
+                android:id="@+id/tv_item_goodsdetailgoods_goodsprice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:text="¥25.50"
                 android:textColor="@android:color/holo_red_dark"
                 android:textSize="@dimen/x20" />
 
@@ -59,9 +59,9 @@
                     android:textSize="@dimen/x11" />
 
                 <TextView
+                    android:id="@+id/tv_item_goodsdetailgoods_goodssalenum"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/x11" />
 
@@ -89,20 +89,19 @@
                 android:text="送至" />
 
             <TextView
-                android:id="@+id/tv_item_goodsdetailgoods_address"
+                android:id="@+id/tv_item_goodsdetailgoods_areaname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/x5"
                 android:layout_toRightOf="@+id/tv_item_goodsdetailgoods_sendto"
-                android:text="全国"
                 android:textColor="@android:color/black" />
 
             <TextView
+                android:id="@+id/tv_item_goodsdetailgoods_ifstorecn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/x5"
-                android:layout_toRightOf="@+id/tv_item_goodsdetailgoods_address"
-                android:text="有货"
+                android:layout_toRightOf="@+id/tv_item_goodsdetailgoods_areaname"
                 android:textColor="@android:color/holo_red_dark" />
 
 
@@ -111,15 +110,15 @@
                 android:layout_height="@dimen/x15"
                 android:layout_alignParentRight="true"
                 android:scaleType="fitXY"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/img_default" />
 
             <TextView
+                android:id="@+id/tv_item_goodsdetailgoods_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/tv_item_goodsdetailgoods_address"
-                android:layout_below="@+id/tv_item_goodsdetailgoods_address"
+                android:layout_alignLeft="@+id/tv_item_goodsdetailgoods_areaname"
+                android:layout_below="@+id/tv_item_goodsdetailgoods_areaname"
                 android:layout_marginTop="@dimen/x5"
-                android:text="免运费"
                 android:textSize="@dimen/x10" />
 
         </RelativeLayout>
@@ -164,7 +163,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/x5"
-                android:text="32"
                 android:textColor="@android:color/black" />
 
         </LinearLayout>
@@ -190,18 +188,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/x5"
-                android:text="0.55"
                 android:textColor="@android:color/black" />
 
         </LinearLayout>
 
         <ImageView
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
             android:layout_width="@dimen/x12"
             android:layout_height="@dimen/x12"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:scaleType="fitXY"
-            android:src="@mipmap/more_black"/>
+            android:src="@mipmap/more_black" />
 
     </RelativeLayout>
 
