@@ -93,6 +93,7 @@
         <activity android:name=".DigouStoreActivity" />
         <activity android:name=".PurchaseDetailActivity" />
         <activity android:name=".StoreOfferActivity" />
+        <activity android:name=".AgreeMentActivity"></activity>
     </application>
 
 </manifest>

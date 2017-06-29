@@ -92,6 +92,7 @@
                 android:textSize="@dimen/x12" />
 
             <TextView
+                android:id="@+id/tv_register_agreement"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
@@ -100,14 +101,27 @@
                 android:textSize="@dimen/x12" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btn_register"
+        <RelativeLayout
+            android:id="@+id/rl_register_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/x10"
-            android:background="@drawable/shape_button_login"
-            android:text="注册"
-            android:textSize="@dimen/x12" />
+            android:layout_alignParentBottom="true"
+            android:layout_margin="@dimen/x5"
+            android:layout_marginTop="@dimen/x20"
+            android:background="@drawable/addreceiveaddress_selector"
+            android:clickable="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="@dimen/x10"
+                android:layout_marginTop="@dimen/x10"
+                android:text="注册"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/x15" />
+
+        </RelativeLayout>
 
     </LinearLayout>
 

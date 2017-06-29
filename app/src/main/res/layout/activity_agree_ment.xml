@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_agree_ment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.gangjianwang.www.gangjianwang.AgreeMentActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x40">
+
+        <RelativeLayout
+            android:id="@+id/rl_agreement_back"
+            android:layout_width="@dimen/x40"
+            android:layout_height="match_parent"
+            android:background="@drawable/default_gray_selector"
+            android:clickable="true"
+            android:padding="@dimen/x10">
+
+            <ImageView
+                android:layout_width="@dimen/x20"
+                android:layout_height="@dimen/x20"
+                android:scaleType="fitXY"
+                android:src="@mipmap/back_black" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <WebView
+        android:id="@+id/wv_agreement"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

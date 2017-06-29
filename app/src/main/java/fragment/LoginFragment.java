@@ -10,10 +10,10 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.LoginActivity;
@@ -32,7 +32,6 @@ import java.io.IOException;
 
 import bean.UserInfo;
 import config.NetConfig;
-import config.PersonConfig;
 import utils.ToastUtils;
 import utils.UserUtils;
 
@@ -48,7 +47,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private TextView mForgetpwdTv;
     private EditText mUsernameEt, mPasswordEt;
     private CheckBox mAutoLoginCb;
-    private Button mLoginBtn;
+    private RelativeLayout mLoginRl;
     private GradientDrawable mLoginBtnGd;
     private Handler mForgetpwdHandler;
     private Handler mLoginHandler;
@@ -107,14 +106,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         mUsernameEt = (EditText) rootView.findViewById(R.id.et_login_username);
         mPasswordEt = (EditText) rootView.findViewById(R.id.et_login_password);
         mAutoLoginCb = (CheckBox) rootView.findViewById(R.id.cb_sevenday_autologin);
-        mLoginBtn = (Button) rootView.findViewById(R.id.btn_login_login);
-        mLoginBtnGd = (GradientDrawable) mLoginBtn.getBackground();
-        mLoginBtnGd.setColor(PersonConfig.loginBtnDefaultColor);
+        mLoginRl = (RelativeLayout) rootView.findViewById(R.id.rl_login_login);
     }
 
     private void setListener() {
         mForgetpwdTv.setOnClickListener(this);
-        mLoginBtn.setOnClickListener(this);
+        mLoginRl.setOnClickListener(this);
     }
 
     @Override
@@ -123,7 +120,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             case R.id.tv_login_forgetpassword:
                 mForgetpwdHandler.sendEmptyMessage(100);
                 break;
-            case R.id.btn_login_login:
+            case R.id.rl_login_login:
                 loginJudge();
                 break;
             default:

@@ -35,7 +35,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private TextView mFirstpageTv, mPurchaseTv, mShopcarTv, mMeTv;
 
     private Fragment mHomeFragment, mPurchaseFragment, mCalculateFragment, mShopcarFragment, mMineFragment;
-    private List<Fragment> mFragmentList;
+    private List<Fragment> mFragmentList = new ArrayList<>();
     private FragmentManager mFragmentManager;
     private int curPosition = 0;
     private long exitTime = 0;
@@ -165,13 +165,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mCalculateFragment = new CalculateFragment();
         mShopcarFragment = new ShopCarFragment();
         mMineFragment = new MineFragment();
-        mFragmentList = new ArrayList<>();
+        mLoadUserHandler = ((MineFragment) mMineFragment).handler;
         mFragmentList.add(mHomeFragment);
         mFragmentList.add(mPurchaseFragment);
         mFragmentList.add(mCalculateFragment);
         mFragmentList.add(mShopcarFragment);
         mFragmentList.add(mMineFragment);
-        mLoadUserHandler = ((MineFragment) mMineFragment).handler;
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transaction.add(R.id.ll_home_sit, mFragmentList.get(0));
         transaction.commit();
