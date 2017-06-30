@@ -78,6 +78,6 @@ public class GoodsDetailDetailFragment extends Fragment {
         for (int i = 0; i < 10; i++) {
             mDataList.add(new GoodsDetailDetail(""));
         }
-        firstloadHandler.sendEmptyMessageDelayed(1, 1000);
+        firstloadHandler.sendEmptyMessage(1);
     }
 }

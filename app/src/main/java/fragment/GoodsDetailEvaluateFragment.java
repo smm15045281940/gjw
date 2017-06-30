@@ -46,8 +46,6 @@ public class GoodsDetailEvaluateFragment extends Fragment implements View.OnClic
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_goodsdetail_evaluate, null);
-        emptyView = inflater.inflate(R.layout.empty_goodsdetailevaluate, null);
-        emptyView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
         initView();
         setListener();
         loadData();
@@ -55,7 +53,12 @@ public class GoodsDetailEvaluateFragment extends Fragment implements View.OnClic
     }
 
     private void initView() {
+        initRoot();
+        initEmpty();
         initPro();
+    }
+
+    private void initRoot() {
         allRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsdetailevaluate_all);
         goodRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsdetailevaluate_good);
         midRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsdetailevaluate_mid);
@@ -75,6 +78,11 @@ public class GoodsDetailEvaluateFragment extends Fragment implements View.OnClic
         orderphotoGd.setColor(Color.parseColor("#AAAAAA"));
         addGd.setColor(Color.parseColor("#AAAAAA"));
         mlv = (ListView) rootView.findViewById(R.id.lv_goodsdetailevaluate);
+    }
+
+    private void initEmpty() {
+        emptyView = View.inflate(getActivity(), R.layout.empty_goodsdetailevaluate, null);
+        emptyView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
         ((ViewGroup) mlv.getParent()).addView(emptyView);
         emptyView.setVisibility(View.GONE);
         mlv.setEmptyView(emptyView);
@@ -95,7 +103,7 @@ public class GoodsDetailEvaluateFragment extends Fragment implements View.OnClic
 
     private void loadData() {
         mPd.show();
-        loadHandler.sendEmptyMessageDelayed(1, 1000);
+        loadHandler.sendEmptyMessage(1);
     }
 
     @Override

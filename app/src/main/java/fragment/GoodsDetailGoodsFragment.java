@@ -39,6 +39,7 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,6 +51,7 @@ import adapter.GoodsDetailGoodsHeadGvAdapter;
 import adapter.GoodsDetailGoodsLvAdapter;
 import adapter.MyPagerAdapter;
 import bean.GoodsDetailGoods;
+import bean.GoodsDetailOtherGoods;
 import config.NetConfig;
 import customview.FlowLayout;
 import customview.LazyFragment;
@@ -92,7 +94,7 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
     private MyPagerAdapter myPagerAdapter;
 
     private List<GoodsDetailGoods> mMainList = new ArrayList<>();
-    private List<String> mOtherList = new ArrayList<>();
+    private List<GoodsDetailOtherGoods> mOtherList = new ArrayList<>();
     private GoodsDetailGoodsLvAdapter goodsDetailGoodsLvAdapter;
 
     private List<String> sizeList = new ArrayList<>();
@@ -437,7 +439,6 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
     }
 
     private void loadData() {
-        mPd.show();
         firstloadHandler.sendEmptyMessageDelayed(1, 1000);
         leftList.add("圆管");
         leftList.add("方管");
@@ -450,12 +451,8 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
             gridList.add("门系列");
         }
         HeightUtils.setGridViewHeight(headGv);
-        for (int i = 0; i < 10; i++) {
-            mOtherList.add("");
-        }
 
         mPd.show();
-        ToastUtils.log(getActivity(), NetConfig.contractprojectDetailHeadUrl + goodsId + NetConfig.contractprojectDetailFootUrl);
         Request request = new Request.Builder().url(NetConfig.contractprojectDetailHeadUrl + goodsId + NetConfig.contractprojectDetailFootUrl).get().build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -509,6 +506,22 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
             JSONObject objStoreDeliverycredit = objStoreCredit.optJSONObject("store_deliverycredit");
             deliverycreditText = objStoreDeliverycredit.optString("text");
             deliverycreditCredit = objStoreDeliverycredit.optString("credit");
+
+            JSONObject objOtherSpecList = objDatas.optJSONObject("other_spec_list");
+            JSONArray arrData = objOtherSpecList.optJSONArray("data");
+            for (int i = 0; i < arrData.length(); i++) {
+                JSONObject o = arrData.optJSONObject(i);
+                GoodsDetailOtherGoods goodsDetailOtherGoods = new GoodsDetailOtherGoods();
+                goodsDetailOtherGoods.setIcon(o.optString("spec_image"));
+                goodsDetailOtherGoods.setLink(o.optString("link"));
+                goodsDetailOtherGoods.setId(o.optString("gid"));
+                goodsDetailOtherGoods.setGoodsName(o.optString("goods_name"));
+                goodsDetailOtherGoods.setSpec(o.optString("spec_name"));
+                goodsDetailOtherGoods.setSize(o.optString("goods_spec"));
+                goodsDetailOtherGoods.setPrice(o.optString("goods_price"));
+                mOtherList.add(goodsDetailOtherGoods);
+            }
+
             return true;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -636,9 +649,6 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
                 });
                 break;
             case R.id.rl_foot_goodsdetailgoods_loadmore:
-                for (int i = 0; i < 10; i++) {
-                    mOtherList.add("");
-                }
                 goodsDetailGoodsLvAdapter.notifyDataSetChanged();
                 break;
             default:
@@ -681,7 +691,6 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
         deliverycreditTextTv.setText(deliverycreditText);
         deliverycreditCreditTv.setText(deliverycreditCredit);
         goodsDetailGoodsLvAdapter.notifyDataSetChanged();
-        ToastUtils.log(getActivity(), goodsImageUrlList.toString());
         createVp(goodsImageUrlList.size());
     }
 }

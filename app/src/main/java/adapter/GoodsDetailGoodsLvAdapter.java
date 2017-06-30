@@ -4,14 +4,17 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import bean.GoodsDetailGoods;
+import bean.GoodsDetailOtherGoods;
 
 /**
  * Created by Administrator on 2017/5/23.
@@ -21,10 +24,10 @@ public class GoodsDetailGoodsLvAdapter extends BaseAdapter {
 
     private Context context;
     private List<GoodsDetailGoods> mainList;
-    private List<String> otherList;
+    private List<GoodsDetailOtherGoods> otherList;
     private ListItemClickHelp callback;
 
-    public GoodsDetailGoodsLvAdapter(Context context, List<GoodsDetailGoods> mainList, List<String> otherList, ListItemClickHelp callback) {
+    public GoodsDetailGoodsLvAdapter(Context context, List<GoodsDetailGoods> mainList, List<GoodsDetailOtherGoods> otherList, ListItemClickHelp callback) {
         this.context = context;
         this.mainList = mainList;
         this.otherList = otherList;
@@ -109,7 +112,15 @@ public class GoodsDetailGoodsLvAdapter extends BaseAdapter {
             }
             if (position > 1) {
                 holder2.otherTv.setVisibility(View.GONE);
+            } else {
+                holder2.otherTv.setVisibility(View.VISIBLE);
             }
+            GoodsDetailOtherGoods goodsDetailOtherGoods = otherList.get(position - 1);
+            Picasso.with(context).load(goodsDetailOtherGoods.getIcon()).placeholder(holder2.iconIv.getDrawable()).into(holder2.iconIv);
+            holder2.goodsNameTv.setText(goodsDetailOtherGoods.getGoodsName());
+            holder2.specTv.setText(goodsDetailOtherGoods.getSpec());
+            holder2.sizeTv.setText(goodsDetailOtherGoods.getSize());
+            holder2.priceTv.setText("¥"+goodsDetailOtherGoods.getPrice());
         }
         return convertView;
     }
@@ -135,9 +146,16 @@ public class GoodsDetailGoodsLvAdapter extends BaseAdapter {
     class ViewHolder2 {
 
         private TextView otherTv;
+        private ImageView iconIv;
+        private TextView goodsNameTv, specTv, sizeTv, priceTv;
 
         public ViewHolder2(View itemView) {
             otherTv = (TextView) itemView.findViewById(R.id.tv_item_goodsdetailgoods_othergoods);
+            iconIv = (ImageView) itemView.findViewById(R.id.iv_item_goodsdetailgoods_2_icon);
+            goodsNameTv = (TextView) itemView.findViewById(R.id.tv_item_goodsdetailgoods_2_goodsname);
+            specTv = (TextView) itemView.findViewById(R.id.tv_item_goodsdetailgoods_2_spec);
+            sizeTv = (TextView) itemView.findViewById(R.id.tv_item_goodsdetailgoods_2_size);
+            priceTv = (TextView) itemView.findViewById(R.id.tv_item_goodsdetailgoods_2_price);
         }
     }
 }
