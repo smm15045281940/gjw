@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +16,13 @@ import android.widget.RelativeLayout;
 
 import com.gangjianwang.www.gangjianwang.R;
 
-import customview.LazyFragment;
 import utils.ToastUtils;
 
 /**
  * Created by Administrator on 2017/5/23.
  */
 
-public class GoodsDetailEvaluateFragment extends LazyFragment implements View.OnClickListener {
+public class GoodsDetailEvaluateFragment extends Fragment implements View.OnClickListener {
 
     private View rootView, emptyView;
     private RelativeLayout allRl, goodRl, midRl, poorRl, orderphotoRl, addRl;
@@ -50,11 +50,12 @@ public class GoodsDetailEvaluateFragment extends LazyFragment implements View.On
         emptyView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
         initView();
         setListener();
+        loadData();
         return rootView;
     }
 
     private void initView() {
-        initProgress();
+        initPro();
         allRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsdetailevaluate_all);
         goodRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsdetailevaluate_good);
         midRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsdetailevaluate_mid);
@@ -79,7 +80,7 @@ public class GoodsDetailEvaluateFragment extends LazyFragment implements View.On
         mlv.setEmptyView(emptyView);
     }
 
-    private void initProgress() {
+    private void initPro() {
         mPd = new ProgressDialog(getActivity());
     }
 
@@ -92,15 +93,9 @@ public class GoodsDetailEvaluateFragment extends LazyFragment implements View.On
         addRl.setOnClickListener(this);
     }
 
-    @Override
-    protected void onFragmentFirstVisible() {
-        mPd.show();
-        loadData();
-        loadHandler.sendEmptyMessageDelayed(1, 1000);
-    }
-
     private void loadData() {
-
+        mPd.show();
+        loadHandler.sendEmptyMessageDelayed(1, 1000);
     }
 
     @Override

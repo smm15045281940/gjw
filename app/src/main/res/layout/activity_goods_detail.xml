@@ -27,19 +27,100 @@
 
         </RelativeLayout>
 
+        <LinearLayout
+            android:layout_width="@dimen/x150"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:orientation="horizontal">
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tl_goodsdetail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
+            <RelativeLayout
+                android:id="@+id/rl_goodsdetail_goods"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_goodsdetail_goods"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="商品"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/x15" />
+
+                <View
+                    android:id="@+id/v_goodsdetail_goods"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x1"
+                    android:layout_alignParentBottom="true"
+                    android:background="@android:color/holo_red_dark" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_goodsdetail_detail"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/x10"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_goodsdetail_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="详情"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/x15" />
+
+                <View
+                    android:id="@+id/v_goodsdetail_detail"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x1"
+                    android:layout_alignParentBottom="true"
+                    android:background="@android:color/holo_red_dark" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_goodsdetail_evaluate"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/x10"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_goodsdetail_evaluate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="评价"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/x15" />
+
+                <View
+                    android:id="@+id/v_goodsdetail_evaluate"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x1"
+                    android:layout_alignParentBottom="true"
+                    android:background="@android:color/holo_red_dark" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
 
     </RelativeLayout>
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/vp_goodsdetail"
+    <LinearLayout
+        android:id="@+id/ll_goodsdetail_sit"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
+        android:layout_height="match_parent"
+        android:orientation="vertical" />
 
 </LinearLayout>

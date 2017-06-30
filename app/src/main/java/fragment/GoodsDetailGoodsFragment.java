@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -60,7 +61,7 @@ import utils.ToastUtils;
  * Created by Administrator on 2017/5/23.
  */
 
-public class GoodsDetailGoodsFragment extends LazyFragment implements View.OnClickListener, ListItemClickHelp {
+public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickListener, ListItemClickHelp {
 
     private View rootView, headView, footView, popView;
     private PopupWindow popWindow;
@@ -161,6 +162,7 @@ public class GoodsDetailGoodsFragment extends LazyFragment implements View.OnCli
         initData();
         setData();
         setListener();
+        loadData();
         return rootView;
     }
 
@@ -435,6 +437,8 @@ public class GoodsDetailGoodsFragment extends LazyFragment implements View.OnCli
     }
 
     private void loadData() {
+        mPd.show();
+        firstloadHandler.sendEmptyMessageDelayed(1, 1000);
         leftList.add("圆管");
         leftList.add("方管");
         leftList.add("矩管");
@@ -468,6 +472,7 @@ public class GoodsDetailGoodsFragment extends LazyFragment implements View.OnCli
                 }
             }
         });
+
     }
 
     private boolean parseJson(String json) {
@@ -565,13 +570,6 @@ public class GoodsDetailGoodsFragment extends LazyFragment implements View.OnCli
         popShopCarRl.setOnClickListener(this);
         popBuyNowRl.setOnClickListener(this);
         popAddShopCarRl.setOnClickListener(this);
-    }
-
-    @Override
-    protected void onFragmentFirstVisible() {
-        mPd.show();
-        loadData();
-        firstloadHandler.sendEmptyMessageDelayed(1, 1000);
     }
 
     @Override

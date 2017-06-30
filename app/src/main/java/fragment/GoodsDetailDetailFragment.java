@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +18,12 @@ import java.util.List;
 
 import adapter.GoodsDetailDetailAdapter;
 import bean.GoodsDetailDetail;
-import customview.LazyFragment;
 
 /**
  * Created by Administrator on 2017/5/23.
  */
 
-public class GoodsDetailDetailFragment extends LazyFragment {
+public class GoodsDetailDetailFragment extends Fragment {
 
     private View rootView;
     private ListView mLv;
@@ -51,7 +51,7 @@ public class GoodsDetailDetailFragment extends LazyFragment {
         initView(rootView);
         initData();
         setData();
-        setListener();
+        loadData();
         return rootView;
     }
 
@@ -73,20 +73,11 @@ public class GoodsDetailDetailFragment extends LazyFragment {
         mLv.setAdapter(mAdapter);
     }
 
-    private void setListener() {
-
-    }
-
-    @Override
-    protected void onFragmentFirstVisible() {
-        mPd.show();
-        loadData();
-        firstloadHandler.sendEmptyMessageDelayed(1, 1000);
-    }
-
     private void loadData() {
+        mPd.show();
         for (int i = 0; i < 10; i++) {
             mDataList.add(new GoodsDetailDetail(""));
         }
+        firstloadHandler.sendEmptyMessageDelayed(1, 1000);
     }
 }
