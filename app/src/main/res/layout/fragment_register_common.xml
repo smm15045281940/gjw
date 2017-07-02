@@ -36,7 +36,8 @@
                 android:id="@+id/et_register_common_setpwd"
                 style="@style/et_input"
                 android:hint="请输入6-20位密码"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:maxLength="20" />
         </LinearLayout>
 
         <LinearLayout
@@ -51,7 +52,8 @@
                 android:id="@+id/et_register_common_surepwd"
                 style="@style/et_input"
                 android:hint="请再次输入密码"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:maxLength="20" />
 
         </LinearLayout>
 
@@ -66,8 +68,8 @@
             <EditText
                 android:id="@+id/et_register_common_email"
                 style="@style/et_input"
-                android:inputType="textEmailAddress"
-                android:hint="[选填]请输入常用邮箱地址" />
+                android:hint="[选填]请输入常用邮箱地址"
+                android:inputType="textEmailAddress" />
 
         </LinearLayout>
 

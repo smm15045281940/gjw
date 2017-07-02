@@ -18,7 +18,17 @@
             <EditText
                 android:id="@+id/et_login_username"
                 style="@style/et_input"
-                android:hint="请输入用户名/已验证手机" />
+                android:hint="请输入用户名/已验证手机"
+                android:maxLength="20" />
+
+            <ImageView
+                android:id="@+id/iv_login_username_clear"
+                android:layout_width="@dimen/x20"
+                android:layout_height="@dimen/x20"
+                android:layout_centerVertical="true"
+                android:scaleType="fitXY"
+                android:src="@mipmap/img_default"
+                android:visibility="invisible" />
 
         </LinearLayout>
 
@@ -34,7 +44,17 @@
                 android:id="@+id/et_login_password"
                 style="@style/et_input"
                 android:hint="请输入密码"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:maxLength="20" />
+
+            <ImageView
+                android:id="@+id/iv_login_password_clear"
+                android:layout_width="@dimen/x20"
+                android:layout_height="@dimen/x20"
+                android:layout_centerVertical="true"
+                android:scaleType="fitXY"
+                android:src="@mipmap/img_default"
+                android:visibility="invisible" />
 
         </LinearLayout>
 

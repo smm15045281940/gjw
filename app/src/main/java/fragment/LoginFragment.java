@@ -5,12 +5,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -44,6 +47,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private View rootView;
     private TextView mForgetpwdTv;
     private EditText mUsernameEt, mPasswordEt;
+    private ImageView mClearUsernameIv, mClearPasswordIv;
     private CheckBox mAutoLoginCb;
     private RelativeLayout mLoginRl;
     private Handler mForgetpwdHandler;
@@ -102,6 +106,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         mForgetpwdTv = (TextView) rootView.findViewById(R.id.tv_login_forgetpassword);
         mUsernameEt = (EditText) rootView.findViewById(R.id.et_login_username);
         mPasswordEt = (EditText) rootView.findViewById(R.id.et_login_password);
+        mClearUsernameIv = (ImageView) rootView.findViewById(R.id.iv_login_username_clear);
+        mClearPasswordIv = (ImageView) rootView.findViewById(R.id.iv_login_password_clear);
         mAutoLoginCb = (CheckBox) rootView.findViewById(R.id.cb_sevenday_autologin);
         mLoginRl = (RelativeLayout) rootView.findViewById(R.id.rl_login_login);
     }
@@ -109,11 +115,59 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private void setListener() {
         mForgetpwdTv.setOnClickListener(this);
         mLoginRl.setOnClickListener(this);
+        mUsernameEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() == 0) {
+                    mClearUsernameIv.setVisibility(View.INVISIBLE);
+                } else {
+                    mClearUsernameIv.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        mPasswordEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() == 0) {
+                    mClearPasswordIv.setVisibility(View.INVISIBLE);
+                } else {
+                    mClearPasswordIv.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        mClearUsernameIv.setOnClickListener(this);
+        mClearPasswordIv.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.iv_login_username_clear:
+                mUsernameEt.setText("");
+                break;
+            case R.id.iv_login_password_clear:
+                mPasswordEt.setText("");
+                break;
             case R.id.tv_login_forgetpassword:
                 mForgetpwdHandler.sendEmptyMessage(100);
                 break;
