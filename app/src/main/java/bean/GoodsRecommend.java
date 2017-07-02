@@ -7,20 +7,12 @@ package bean;
 public class GoodsRecommend {
 
     private String title;
+    private String id1, id2;
     private String imgUrl1, imgUrl2;
     private String goodsName1, goodsName2;
     private String goodsPrice1, goodsPrice2;
 
     public GoodsRecommend() {
-    }
-
-    public GoodsRecommend(String imgUrl1, String imgUrl2, String goodsName1, String goodsName2, String goodsPrice1, String goodsPrice2) {
-        this.imgUrl1 = imgUrl1;
-        this.imgUrl2 = imgUrl2;
-        this.goodsName1 = goodsName1;
-        this.goodsName2 = goodsName2;
-        this.goodsPrice1 = goodsPrice1;
-        this.goodsPrice2 = goodsPrice2;
     }
 
     public String getTitle() {
@@ -29,6 +21,22 @@ public class GoodsRecommend {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getId1() {
+        return id1;
+    }
+
+    public void setId1(String id1) {
+        this.id1 = id1;
+    }
+
+    public String getId2() {
+        return id2;
+    }
+
+    public void setId2(String id2) {
+        this.id2 = id2;
     }
 
     public String getImgUrl1() {

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            style="@style/ll_username"
+            android:layout_marginTop="@dimen/x10">
+
+            <TextView
+                style="@style/tv_username"
+                android:text="手 机 号" />
+
+            <EditText
+                android:id="@+id/et_register_phone_photonumber"
+                style="@style/et_input"
+                android:hint="请输入手机号"
+                android:inputType="phone" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/ll_username"
+            android:layout_marginTop="@dimen/x1">
+
+            <TextView
+                style="@style/tv_username"
+                android:text="验 证 码" />
+
+            <EditText
+                android:id="@+id/et_register_phone_photocode"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/x10"
+                android:layout_marginRight="@dimen/x10"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="输入4位验证码"
+                android:singleLine="true"
+                android:textColor="@android:color/black"
+                android:textCursorDrawable="@null"
+                android:textSize="@dimen/x15" />
+
+            <ImageView
+                android:id="@+id/iv_register_phone_photocode"
+                android:layout_width="@dimen/x80"
+                android:layout_height="@dimen/x20"
+                android:layout_gravity="center_vertical"
+                android:scaleType="fitXY"
+                android:src="@mipmap/img_default" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/x1"
+            android:orientation="horizontal"
+            android:padding="@dimen/x10">
+
+            <CheckBox
+                android:id="@+id/cb_register_agree"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:checked="true"
+                android:clickable="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="同意"
+                android:textSize="@dimen/x12" />
+
+            <TextView
+                android:id="@+id/tv_register_agreement"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="用户注册协议"
+                android:textColor="@android:color/holo_blue_light"
+                android:textSize="@dimen/x12" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_register_phone_getcode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="@dimen/x5"
+            android:layout_marginTop="@dimen/x20"
+            android:background="@drawable/addreceiveaddress_selector"
+            android:clickable="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="@dimen/x10"
+                android:layout_marginTop="@dimen/x10"
+                android:text="获取验证码"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/x15" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/x10"
+            android:text="绑定手机不收任何费用，一个手机只能绑定一个账号，若需修改或解除已绑定的手机，请登录商城PC端进行操作。"
+            android:textSize="@dimen/x10" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -86,7 +86,7 @@ public class FirstpageAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, final ViewGroup parent) {
+    public View getView(final int position, View convertView, final ViewGroup parent) {
         ViewHolder1 holder1;
         ViewHolder2 holder2;
         final ViewHolder3 holder3;
@@ -109,14 +109,17 @@ public class FirstpageAdapter extends BaseAdapter {
             holder1.iv1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ToastUtils.toast(context, "你点击了商品推荐0");
-                    context.startActivity(new Intent(context, GoodsDetailActivity.class));
+                    Intent intent = new Intent(context, GoodsDetailActivity.class);
+                    intent.putExtra("goods_id", goodsRecommendList.get(position).getId1());
+                    context.startActivity(intent);
                 }
             });
             holder1.iv2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ToastUtils.toast(context, "你点击了商品推荐1");
+                    Intent intent = new Intent(context, GoodsDetailActivity.class);
+                    intent.putExtra("goods_id", goodsRecommendList.get(position).getId1());
+                    context.startActivity(intent);
                 }
             });
         } else if (getItemViewType(position) == 1) {

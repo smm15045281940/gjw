@@ -214,62 +214,124 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.rl_mine_goodscollect:
-                startActivity(new Intent(getActivity(), GoodsStoreCollectActivity.class));
+                if (UserUtils.isLogined(getActivity())) {
+                    startActivity(new Intent(getActivity(), GoodsStoreCollectActivity.class));
+                } else {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
                 break;
             case R.id.rl_mine_shopcollect:
-                Intent shopIntent = new Intent(getActivity(), GoodsStoreCollectActivity.class);
-                shopIntent.putExtra("collect", 1);
-                startActivity(shopIntent);
+                if (UserUtils.isLogined(getActivity())) {
+                    Intent shopIntent = new Intent(getActivity(), GoodsStoreCollectActivity.class);
+                    shopIntent.putExtra("collect", 1);
+                    startActivity(shopIntent);
+                } else {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
                 break;
             case R.id.rl_mine_myfoot:
-                startActivity(new Intent(getActivity(), FootActivity.class));
+                if (UserUtils.isLogined(getActivity())) {
+                    startActivity(new Intent(getActivity(), FootActivity.class));
+                } else {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
                 break;
             case R.id.tv_mine_face:
-                startActivity(new Intent(getActivity(), LoginActivity.class));
+                if (!UserUtils.isLogined(getActivity())) {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
                 break;
             case R.id.rl_mine_myorder:
-                startActivity(new Intent(getActivity(), OrderActivity.class));
+                if (UserUtils.isLogined(getActivity())) {
+                    startActivity(new Intent(getActivity(), OrderActivity.class));
+                } else {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
                 break;
             case R.id.rl_mine_myproperty:
-                startActivity(new Intent(getActivity(), PropertyActivity.class));
+                if (UserUtils.isLogined(getActivity())) {
+                    startActivity(new Intent(getActivity(), PropertyActivity.class));
+                } else {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
                 break;
             case R.id.rl_mine_deliveryaddressmanage:
-                startActivity(new Intent(getActivity(), AddressManagerActivity.class));
+                if (UserUtils.isLogined(getActivity())) {
+                    startActivity(new Intent(getActivity(), AddressManagerActivity.class));
+                } else {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
                 break;
             case R.id.rl_mine_usersetting:
-                startActivity(new Intent(getActivity(), SettingActivity.class));
+                if (UserUtils.isLogined(getActivity())) {
+                    startActivity(new Intent(getActivity(), SettingActivity.class));
+                } else {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
                 break;
             case R.id.rl_mine_mypurchase:
-                mChangeFragHandler.sendEmptyMessage(1);
+                if (UserUtils.isLogined(getActivity())) {
+                    mChangeFragHandler.sendEmptyMessage(1);
+                } else {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
                 break;
             case R.id.rl_mine_messagelist:
-                startActivity(new Intent(getActivity(), MessageActivity.class));
+                if (UserUtils.isLogined(getActivity())) {
+                    startActivity(new Intent(getActivity(), MessageActivity.class));
+                } else {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
                 break;
             case R.id.rl_mine_obligation:
-                Intent waitpayIntent = new Intent(getActivity(), OrderActivity.class);
-                waitpayIntent.putExtra("order", 1);
-                startActivity(waitpayIntent);
+                if (UserUtils.isLogined(getActivity())) {
+                    Intent waitpayIntent = new Intent(getActivity(), OrderActivity.class);
+                    waitpayIntent.putExtra("order", 1);
+                    startActivity(waitpayIntent);
+                } else {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
                 break;
             case R.id.rl_mine_waitreceive:
-                Intent waitreceiveIntent = new Intent(getActivity(), OrderActivity.class);
-                waitreceiveIntent.putExtra("order", 2);
-                startActivity(waitreceiveIntent);
+                if (UserUtils.isLogined(getActivity())) {
+                    Intent waitreceiveIntent = new Intent(getActivity(), OrderActivity.class);
+                    waitreceiveIntent.putExtra("order", 2);
+                    startActivity(waitreceiveIntent);
+                } else {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
                 break;
             case R.id.rl_mine_waitselfbring:
-                Intent waitbringIntent = new Intent(getActivity(), OrderActivity.class);
-                waitbringIntent.putExtra("order", 3);
-                startActivity(waitbringIntent);
+                if (UserUtils.isLogined(getActivity())) {
+                    Intent waitbringIntent = new Intent(getActivity(), OrderActivity.class);
+                    waitbringIntent.putExtra("order", 3);
+                    startActivity(waitbringIntent);
+                } else {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
                 break;
             case R.id.rl_mine_waitevaluate:
-                Intent waitevaluateIntent = new Intent(getActivity(), OrderActivity.class);
-                waitevaluateIntent.putExtra("order", 4);
-                startActivity(waitevaluateIntent);
+                if (UserUtils.isLogined(getActivity())) {
+                    Intent waitevaluateIntent = new Intent(getActivity(), OrderActivity.class);
+                    waitevaluateIntent.putExtra("order", 4);
+                    startActivity(waitevaluateIntent);
+                } else {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
                 break;
             case R.id.rl_mine_refundreturn:
-                startActivity(new Intent(getActivity(), RefundActivity.class));
+                if (UserUtils.isLogined(getActivity())) {
+                    startActivity(new Intent(getActivity(), RefundActivity.class));
+                } else {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
                 break;
             case R.id.rl_mine_integrate:
-                startActivity(new Intent(getActivity(), IntegrateActivity.class));
+                if (UserUtils.isLogined(getActivity())) {
+                    startActivity(new Intent(getActivity(), IntegrateActivity.class));
+                } else {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
                 break;
             default:
                 break;

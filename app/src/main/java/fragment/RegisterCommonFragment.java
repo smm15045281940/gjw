@@ -1,5 +1,6 @@
 package fragment;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,9 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.LoginActivity;
 import com.gangjianwang.www.gangjianwang.R;
@@ -31,31 +30,30 @@ import java.io.IOException;
 
 import bean.UserInfo;
 import config.NetConfig;
+import utils.RegularUtils;
 import utils.ToastUtils;
 import utils.UserUtils;
 
 /**
- * Created by Administrator on 2017/4/10 0010.
+ * Created by Administrator on 2017/6/30.
  */
 
-public class LoginFragment extends Fragment implements View.OnClickListener {
-
+public class RegisterCommonFragment extends Fragment implements View.OnClickListener {
 
     private View rootView;
-    private TextView mForgetpwdTv;
-    private EditText mUsernameEt, mPasswordEt;
-    private CheckBox mAutoLoginCb;
-    private RelativeLayout mLoginRl;
-    private Handler mForgetpwdHandler;
-    private Handler mLoginHandler;
-    private String username;
-    private String password;
-    private String client;
-    private String key;
+    private EditText nameEt, pwdEt, surePwdEt, emailEt;
+    private CheckBox autoCb;
+    private RelativeLayout registerRl;
+    private OkHttpClient okHttpClient;
+    private String name, pwd, surePwd, email, client = "wap";
+    private ProgressDialog mPd;
+    private String json;
+    private String hintResult;
+    private String getUserName, getKey;
+    private int getUserId;
+    private String autoLogin;
     private UserInfo userInfo;
-    private String s;
-
-    private OkHttpClient okHttpClient = new OkHttpClient();
+    private Handler loginHandler;
 
     Handler handler = new Handler() {
         @Override
@@ -64,14 +62,16 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             if (msg != null) {
                 switch (msg.what) {
                     case 0:
+                        mPd.dismiss();
                         ToastUtils.toast(getActivity(), "无网络");
                         break;
                     case 1:
-                        getUserData();
+                        mPd.dismiss();
+                        ToastUtils.toast(getActivity(), hintResult);
                         break;
                     case 2:
                         UserUtils.writeLogin(getActivity(), userInfo);
-                        mLoginHandler.sendEmptyMessage(1);
+                        loginHandler.sendEmptyMessage(1);
                         break;
                     default:
                         break;
@@ -84,78 +84,92 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LoginActivity loginActivity = (LoginActivity) getActivity();
-        mForgetpwdHandler = loginActivity.forgetpwdHandler;
-        mLoginHandler = loginActivity.loginHandler;
+        loginHandler = loginActivity.loginHandler;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_login, null);
-        rootView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        rootView = inflater.inflate(R.layout.fragment_register_common, null);
         initView();
+        initData();
         setListener();
         return rootView;
     }
 
     private void initView() {
-        mForgetpwdTv = (TextView) rootView.findViewById(R.id.tv_login_forgetpassword);
-        mUsernameEt = (EditText) rootView.findViewById(R.id.et_login_username);
-        mPasswordEt = (EditText) rootView.findViewById(R.id.et_login_password);
-        mAutoLoginCb = (CheckBox) rootView.findViewById(R.id.cb_sevenday_autologin);
-        mLoginRl = (RelativeLayout) rootView.findViewById(R.id.rl_login_login);
+        initRoot();
+    }
+
+    private void initRoot() {
+        nameEt = (EditText) rootView.findViewById(R.id.et_register_common_username);
+        pwdEt = (EditText) rootView.findViewById(R.id.et_register_common_setpwd);
+        surePwdEt = (EditText) rootView.findViewById(R.id.et_register_common_surepwd);
+        emailEt = (EditText) rootView.findViewById(R.id.et_register_common_email);
+        autoCb = (CheckBox) rootView.findViewById(R.id.cb_register_common_agree);
+        registerRl = (RelativeLayout) rootView.findViewById(R.id.rl_register_common_register);
+    }
+
+    private void initData() {
+        okHttpClient = new OkHttpClient();
+        mPd = new ProgressDialog(getActivity());
     }
 
     private void setListener() {
-        mForgetpwdTv.setOnClickListener(this);
-        mLoginRl.setOnClickListener(this);
+        registerRl.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.tv_login_forgetpassword:
-                mForgetpwdHandler.sendEmptyMessage(100);
-                break;
-            case R.id.rl_login_login:
-                loginJudge();
+            case R.id.rl_register_common_register:
+                judge();
                 break;
             default:
                 break;
         }
     }
 
-    private void loginJudge() {
-        if (TextUtils.isEmpty(mUsernameEt.getText().toString())) {
-            ToastUtils.toast(getActivity(), "请输入用户名!");
-            return;
-        } else if (TextUtils.isEmpty(mPasswordEt.getText().toString())) {
-            ToastUtils.toast(getActivity(), "请输入密码!");
-            return;
+    private void judge() {
+        name = nameEt.getText().toString();
+        pwd = pwdEt.getText().toString();
+        surePwd = surePwdEt.getText().toString();
+        email = emailEt.getText().toString();
+        if (TextUtils.isEmpty(name)) {
+            ToastUtils.toast(getActivity(), "用户名不能为空!");
+        } else if (name.length() < 6 || name.length() > 20) {
+            ToastUtils.toast(getActivity(), "用户名必须为6-20个字符!");
+        } else if (TextUtils.isEmpty(pwd)) {
+            ToastUtils.toast(getActivity(), "密码不能为空!");
+        } else if (pwd.length() < 6 || pwd.length() > 20) {
+            ToastUtils.toast(getActivity(), "密码必须为6-20位!");
+        } else if (TextUtils.isEmpty(surePwd)) {
+            ToastUtils.toast(getActivity(), "确认密码不能为空!");
+        } else if (!surePwd.equals(pwd)) {
+            ToastUtils.toast(getActivity(), "两次密码不一致!");
+        } else if (!TextUtils.isEmpty(email) && !RegularUtils.isEmail(email)) {
+            ToastUtils.toast(getActivity(), "邮箱格式不正确!");
         } else {
-            ToastUtils.toast(getActivity(), "用户名:" + mUsernameEt.getText().toString() + "\n" + "密码:" + mPasswordEt.getText().toString() + "\n" + "七天自动登陆:" + mAutoLoginCb.isChecked() + "\n" + "正在登陆...");
-            username = mUsernameEt.getText().toString();
-            password = mPasswordEt.getText().toString();
-            client = "wap";
-            if (mAutoLoginCb.isChecked()) {
-                s = "1";
-                ToastUtils.log(getActivity(), "七天自动登录");
+            if (autoCb.isChecked()) {
+                autoLogin = "七天自动登录";
             } else {
-                s = "0";
-                ToastUtils.log(getActivity(), "七天不自动登录");
+                autoLogin = "七天不自动登录";
             }
-            toLogin();
+            register();
         }
     }
 
-    private void toLogin() {
+    private void register() {
+        mPd.show();
         RequestBody body = new FormEncodingBuilder()
-                .add("username", username)
-                .add("password", password)
+                .add("username", name)
+                .add("password", pwd)
+                .add("password_confirm", surePwd)
+                .add("email", email)
                 .add("client", client)
                 .build();
         Request request = new Request.Builder()
-                .url(NetConfig.loginUrl)
+                .url(NetConfig.registerUrl)
                 .post(body)
                 .build();
         okHttpClient.newCall(request).enqueue(new Callback() {
@@ -167,29 +181,36 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onResponse(Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    String result = response.body().string();
-                    if (parseJson(result))
-                        handler.sendEmptyMessage(1);
+                    json = response.body().string();
+                    parseJson(json);
                 }
             }
         });
     }
 
-    private boolean parseJson(String json) {
+    private void parseJson(String json) {
         try {
             JSONObject objBean = new JSONObject(json);
+            String code = objBean.optString("code");
             JSONObject objDatas = objBean.optJSONObject("datas");
-            key = objDatas.optString("key");
-            return true;
+            if (code.equals("200")) {
+                getUserName = objDatas.optString("username");
+                getUserId = objDatas.optInt("userid");
+                getKey = objDatas.optString("key");
+                hintResult = "注册成功";
+                getUserData();
+            } else if (code.equals("400")) {
+                hintResult = objDatas.optString("error");
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return false;
+        handler.sendEmptyMessage(1);
     }
 
     private void getUserData() {
         RequestBody body = new FormEncodingBuilder()
-                .add("key", key)
+                .add("key", getKey)
                 .build();
         Request request = new Request.Builder()
                 .url(NetConfig.loginAfterUrl)
@@ -223,7 +244,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             userInfo.setLevelName(objInfo.optString("level_name"));
             userInfo.setFavoritesStore(objInfo.optString("favorites_store"));
             userInfo.setFavoritersGoods(objInfo.optString("favorites_goods"));
-            userInfo.setAutoLogin(s);
+            userInfo.setAutoLogin(autoLogin);
             return true;
         } catch (JSONException e) {
             e.printStackTrace();

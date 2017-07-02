@@ -42,6 +42,8 @@ public interface NetConfig {
     public static final String specialSupplyFootUrl = "&_=1498182762846";
     //收货地头
     public static final String receiveAreaUrl = "http://www.gangjianwang.com/mobile/index.php?act=area&op=area_list&area_id=";
+    //注册
+    public static final String registerUrl = "http://www.gangjianwang.com/mobile/index.php?act=login&op=register";
     //登录
     public static final String loginUrl = "http://www.gangjianwang.com/mobile/index.php?act=login";
     //登录后

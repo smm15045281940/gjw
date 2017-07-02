@@ -463,10 +463,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener, OnRe
             for (int i = 0; i < arrItems.length(); i++) {
                 JSONObject o = arrItems.optJSONObject(i);
                 if (i == 0) {
+                    goodsRecommend.setId1(o.optString("goods_id"));
                     goodsRecommend.setGoodsName1(o.optString("goods_name"));
                     goodsRecommend.setGoodsPrice1(o.optString("goods_promotion_price"));
                     goodsRecommend.setImgUrl1(o.optString("goods_image"));
                 } else if (i == 1) {
+                    goodsRecommend.setId2(o.optString("goods_id"));
                     goodsRecommend.setGoodsName2(o.optString("goods_name"));
                     goodsRecommend.setGoodsPrice2(o.optString("goods_promotion_price"));
                     goodsRecommend.setImgUrl2(o.optString("goods_image"));
