@@ -82,7 +82,7 @@
                 android:textSize="@dimen/x12" />
 
             <TextView
-                android:id="@+id/tv_register_agreement"
+                android:id="@+id/tv_register_phone_agreement"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"

@@ -1,6 +1,7 @@
 package fragment;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,7 +14,9 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.gangjianwang.www.gangjianwang.AgreeMentActivity;
 import com.gangjianwang.www.gangjianwang.LoginActivity;
 import com.gangjianwang.www.gangjianwang.R;
 import com.squareup.okhttp.Callback;
@@ -49,6 +52,7 @@ public class RegisterCommonFragment extends Fragment implements View.OnClickList
     private ProgressDialog mPd;
     private String json;
     private String hintResult;
+    private TextView agreeTv;
     private String getUserName, getKey;
     private int getUserId;
     private String autoLogin;
@@ -107,6 +111,7 @@ public class RegisterCommonFragment extends Fragment implements View.OnClickList
         surePwdEt = (EditText) rootView.findViewById(R.id.et_register_common_surepwd);
         emailEt = (EditText) rootView.findViewById(R.id.et_register_common_email);
         autoCb = (CheckBox) rootView.findViewById(R.id.cb_register_common_agree);
+        agreeTv = (TextView) rootView.findViewById(R.id.tv_register_common_agreement);
         registerRl = (RelativeLayout) rootView.findViewById(R.id.rl_register_common_register);
     }
 
@@ -116,12 +121,16 @@ public class RegisterCommonFragment extends Fragment implements View.OnClickList
     }
 
     private void setListener() {
+        agreeTv.setOnClickListener(this);
         registerRl.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.tv_register_common_agreement:
+                startActivity(new Intent(getActivity(), AgreeMentActivity.class));
+                break;
             case R.id.rl_register_common_register:
                 judge();
                 break;

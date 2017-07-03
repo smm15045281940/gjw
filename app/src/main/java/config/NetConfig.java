@@ -50,4 +50,8 @@ public interface NetConfig {
     public static final String loginAfterUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_index";
     //用户协议
     public static final String agreeMentUrl = "http://www.gangjianwang.com/wap/tmpl/member/document.html";
+    //商品收藏头
+    public static final String goodsCollectHeadUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_favorites&op=favorites_list&key=";
+    //商品收藏尾
+    public static final String goodsCollectFootUrl = "&curpage=1&page=10";
 }

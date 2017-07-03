@@ -14,6 +14,7 @@ public class UserInfo implements Serializable {
     private String favoritesStore;
     private String favoritersGoods;
     private String autoLogin;
+    private String key;
 
     public UserInfo() {
     }
@@ -66,4 +67,11 @@ public class UserInfo implements Serializable {
         this.autoLogin = autoLogin;
     }
 
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 }

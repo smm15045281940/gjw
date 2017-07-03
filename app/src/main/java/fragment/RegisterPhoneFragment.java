@@ -1,5 +1,6 @@
 package fragment;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,7 +12,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.gangjianwang.www.gangjianwang.AgreeMentActivity;
 import com.gangjianwang.www.gangjianwang.R;
 
 import utils.CodeUtils;
@@ -28,6 +31,7 @@ public class RegisterPhoneFragment extends Fragment implements View.OnClickListe
     private EditText photoNumberEt, photoCodeEt;
     private ImageView photoCodeIv;
     private RelativeLayout getCodeRl;
+    private TextView agreeTv;
     private CodeUtils codeUtils;
 
     @Nullable
@@ -48,6 +52,7 @@ public class RegisterPhoneFragment extends Fragment implements View.OnClickListe
         photoNumberEt = (EditText) rootView.findViewById(R.id.et_register_phone_photonumber);
         photoCodeEt = (EditText) rootView.findViewById(R.id.et_register_phone_photocode);
         photoCodeIv = (ImageView) rootView.findViewById(R.id.iv_register_phone_photocode);
+        agreeTv = (TextView) rootView.findViewById(R.id.tv_register_phone_agreement);
         getCodeRl = (RelativeLayout) rootView.findViewById(R.id.rl_register_phone_getcode);
     }
 
@@ -59,6 +64,7 @@ public class RegisterPhoneFragment extends Fragment implements View.OnClickListe
 
     private void setListener() {
         photoCodeIv.setOnClickListener(this);
+        agreeTv.setOnClickListener(this);
         getCodeRl.setOnClickListener(this);
     }
 
@@ -68,6 +74,9 @@ public class RegisterPhoneFragment extends Fragment implements View.OnClickListe
             case R.id.iv_register_phone_photocode:
                 Bitmap bitmap = codeUtils.createBitmap();
                 photoCodeIv.setImageBitmap(bitmap);
+                break;
+            case R.id.tv_register_phone_agreement:
+                startActivity(new Intent(getActivity(), AgreeMentActivity.class));
                 break;
             case R.id.rl_register_phone_getcode:
                 judge();

@@ -278,6 +278,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             userInfo.setFavoritesStore(objInfo.optString("favorites_store"));
             userInfo.setFavoritersGoods(objInfo.optString("favorites_goods"));
             userInfo.setAutoLogin(s);
+            userInfo.setKey(key);
             return true;
         } catch (JSONException e) {
             e.printStackTrace();

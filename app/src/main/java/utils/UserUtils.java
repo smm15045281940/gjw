@@ -61,6 +61,7 @@ public class UserUtils {
             et.putString("levelName", userInfo.getLevelName());
             et.putString("favoriteGoods", userInfo.getFavoritersGoods());
             et.putString("favoriteStore", userInfo.getFavoritesStore());
+            et.putString("key", userInfo.getKey());
             et.commit();
         }
     }
@@ -76,6 +77,7 @@ public class UserUtils {
             userInfo.setLevelName(sp.getString("levelName", ""));
             userInfo.setFavoritersGoods(sp.getString("favoriteGoods", ""));
             userInfo.setFavoritesStore(sp.getString("favoriteStore", ""));
+            userInfo.setKey(sp.getString("key", ""));
         } else {
             userInfo = new UserInfo();
             userInfo.setUserName("点击登录");
@@ -97,6 +99,7 @@ public class UserUtils {
         et.remove("levelName");
         et.remove("favoriteGoods");
         et.remove("favoriteStore");
+        et.remove("key");
         et.commit();
     }
 }
