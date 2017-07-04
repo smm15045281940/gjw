@@ -54,4 +54,8 @@ public interface NetConfig {
     public static final String goodsCollectHeadUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_favorites&op=favorites_list&key=";
     //商品收藏尾
     public static final String goodsCollectFootUrl = "&curpage=1&page=10";
+    //店铺收藏头
+    public static final String storeCollectHeadUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_favorites_store&op=favorites_list&key=";
+    //店铺收藏尾
+    public static final String storeCollectFootUrl = "&curpage=1&page=10";
 }

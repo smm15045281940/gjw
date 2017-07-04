@@ -4,8 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <customview.MyRefreshListView
-        android:id="@+id/lv_shopcollect"
+    <ListView
+        android:id="@+id/lv_store_collect"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

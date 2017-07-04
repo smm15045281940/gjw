@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.R;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
@@ -29,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import adapter.GoodsCollectGridAdapter;
 import bean.GoodsCollect;
 import bean.UserInfo;
 import config.NetConfig;
@@ -39,12 +41,13 @@ import utils.UserUtils;
  * Created by Administrator on 2017/4/17 0017.
  */
 
-public class GoodsCollectFragment extends Fragment {
+public class GoodsCollectFragment extends Fragment implements ListItemClickHelp {
 
     private View rootView, emptyView;
     private GridView gv;
 
     private List<GoodsCollect> goodsCollectList = new ArrayList<>();
+    private GoodsCollectGridAdapter goodsCollectGridAdapter;
     private boolean isLogined;
     private OkHttpClient okHttpClient;
     private ProgressDialog progressDialog;
@@ -59,9 +62,12 @@ public class GoodsCollectFragment extends Fragment {
                     case 0:
                         progressDialog.dismiss();
                         ToastUtils.toast(getActivity(), "无网络");
+                        gv.setEmptyView(emptyView);
                         break;
                     case 1:
                         progressDialog.dismiss();
+                        goodsCollectGridAdapter.notifyDataSetChanged();
+                        gv.setEmptyView(emptyView);
                         break;
                     default:
                         break;
@@ -76,6 +82,7 @@ public class GoodsCollectFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_goodscollect, null);
         initView();
         initData();
+        setData();
         loadData();
         return rootView;
     }
@@ -83,7 +90,6 @@ public class GoodsCollectFragment extends Fragment {
     private void initView() {
         initRoot();
         initEmpty();
-        gv.setEmptyView(emptyView);
     }
 
     private void initData() {
@@ -94,6 +100,7 @@ public class GoodsCollectFragment extends Fragment {
             UserInfo userInfo = UserUtils.readLogin(getActivity(), true);
             key = userInfo.getKey();
         }
+        goodsCollectGridAdapter = new GoodsCollectGridAdapter(getActivity(), goodsCollectList, this);
     }
 
     private void initRoot() {
@@ -109,6 +116,10 @@ public class GoodsCollectFragment extends Fragment {
         ((TextView) emptyView.findViewById(R.id.tv_empty_type_myfoot_recommend)).setText("可以去看看哪些商品值得收藏");
         ((ViewGroup) gv.getParent()).addView(emptyView);
         emptyView.setVisibility(View.GONE);
+    }
+
+    private void setData() {
+        gv.setAdapter(goodsCollectGridAdapter);
     }
 
     private void loadData() {
@@ -156,5 +167,17 @@ public class GoodsCollectFragment extends Fragment {
             e.printStackTrace();
         }
         return false;
+    }
+
+    @Override
+    public void onClick(View item, View widget, int position, int which, boolean isChecked) {
+        switch (which) {
+            case R.id.iv_item_goods_collect_delete:
+                goodsCollectList.remove(position);
+                goodsCollectGridAdapter.notifyDataSetChanged();
+                break;
+            default:
+                break;
+        }
     }
 }
