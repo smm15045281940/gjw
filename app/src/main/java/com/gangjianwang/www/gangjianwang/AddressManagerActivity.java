@@ -1,36 +1,86 @@
 package com.gangjianwang.www.gangjianwang;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import adapter.AddressAdapter;
 import bean.Address;
+import config.NetConfig;
+import utils.ToastUtils;
+import utils.UserUtils;
 
 public class AddressManagerActivity extends AppCompatActivity implements View.OnClickListener, ListItemClickHelp {
 
+    private View rootView, dialogView;
     private RelativeLayout mBackRl, mAddRl;
-    private TextView mEmptyTv;
-    private ListView mAddressManagerLv;
-    private List<Address> mAddressList;
-    private AddressAdapter mAddressAdapter;
+    private AlertDialog alertDialog;
+    private RelativeLayout yesRl, noRl;
+    private ListView lv;
+    private List<Address> addressList = new ArrayList<>();
+    private AddressAdapter addressAdapter;
+    private ProgressDialog progressDialog;
+    private OkHttpClient okHttpClient;
+    private boolean isLogined;
+    private String key;
+    private int delPositon;
+
+    public Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg != null) {
+                switch (msg.what) {
+                    case 0:
+                        progressDialog.dismiss();
+                        ToastUtils.toast(AddressManagerActivity.this, "无网络");
+                        break;
+                    case 1:
+                        progressDialog.dismiss();
+                        addressAdapter.notifyDataSetChanged();
+                        break;
+                    case 2:
+                        addressList.remove(delPositon);
+                        addressAdapter.notifyDataSetChanged();
+                        ToastUtils.toast(AddressManagerActivity.this,"删除成功");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_address_manager);
+        rootView = View.inflate(this, R.layout.activity_address_manager, null);
+        setContentView(rootView);
         initView();
         initData();
         setData();
@@ -39,35 +89,99 @@ public class AddressManagerActivity extends AppCompatActivity implements View.On
     }
 
     private void initView() {
-        mBackRl = (RelativeLayout) findViewById(R.id.rl_addressmanage_back);
-        mAddRl = (RelativeLayout) findViewById(R.id.rl_addressmanage_add);
-        mEmptyTv = (TextView) findViewById(R.id.tv_address_manager_empty);
-        mAddressManagerLv = (ListView) findViewById(R.id.lv_address_manager);
-        mAddressManagerLv.setEmptyView(mEmptyTv);
+        initRoot();
+        initDialog();
+    }
+
+    private void initRoot() {
+        mBackRl = (RelativeLayout) rootView.findViewById(R.id.rl_addressmanage_back);
+        mAddRl = (RelativeLayout) rootView.findViewById(R.id.rl_addressmanage_add);
+        lv = (ListView) rootView.findViewById(R.id.lv_address_manager);
+    }
+
+    private void initDialog() {
+        dialogView = View.inflate(this, R.layout.dialog_delete, null);
+        ((TextView) dialogView.findViewById(R.id.tv_dialog_delete_hint)).setText("确认删除吗?");
+        ((TextView) dialogView.findViewById(R.id.tv_dialog_delete_yes)).setText("确认");
+        ((TextView) dialogView.findViewById(R.id.tv_dialog_delete_no)).setText("取消");
+        yesRl = (RelativeLayout) dialogView.findViewById(R.id.rl_dialog_delete_yes);
+        noRl = (RelativeLayout) dialogView.findViewById(R.id.rl_dialog_delete_no);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+        alertDialog = builder.create();
     }
 
     private void initData() {
-        mAddressList = new ArrayList<>();
+        addressAdapter = new AddressAdapter(this, addressList, this);
+        progressDialog = new ProgressDialog(this);
+        okHttpClient = new OkHttpClient();
+        isLogined = UserUtils.isLogined(this);
+        if (isLogined) {
+            key = UserUtils.readLogin(this, isLogined).getKey();
+        }
     }
 
     private void setData() {
-        mAddressAdapter = new AddressAdapter(AddressManagerActivity.this, mAddressList, this);
-        mAddressManagerLv.setAdapter(mAddressAdapter);
+        lv.setAdapter(addressAdapter);
     }
 
     private void setListener() {
         mBackRl.setOnClickListener(this);
         mAddRl.setOnClickListener(this);
+        yesRl.setOnClickListener(this);
+        noRl.setOnClickListener(this);
     }
 
     private void loadData() {
-        Address address = new Address();
-        address.setName("dfdfdfd");
-        address.setPhone("129473974");
-        address.setAddress("difdifjdkfdlfdjlfdjlfjd");
-        address.setDefault(false);
-        mAddressList.add(address);
-        mAddressAdapter.notifyDataSetChanged();
+        progressDialog.show();
+        RequestBody body = new FormEncodingBuilder()
+                .add("key", key)
+                .build();
+        Request request = new Request.Builder().url(NetConfig.addressManageUrl)
+                .post(body)
+                .build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    if (parseJson(response.body().string())) {
+                        handler.sendEmptyMessage(1);
+                    } else {
+                        handler.sendEmptyMessage(0);
+                    }
+                } else {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
+    }
+
+    private boolean parseJson(String json) {
+        try {
+            JSONObject objBean = new JSONObject(json);
+            JSONObject objDatas = objBean.optJSONObject("datas");
+            JSONArray arrAddressList = objDatas.optJSONArray("address_list");
+            for (int i = 0; i < arrAddressList.length(); i++) {
+                Address address = new Address();
+                JSONObject o = arrAddressList.optJSONObject(i);
+                address.setAddressId(o.optString("address_id"));
+                address.setTrueName(o.optString("true_name"));
+                address.setMobPhone(o.optString("mob_phone"));
+                address.setAreaInfo(o.optString("area_info"));
+                address.setAddress(o.optString("address"));
+                address.setIsDefault(o.optString("is_default"));
+                addressList.add(address);
+            }
+            return true;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override
@@ -81,66 +195,75 @@ public class AddressManagerActivity extends AppCompatActivity implements View.On
                 intent.putExtra("addressstate", 0);
                 startActivityForResult(intent, 1);
                 break;
+            case R.id.rl_dialog_delete_yes:
+                alertDialog.dismiss();
+                ToastUtils.toast(AddressManagerActivity.this, "删除" + delPositon);
+                delete(delPositon);
+                break;
+            case R.id.rl_dialog_delete_no:
+                alertDialog.dismiss();
+                break;
             default:
                 break;
         }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && resultCode == 1 && data != null) {
-            Bundle bundle = data.getBundleExtra("addaddress");
-            Address address = (Address) bundle.getSerializable("addaddress");
-            if (address.getDefault()) {
-                for (int i = 0; i < mAddressList.size(); i++) {
-                    mAddressList.get(i).setDefault(false);
-                }
-            }
-            mAddressList.add(address);
-            mAddressAdapter.notifyDataSetChanged();
-        }
-        if (requestCode == 2 && resultCode == 2 && data != null) {
-            Bundle bundle = data.getBundleExtra("addaddress");
-            int editPosition = bundle.getInt("editposition");
-            Address address = (Address) bundle.getSerializable("addaddress");
-            List<Address> tempList1 = new ArrayList<>();
-            List<Address> tempList2 = new ArrayList<>();
-            for (int i = 0; i < editPosition; i++) {
-                tempList1.add(mAddressList.get(editPosition));
-            }
-            for (int i = editPosition + 1; i < mAddressList.size(); i++) {
-                tempList2.add(mAddressList.get(editPosition));
-            }
-            if (address.getDefault()) {
-                for (int i = 0; i < mAddressList.size(); i++) {
-                    mAddressList.get(i).setDefault(false);
-                }
-            }
-            mAddressList.clear();
-            mAddressList.addAll(tempList1);
-            mAddressList.add(address);
-            mAddressList.addAll(tempList2);
-            mAddressAdapter.notifyDataSetChanged();
+    public void onClick(View item, View widget, int position, int which, boolean isChecked) {
+        switch (which) {
+            case R.id.tv_item_address_manager_edit:
+                ToastUtils.log(AddressManagerActivity.this, "编辑" + position);
+                break;
+            case R.id.tv_item_address_manager_delete:
+                delPositon = position;
+                alertDialog.show();
+                break;
+            default:
+                break;
         }
     }
 
-    @Override
-    public void onClick(View item, View widget, int position, int which, boolean isChecked) {
-        switch (which) {
-            case R.id.btn_item_address_manager_edit:
-                Intent intent = new Intent(AddressManagerActivity.this, AddAddressActivity.class);
-                intent.putExtra("addressstate", 1);
-                intent.putExtra("editposition", position);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("addressobject", mAddressList.get(position));
-                intent.putExtra("addressobject", bundle);
-                startActivityForResult(intent, 2);
-                break;
-            case R.id.btn_item_address_manager_delete:
-                mAddressList.remove(position);
-                mAddressAdapter.notifyDataSetChanged();
-                break;
+    private void delete(int position) {
+        String addressId = addressList.get(position).getAddressId();
+        RequestBody body = new FormEncodingBuilder()
+                .add("address_id", addressId)
+                .add("key", key)
+                .build();
+        Request request = new Request.Builder().url(NetConfig.addressManageDeleteUrl)
+                .post(body)
+                .build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    if (parseDeleteson(response.body().string())) {
+                        handler.sendEmptyMessage(2);
+                    } else {
+                        handler.sendEmptyMessage(0);
+                    }
+                } else {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
+    }
+
+    private boolean parseDeleteson(String json) {
+        boolean b = false;
+        try {
+            JSONObject objBean = new JSONObject(json);
+            String code = objBean.optString("code");
+            if (code.equals("200")) {
+                b = true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        return b;
     }
 }

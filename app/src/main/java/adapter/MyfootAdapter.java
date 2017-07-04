@@ -8,10 +8,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import bean.Myfoot;
+import bean.MyFoot;
 
 /**
  * Created by Administrator on 2017/4/17 0017.
@@ -20,20 +21,16 @@ import bean.Myfoot;
 public class MyfootAdapter extends BaseAdapter {
 
     private Context context;
-    private List<Myfoot> list;
+    private List<MyFoot> list;
 
-    public MyfootAdapter(Context context, List<Myfoot> list) {
+    public MyfootAdapter(Context context, List<MyFoot> list) {
         this.context = context;
         this.list = list;
     }
 
     @Override
     public int getCount() {
-        if (list == null || list.size() == 0) {
-            return 0;
-        } else {
-            return list.size();
-        }
+        return list.size();
     }
 
     @Override
@@ -56,9 +53,10 @@ public class MyfootAdapter extends BaseAdapter {
         } else {
             vh = (ViewHolder) convertView.getTag();
         }
-        Myfoot myfoot = list.get(position);
-        vh.goodsNameTv.setText(myfoot.goodsName);
-        vh.goodsPriceTv.setText(myfoot.goodsPrice);
+        MyFoot myfoot = list.get(position);
+        vh.goodsNameTv.setText(myfoot.getGoodsName());
+        vh.goodsPriceTv.setText("¥" + myfoot.getGoodsPrice());
+        Picasso.with(context).load(myfoot.getGoodsImgUrl()).placeholder(vh.goodsImgIv.getDrawable()).into(vh.goodsImgIv);
         return convertView;
     }
 

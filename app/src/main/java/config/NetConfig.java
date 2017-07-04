@@ -58,4 +58,24 @@ public interface NetConfig {
     public static final String storeCollectHeadUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_favorites_store&op=favorites_list&key=";
     //店铺收藏尾
     public static final String storeCollectFootUrl = "&curpage=1&page=10";
+    //足迹头
+    public static final String footHeadUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_goodsbrowse&op=browse_list&key=";
+    //足迹尾
+    public static final String footFootUrl = "&curpage=1&page=10";
+    //我的财产头
+    public static final String propertyHeadUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_index&op=my_asset&key=";
+    //积分头(总)
+    public static final String integrateNumHeadUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_index&op=my_asset&key=";
+    //积分尾(总)
+    public static final String integrateNumFootUrl = "&fields=point";
+    //积分头
+    public static final String integrateHeadUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_points&op=pointslog&key=";
+    //积分尾页头
+    public static final String integrateFootPageHeadUrl = "&curpage=";
+    //积分尾页尾
+    public static final String integrateFootPageFootUrl = "&page=10";
+    //地址管理(Post) 字段key
+    public static final String addressManageUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_address&op=address_list";
+    //地址管理删除(Post) 字段 address_id key
+    public static final String addressManageDeleteUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_address&op=address_del";
 }
