@@ -8,12 +8,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -24,8 +22,8 @@ import com.gangjianwang.www.gangjianwang.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import adapter.OrderAdapter;
-import bean.Order;
+import adapter.OrderInnerAdapter;
+import bean.OrderInner;
 import customview.LazyFragment;
 import customview.MyRefreshListView;
 import customview.OnRefreshListener;
@@ -40,9 +38,9 @@ public class RealorderWaitpayFragment extends LazyFragment implements OnRefreshL
     private View rootView, emptyView;
     private MyRefreshListView mLv;
     private TextView loadTv;
-    private List<Order> mDataList = new ArrayList<>();
+    private List<OrderInner> mDataList = new ArrayList<>();
     private RelativeLayout lookAroundRl;
-    private OrderAdapter mAdapter;
+    private OrderInnerAdapter mAdapter;
     private AlertDialog cancelAd;
     private int cancelIndex;
 
@@ -108,7 +106,7 @@ public class RealorderWaitpayFragment extends LazyFragment implements OnRefreshL
     }
 
     private void setData() {
-        mAdapter = new OrderAdapter(getActivity(), mDataList, this);
+        mAdapter = new OrderInnerAdapter(getActivity(), mDataList, this);
         mLv.setAdapter(mAdapter);
     }
 
@@ -118,7 +116,7 @@ public class RealorderWaitpayFragment extends LazyFragment implements OnRefreshL
 
     private void loadData() {
         for (int i = 0; i < 2; i++) {
-            mDataList.add(new Order("", "西林钢铁集团", "待付款", "", "工字钢", "¥1500.00", "x1", "1", "¥1500.00"));
+            mDataList.add(new OrderInner("", "西林钢铁集团", "待付款", "", "工字钢", "¥1500.00", "x1", "1", "¥1500.00"));
         }
     }
 
@@ -137,7 +135,7 @@ public class RealorderWaitpayFragment extends LazyFragment implements OnRefreshL
             @Override
             protected Void doInBackground(Void... params) {
                 SystemClock.sleep(2000);
-                List<Order> tempList = new ArrayList<Order>();
+                List<OrderInner> tempList = new ArrayList<OrderInner>();
                 tempList.addAll(mDataList);
                 mDataList.clear();
                 loadData();

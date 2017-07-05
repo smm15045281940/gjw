@@ -3,11 +3,11 @@ package com.gangjianwang.www.gangjianwang;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -20,7 +20,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import bean.Order;
 import fragment.RealorderFragment;
 import fragment.VirtualorderFragment;
 
@@ -134,9 +133,6 @@ public class OrderActivity extends AppCompatActivity implements OnClickListener 
         }
     }
 
-    /**
-     * 接收intent
-     */
     private void receiveIntent() {
         Intent intent = getIntent();
         Bundle bundle = new Bundle();

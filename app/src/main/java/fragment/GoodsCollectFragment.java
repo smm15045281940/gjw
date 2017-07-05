@@ -18,8 +18,10 @@ import android.widget.TextView;
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.R;
 import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
 import org.json.JSONArray;
@@ -45,13 +47,13 @@ public class GoodsCollectFragment extends Fragment implements ListItemClickHelp 
 
     private View rootView, emptyView;
     private GridView gv;
-
     private List<GoodsCollect> goodsCollectList = new ArrayList<>();
     private GoodsCollectGridAdapter goodsCollectGridAdapter;
     private boolean isLogined;
     private OkHttpClient okHttpClient;
     private ProgressDialog progressDialog;
     private String key;
+    private int delPosition;
 
     public Handler handler = new Handler() {
         @Override
@@ -68,6 +70,11 @@ public class GoodsCollectFragment extends Fragment implements ListItemClickHelp 
                         progressDialog.dismiss();
                         goodsCollectGridAdapter.notifyDataSetChanged();
                         gv.setEmptyView(emptyView);
+                        break;
+                    case 2:
+                        goodsCollectList.remove(delPosition);
+                        goodsCollectGridAdapter.notifyDataSetChanged();
+                        ToastUtils.toast(getActivity(), "删除成功");
                         break;
                     default:
                         break;
@@ -92,17 +99,6 @@ public class GoodsCollectFragment extends Fragment implements ListItemClickHelp 
         initEmpty();
     }
 
-    private void initData() {
-        okHttpClient = new OkHttpClient();
-        progressDialog = new ProgressDialog(getActivity());
-        isLogined = UserUtils.isLogined(getActivity());
-        if (isLogined) {
-            UserInfo userInfo = UserUtils.readLogin(getActivity(), true);
-            key = userInfo.getKey();
-        }
-        goodsCollectGridAdapter = new GoodsCollectGridAdapter(getActivity(), goodsCollectList, this);
-    }
-
     private void initRoot() {
         rootView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         gv = (GridView) rootView.findViewById(R.id.gv_goodscollect);
@@ -116,6 +112,17 @@ public class GoodsCollectFragment extends Fragment implements ListItemClickHelp 
         ((TextView) emptyView.findViewById(R.id.tv_empty_type_myfoot_recommend)).setText("可以去看看哪些商品值得收藏");
         ((ViewGroup) gv.getParent()).addView(emptyView);
         emptyView.setVisibility(View.GONE);
+    }
+
+    private void initData() {
+        okHttpClient = new OkHttpClient();
+        progressDialog = new ProgressDialog(getActivity());
+        isLogined = UserUtils.isLogined(getActivity());
+        if (isLogined) {
+            UserInfo userInfo = UserUtils.readLogin(getActivity(), true);
+            key = userInfo.getKey();
+        }
+        goodsCollectGridAdapter = new GoodsCollectGridAdapter(getActivity(), goodsCollectList, this);
     }
 
     private void setData() {
@@ -173,11 +180,57 @@ public class GoodsCollectFragment extends Fragment implements ListItemClickHelp 
     public void onClick(View item, View widget, int position, int which, boolean isChecked) {
         switch (which) {
             case R.id.iv_item_goods_collect_delete:
-                goodsCollectList.remove(position);
-                goodsCollectGridAdapter.notifyDataSetChanged();
+                delPosition = position;
+                delete(delPosition);
                 break;
             default:
                 break;
         }
+    }
+
+    private void delete(int position) {
+        String fav_id = goodsCollectList.get(position).getFavId();
+        RequestBody body = new FormEncodingBuilder()
+                .add("key", key)
+                .add("fav_id", fav_id)
+                .build();
+        Request request = new Request.Builder().url(NetConfig.goodsDeleteUrl)
+                .post(body)
+                .build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    if (parseDelJson(response.body().string())) {
+                        handler.sendEmptyMessage(2);
+                    } else {
+                        handler.sendEmptyMessage(0);
+                    }
+                } else {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
+    }
+
+    private boolean parseDelJson(String json) {
+        boolean b = false;
+        try {
+            JSONObject objBean = new JSONObject(json);
+            int code = objBean.optInt("code");
+            if (code == 200) {
+                b = true;
+            } else {
+                b = false;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return b;
     }
 }

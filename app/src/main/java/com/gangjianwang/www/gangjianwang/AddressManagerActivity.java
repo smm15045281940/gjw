@@ -66,7 +66,7 @@ public class AddressManagerActivity extends AppCompatActivity implements View.On
                     case 2:
                         addressList.remove(delPositon);
                         addressAdapter.notifyDataSetChanged();
-                        ToastUtils.toast(AddressManagerActivity.this,"删除成功");
+                        ToastUtils.toast(AddressManagerActivity.this, "删除成功");
                         break;
                     default:
                         break;
@@ -192,7 +192,7 @@ public class AddressManagerActivity extends AppCompatActivity implements View.On
                 break;
             case R.id.rl_addressmanage_add:
                 Intent intent = new Intent(AddressManagerActivity.this, AddAddressActivity.class);
-                intent.putExtra("addressstate", 0);
+                intent.putExtra("title", "新增收货地址");
                 startActivityForResult(intent, 1);
                 break;
             case R.id.rl_dialog_delete_yes:

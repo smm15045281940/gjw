@@ -18,8 +18,10 @@ import android.widget.TextView;
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.R;
 import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
 import org.json.JSONArray;
@@ -51,6 +53,7 @@ public class ShopCollectFragment extends Fragment implements ListItemClickHelp {
     private StoreCollectListAdapter storeCollectListAdapter;
     private boolean isLogined;
     private String key;
+    private int delPosition;
 
     public Handler handler = new Handler() {
         @Override
@@ -67,6 +70,11 @@ public class ShopCollectFragment extends Fragment implements ListItemClickHelp {
                         mPd.dismiss();
                         storeCollectListAdapter.notifyDataSetChanged();
                         lv.setEmptyView(emptyView);
+                        break;
+                    case 2:
+                        storeCollectList.remove(delPosition);
+                        storeCollectListAdapter.notifyDataSetChanged();
+                        ToastUtils.toast(getActivity(), "删除成功");
                         break;
                     default:
                         break;
@@ -177,11 +185,58 @@ public class ShopCollectFragment extends Fragment implements ListItemClickHelp {
     public void onClick(View item, View widget, int position, int which, boolean isChecked) {
         switch (which) {
             case R.id.iv_item_store_collect_delete:
-                storeCollectList.remove(position);
-                storeCollectListAdapter.notifyDataSetChanged();
+                delPosition = position;
+                delete(delPosition);
                 break;
             default:
                 break;
         }
+    }
+
+    private void delete(int position) {
+        String store_id = storeCollectList.get(position).getStoreId();
+        RequestBody body = new FormEncodingBuilder()
+                .add("key", key)
+                .add("store_id", store_id)
+                .build();
+        Request request = new Request.Builder()
+                .url(NetConfig.storeDeleteUrl)
+                .post(body)
+                .build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    if (parseDelJson(response.body().string())) {
+                        handler.sendEmptyMessage(2);
+                    } else {
+                        handler.sendEmptyMessage(0);
+                    }
+                } else {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
+    }
+
+    private boolean parseDelJson(String json) {
+        boolean b = false;
+        try {
+            JSONObject objBean = new JSONObject(json);
+            int code = objBean.optInt("code");
+            if (code == 200) {
+                b = true;
+            } else {
+                b = false;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return b;
     }
 }

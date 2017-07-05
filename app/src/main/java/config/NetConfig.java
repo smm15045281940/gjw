@@ -54,10 +54,14 @@ public interface NetConfig {
     public static final String goodsCollectHeadUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_favorites&op=favorites_list&key=";
     //商品收藏尾
     public static final String goodsCollectFootUrl = "&curpage=1&page=10";
+    //商品删除(post) key fav_id
+    public static final String goodsDeleteUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_favorites&op=favorites_del";
     //店铺收藏头
     public static final String storeCollectHeadUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_favorites_store&op=favorites_list&key=";
     //店铺收藏尾
     public static final String storeCollectFootUrl = "&curpage=1&page=10";
+    //店铺删除(post) key store_id
+    public static final String storeDeleteUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_favorites_store&op=favorites_del";
     //足迹头
     public static final String footHeadUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_goodsbrowse&op=browse_list&key=";
     //足迹尾
@@ -78,4 +82,7 @@ public interface NetConfig {
     public static final String addressManageUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_address&op=address_list";
     //地址管理删除(Post) 字段 address_id key
     public static final String addressManageDeleteUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_address&op=address_del";
+    //实物订单全部订单(post) key state_type order_key
+    public static final String realallorderUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_order&op=order_list&page=10&curpage=1";
+
 }

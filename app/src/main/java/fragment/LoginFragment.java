@@ -187,16 +187,13 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             ToastUtils.toast(getActivity(), "请输入密码!");
             return;
         } else {
-            ToastUtils.toast(getActivity(), "用户名:" + mUsernameEt.getText().toString() + "\n" + "密码:" + mPasswordEt.getText().toString() + "\n" + "七天自动登陆:" + mAutoLoginCb.isChecked() + "\n" + "正在登陆...");
             username = mUsernameEt.getText().toString();
             password = mPasswordEt.getText().toString();
             client = "wap";
             if (mAutoLoginCb.isChecked()) {
                 s = "1";
-                ToastUtils.log(getActivity(), "七天自动登录");
             } else {
                 s = "0";
-                ToastUtils.log(getActivity(), "七天不自动登录");
             }
             toLogin();
         }
