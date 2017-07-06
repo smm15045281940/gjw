@@ -8,11 +8,20 @@ import java.util.List;
 
 public class OrderOuter {
 
+    private String orderId;
     private String storeName;
     private String stateDesc;
     private String goodsAmount;
     private String orderAmount;
     private List<OrderInner> orderInnerList;
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
 
     public String getStoreName() {
         return storeName;

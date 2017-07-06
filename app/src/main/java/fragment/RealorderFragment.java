@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -43,10 +44,9 @@ import utils.UserUtils;
  * Created by Administrator on 2017/4/14 0014.
  */
 
-public class RealorderFragment extends Fragment implements View.OnClickListener {
+public class RealorderFragment extends Fragment implements View.OnClickListener, AbsListView.OnScrollListener {
 
     private View rootView, emptyView;
-    private LinearLayout containLl;
     private LinearLayout allLl, waitpayLl, waitreceiveLl, waitselfLl, waitevaluateLl;
     private TextView allTv, waitpayTv, waitreceiveTv, waitselfTv, waitevaluateTv;
     private View allV, waitpayV, waitreceiveV, waitselfV, waitevaluateV;
@@ -62,6 +62,7 @@ public class RealorderFragment extends Fragment implements View.OnClickListener 
     private final int REFRESH = 0;
     private final int LOAD = 1;
     private int LOAD_STATE = REFRESH;
+    private boolean isNext;
 
     public Handler handler = new Handler() {
         @Override
@@ -76,7 +77,6 @@ public class RealorderFragment extends Fragment implements View.OnClickListener 
                     case 1:
                         progressDialog.dismiss();
                         orderOuterAdapter.notifyDataSetChanged();
-                        containLl.setVisibility(View.VISIBLE);
                         break;
                     default:
                         break;
@@ -119,7 +119,6 @@ public class RealorderFragment extends Fragment implements View.OnClickListener 
         waitreceiveV = rootView.findViewById(R.id.v_realorder_wait_receive);
         waitselfV = rootView.findViewById(R.id.v_realorder_wait_self);
         waitevaluateV = rootView.findViewById(R.id.v_realorder_wait_evaluate);
-        containLl = (LinearLayout) rootView.findViewById(R.id.ll_realorder_contain);
         lv = (ListView) rootView.findViewById(R.id.lv_realorder);
     }
 
@@ -156,6 +155,7 @@ public class RealorderFragment extends Fragment implements View.OnClickListener 
         waitreceiveLl.setOnClickListener(this);
         waitselfLl.setOnClickListener(this);
         waitevaluateLl.setOnClickListener(this);
+        lv.setOnScrollListener(this);
     }
 
     @Override
@@ -265,7 +265,7 @@ public class RealorderFragment extends Fragment implements View.OnClickListener 
     }
 
     private void loadData() {
-        containLl.setVisibility(View.INVISIBLE);
+        emptyView.setVisibility(View.GONE);
         progressDialog.show();
         RequestBody body = new FormEncodingBuilder()
                 .add("key", key)
@@ -312,6 +312,7 @@ public class RealorderFragment extends Fragment implements View.OnClickListener 
                 JSONArray arrOrderList = obj.optJSONArray("order_list");
                 for (int j = 0; j < arrOrderList.length(); j++) {
                     JSONObject objArr = arrOrderList.optJSONObject(j);
+                    orderOuter.setOrderId(objArr.optString("order_id"));
                     orderOuter.setStoreName(objArr.optString("store_name"));
                     orderOuter.setStateDesc(objArr.optString("state_desc"));
                     orderOuter.setGoodsAmount("?");
@@ -336,5 +337,20 @@ public class RealorderFragment extends Fragment implements View.OnClickListener 
             e.printStackTrace();
         }
         return false;
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if (isNext && scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+            ToastUtils.toast(getActivity(), "到底了");
+//            LOAD_STATE = LOAD;
+//            curPage++;
+//            loadData();
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        isNext = (firstVisibleItem + visibleItemCount == totalItemCount);
     }
 }

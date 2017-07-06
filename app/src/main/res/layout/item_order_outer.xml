@@ -63,7 +63,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/x1"
-            android:background="#F5F5F5"/>
+            android:background="#F5F5F5" />
 
         <ListView
             android:id="@+id/lv_order_inner"
@@ -117,7 +117,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/x1"
-            android:background="#F5F5F5"/>
+            android:background="#F5F5F5" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -147,12 +147,21 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_item_order_outer_click"
+            <RelativeLayout
+                android:id="@+id/rl_item_order_outer_click"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true" />
+                android:layout_centerVertical="true"
+                android:background="@drawable/shape_rl_calculate_choosefile">
+
+                <TextView
+                    android:id="@+id/tv_item_order_outer_click"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/x2" />
+
+            </RelativeLayout>
 
         </RelativeLayout>
 

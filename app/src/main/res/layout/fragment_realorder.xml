@@ -15,6 +15,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/default_gray_selector"
             android:orientation="vertical"
             android:paddingTop="@dimen/x10">
 
@@ -41,6 +42,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/default_gray_selector"
             android:orientation="vertical"
             android:paddingTop="@dimen/x10">
 
@@ -68,6 +70,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/default_gray_selector"
             android:orientation="vertical"
             android:paddingTop="@dimen/x10">
 
@@ -95,6 +98,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/default_gray_selector"
             android:orientation="vertical"
             android:paddingTop="@dimen/x10">
 
@@ -122,6 +126,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/default_gray_selector"
             android:orientation="vertical"
             android:paddingTop="@dimen/x10">
 
@@ -146,18 +151,10 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/ll_realorder_contain"
+    <ListView
+        android:id="@+id/lv_realorder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <ListView
-            android:id="@+id/lv_realorder"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="@null" />
-
-    </LinearLayout>
+        android:divider="@null" />
 
 </LinearLayout>
