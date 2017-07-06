@@ -56,9 +56,13 @@ public class OrderInnerAdapter extends BaseAdapter {
         OrderInner orderInner = list.get(position);
         Picasso.with(context).load(orderInner.getGoodsImageUrl()).placeholder(holder.goodsImageUrlIv.getDrawable()).into(holder.goodsImageUrlIv);
         holder.goodsNameTv.setText(orderInner.getGoodsName());
-        holder.goodsSpecTv.setText(orderInner.getGoodsSpec());
+        if (orderInner.getGoodsSpec().equals("null")) {
+            holder.goodsSpecTv.setText("");
+        } else {
+            holder.goodsSpecTv.setText(orderInner.getGoodsSpec());
+        }
         holder.goodsPriceTv.setText("¥" + orderInner.getGoodsPrice());
-        holder.goodsNumTv.setText(orderInner.getGoodsNum());
+        holder.goodsNumTv.setText("x" + orderInner.getGoodsNum());
         return convertView;
     }
 

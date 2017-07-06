@@ -4,14 +4,160 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tl_realorder"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="horizontal">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/vp_realorder"
+        <LinearLayout
+            android:id="@+id/ll_realorder_all"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/x10">
+
+            <TextView
+                android:id="@+id/tv_realorder_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="全部"
+                android:textColor="@android:color/holo_red_light"
+                android:textSize="@dimen/x18" />
+
+            <View
+                android:id="@+id/v_realorder_all"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/x1"
+                android:layout_marginTop="@dimen/x10"
+                android:background="@android:color/holo_red_light" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_realorder_wait_pay"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/x10">
+
+            <TextView
+                android:id="@+id/tv_realorder_wait_pay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="待付款"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/x18" />
+
+            <View
+                android:id="@+id/v_realorder_wait_pay"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/x1"
+                android:layout_marginTop="@dimen/x10"
+                android:background="@android:color/holo_red_light"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_realorder_wait_receive"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/x10">
+
+            <TextView
+                android:id="@+id/tv_realorder_wait_receive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="待收货"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/x18" />
+
+            <View
+                android:id="@+id/v_realorder_wait_receive"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/x1"
+                android:layout_marginTop="@dimen/x10"
+                android:background="@android:color/holo_red_light"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_realorder_wait_self"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/x10">
+
+            <TextView
+                android:id="@+id/tv_realorder_wait_self"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="待自提"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/x18" />
+
+            <View
+                android:id="@+id/v_realorder_wait_self"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/x1"
+                android:layout_marginTop="@dimen/x10"
+                android:background="@android:color/holo_red_light"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_realorder_wait_evaluate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/x10">
+
+            <TextView
+                android:id="@+id/tv_realorder_wait_evaluate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="待评价"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/x18" />
+
+            <View
+                android:id="@+id/v_realorder_wait_evaluate"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/x1"
+                android:layout_marginTop="@dimen/x10"
+                android:background="@android:color/holo_red_light"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_realorder_contain"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/lv_realorder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null" />
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -2,11 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F5F5F5"
     android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x10" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@android:color/white"
         android:orientation="vertical"
         android:padding="@dimen/x10">
 
@@ -30,7 +36,9 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/x5"
-                android:layout_toRightOf="@+id/iv_item_order_outer_icon" />
+                android:layout_toRightOf="@+id/iv_item_order_outer_icon"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/x20" />
 
             <ImageView
                 android:layout_width="@dimen/x10"
@@ -46,14 +54,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true" />
+                android:layout_centerVertical="true"
+                android:textColor="@android:color/holo_red_light"
+                android:textSize="@dimen/x18" />
 
         </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/x1"
+            android:background="#F5F5F5"/>
 
         <ListView
             android:id="@+id/lv_order_inner"
             android:layout_width="match_parent"
-            android:layout_height="0dp" />
+            android:layout_height="0dp"
+            android:divider="@null" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -91,11 +107,17 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="(含运费¥0.00)" />
+                    android:text="(含运费¥0.00)"
+                    android:textSize="@dimen/x10" />
 
             </LinearLayout>
 
         </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/x1"
+            android:background="#F5F5F5"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -135,5 +157,9 @@
         </RelativeLayout>
 
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x10" />
 
 </LinearLayout>

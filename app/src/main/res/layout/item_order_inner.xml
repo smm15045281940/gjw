@@ -22,32 +22,44 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/x5"
             android:layout_toRightOf="@+id/iv_item_order_inner_goods_image_url"
-            android:text="goods_name" />
+            android:text="goods_name"
+            android:textSize="@dimen/x15" />
 
         <TextView
             android:id="@+id/tv_item_order_inner_goods_spec"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/iv_item_order_inner_goods_image_url"
+            android:layout_below="@+id/tv_item_order_inner_goods_name"
             android:layout_marginLeft="@dimen/x5"
+            android:layout_marginTop="@dimen/x30"
             android:layout_toRightOf="@+id/iv_item_order_inner_goods_image_url"
-            android:text="goods_spec" />
+            android:text="goods_spec"
+            android:textSize="@dimen/x12" />
 
         <TextView
             android:id="@+id/tv_item_order_inner_goods_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="goods_price" />
+            android:text="goods_price"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/x15" />
 
         <TextView
             android:id="@+id/tv_item_order_inner_goods_num"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/iv_item_order_inner_goods_image_url"
             android:layout_alignParentRight="true"
-            android:text="goods_num" />
+            android:layout_below="@+id/tv_item_order_inner_goods_price"
+            android:layout_marginTop="@dimen/x10"
+            android:text="goods_num"
+            android:textSize="@dimen/x12" />
 
     </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x1"
+        android:background="#F5F5F5" />
 
 </LinearLayout>

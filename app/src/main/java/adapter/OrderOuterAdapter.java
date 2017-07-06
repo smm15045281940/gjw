@@ -58,8 +58,19 @@ public class OrderOuterAdapter extends BaseAdapter {
         OrderOuter orderOuter = list.get(position);
         holder.storeNameTv.setText(orderOuter.getStoreName());
         holder.stateDescTv.setText(orderOuter.getStateDesc());
+        String stateDesc = orderOuter.getStateDesc();
+        if (stateDesc.equals("已取消")) {
+            holder.removeLl.setVisibility(View.VISIBLE);
+            holder.clickTv.setText("");
+        } else if (stateDesc.equals("待发货")) {
+            holder.removeLl.setVisibility(View.INVISIBLE);
+            holder.clickTv.setText("取消订单");
+        } else if (stateDesc.equals("交易完成")) {
+            holder.removeLl.setVisibility(View.VISIBLE);
+            holder.clickTv.setText("查看物流");
+        }
         holder.goodsAmountTv.setText(orderOuter.getGoodsAmount());
-        holder.orderAmountTv.setText(orderOuter.getOrderAmount());
+        holder.orderAmountTv.setText("¥" + orderOuter.getOrderAmount());
         orderInnerAdapter = new OrderInnerAdapter(context, orderOuter.getOrderInnerList());
         holder.orderInnerLv.setAdapter(orderInnerAdapter);
         orderInnerAdapter.notifyDataSetChanged();

@@ -82,7 +82,7 @@ public interface NetConfig {
     public static final String addressManageUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_address&op=address_list";
     //地址管理删除(Post) 字段 address_id key
     public static final String addressManageDeleteUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_address&op=address_del";
-    //实物订单全部订单(post) key state_type order_key
-    public static final String realallorderUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_order&op=order_list&page=10&curpage=1";
+    //实物订单全部订单(post)头 key state_type order_key
+    public static final String realallorderUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_order&op=order_list&page=10&curpage=";
 
 }
