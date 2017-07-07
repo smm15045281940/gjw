@@ -7,7 +7,7 @@
         android:color="@android:color/holo_red_light"/>
 
     <corners
-        android:topLeftRadius="10dp"
-        android:bottomLeftRadius="10dp"/>
+        android:topLeftRadius="@dimen/x5"
+        android:bottomLeftRadius="@dimen/x5"/>
 
 </shape>

@@ -1,20 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <android.support.design.widget.TabLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tb_virtualorder">
+        android:background="@android:color/white"
+        android:orientation="horizontal">
 
-    </android.support.design.widget.TabLayout>
+        <LinearLayout
+            android:id="@+id/ll_virtualorder_all"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/default_gray_selector"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/x10">
 
-    <android.support.v4.view.ViewPager
+            <TextView
+                android:id="@+id/tv_virtualorder_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="全部"
+                android:textColor="@android:color/holo_red_light"
+                android:textSize="@dimen/x12" />
+
+            <View
+                android:id="@+id/v_virtualorder_all"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/x1"
+                android:layout_marginTop="@dimen/x10"
+                android:background="@android:color/holo_red_light" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_virtualorder_wait_pay"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/default_gray_selector"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/x10">
+
+            <TextView
+                android:id="@+id/tv_virtualorder_wait_pay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="待付款"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/x12" />
+
+            <View
+                android:id="@+id/v_virtualorder_wait_pay"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/x1"
+                android:layout_marginTop="@dimen/x10"
+                android:background="@android:color/holo_red_light"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_virtualorder_wait_use"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/default_gray_selector"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/x10">
+
+            <TextView
+                android:id="@+id/tv_virtualorder_wait_use"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="待使用"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/x12" />
+
+            <View
+                android:id="@+id/v_virtualorder_wait_use"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/x1"
+                android:layout_marginTop="@dimen/x10"
+                android:background="@android:color/holo_red_light"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lv_virtualorder"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/vp_virtualorder">
-
-    </android.support.v4.view.ViewPager>
+        android:layout_height="match_parent" />
 
 </LinearLayout>

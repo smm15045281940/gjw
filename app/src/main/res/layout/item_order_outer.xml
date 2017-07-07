@@ -38,7 +38,7 @@
                 android:layout_marginLeft="@dimen/x5"
                 android:layout_toRightOf="@+id/iv_item_order_outer_icon"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/x20" />
+                android:textSize="@dimen/x15" />
 
             <ImageView
                 android:layout_width="@dimen/x10"
@@ -56,7 +56,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:textColor="@android:color/holo_red_light"
-                android:textSize="@dimen/x18" />
+                android:textSize="@dimen/x12" />
 
         </RelativeLayout>
 

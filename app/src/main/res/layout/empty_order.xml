@@ -10,8 +10,8 @@
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/x30"
+            android:layout_height="@dimen/x30"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/x5"
             android:scaleType="fitXY"
@@ -24,7 +24,7 @@
             android:layout_margin="@dimen/x5"
             android:text="您还没有相关的订单"
             android:textColor="@android:color/black"
-            android:textSize="@dimen/x18" />
+            android:textSize="@dimen/x15" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -32,7 +32,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/x5"
             android:text="可以去看看那些想要买的"
-            android:textSize="@dimen/x14" />
+            android:textSize="@dimen/x12" />
 
         <RelativeLayout
             android:id="@+id/rl_empty_order_stroll"
@@ -48,7 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="随便逛逛"
-                android:textSize="@dimen/x15" />
+                android:textSize="@dimen/x12" />
 
         </RelativeLayout>
 

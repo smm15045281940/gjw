@@ -12,25 +12,25 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import fragment.RealorderFragment;
 import fragment.VirtualorderFragment;
+import utils.ToastUtils;
 
 public class OrderActivity extends AppCompatActivity implements OnClickListener {
 
+    private View rootView;
     private RelativeLayout mBackRl;
     private RelativeLayout mRealorderRl, mVirtualorderRl;
     private GradientDrawable mRealorderGd, mVirtualorderGd;
     private TextView mRealorderTv, mVirtualorderTv;
     private EditText mSearchEt;
-    private ImageView mSearchIv;
+    private RelativeLayout searchRl;
     private Fragment mRealorderFragment, mVirtualorderFragment;
     private List<Fragment> mFragmentList;
     private FragmentManager mFragmentManager;
@@ -40,7 +40,8 @@ public class OrderActivity extends AppCompatActivity implements OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_myorder);
+        rootView = View.inflate(this, R.layout.activity_myorder, null);
+        setContentView(rootView);
         initView();
         initManager();
         setListener();
@@ -48,15 +49,19 @@ public class OrderActivity extends AppCompatActivity implements OnClickListener 
     }
 
     private void initView() {
-        mBackRl = (RelativeLayout) findViewById(R.id.rl_myorder_back);
-        mRealorderRl = (RelativeLayout) findViewById(R.id.rl_myorder_realorder);
-        mVirtualorderRl = (RelativeLayout) findViewById(R.id.rl_myorder_virtualorder);
+        initRoot();
+    }
+
+    private void initRoot() {
+        mBackRl = (RelativeLayout) rootView.findViewById(R.id.rl_myorder_back);
+        mRealorderRl = (RelativeLayout) rootView.findViewById(R.id.rl_myorder_realorder);
+        mVirtualorderRl = (RelativeLayout) rootView.findViewById(R.id.rl_myorder_virtualorder);
         mRealorderGd = (GradientDrawable) mRealorderRl.getBackground();
         mVirtualorderGd = (GradientDrawable) mVirtualorderRl.getBackground();
-        mRealorderTv = (TextView) findViewById(R.id.tv_myorder_realorder);
-        mVirtualorderTv = (TextView) findViewById(R.id.tv_myorder_virtualorder);
-        mSearchEt = (EditText) findViewById(R.id.et_myorder_search);
-        mSearchIv = (ImageView) findViewById(R.id.iv_myorder_search);
+        mRealorderTv = (TextView) rootView.findViewById(R.id.tv_myorder_realorder);
+        mVirtualorderTv = (TextView) rootView.findViewById(R.id.tv_myorder_virtualorder);
+        mSearchEt = (EditText) rootView.findViewById(R.id.et_myorder_search);
+        searchRl = (RelativeLayout) rootView.findViewById(R.id.rl_order_search);
     }
 
     private void initManager() {
@@ -78,7 +83,7 @@ public class OrderActivity extends AppCompatActivity implements OnClickListener 
         mBackRl.setOnClickListener(this);
         mRealorderRl.setOnClickListener(this);
         mVirtualorderRl.setOnClickListener(this);
-        mSearchIv.setOnClickListener(this);
+        searchRl.setOnClickListener(this);
     }
 
     @Override
@@ -93,9 +98,11 @@ public class OrderActivity extends AppCompatActivity implements OnClickListener 
             case R.id.rl_myorder_virtualorder:
                 changeFragment(1);
                 break;
-            case R.id.iv_myorder_search:
+            case R.id.rl_order_search:
                 if (!mSearchEt.getText().toString().isEmpty()) {
-                    Toast.makeText(OrderActivity.this, mSearchEt.getText().toString(), Toast.LENGTH_SHORT).show();
+                    ToastUtils.toast(OrderActivity.this, mSearchEt.getText().toString());
+                } else {
+                    ToastUtils.toast(OrderActivity.this, "请输入搜索内容");
                 }
                 break;
         }
