@@ -43,7 +43,7 @@ public class OrderActivity extends AppCompatActivity implements OnClickListener 
         rootView = View.inflate(this, R.layout.activity_myorder, null);
         setContentView(rootView);
         initView();
-        initManager();
+        initData();
         setListener();
         receiveIntent();
     }
@@ -62,12 +62,13 @@ public class OrderActivity extends AppCompatActivity implements OnClickListener 
         mVirtualorderTv = (TextView) rootView.findViewById(R.id.tv_myorder_virtualorder);
         mSearchEt = (EditText) rootView.findViewById(R.id.et_myorder_search);
         searchRl = (RelativeLayout) rootView.findViewById(R.id.rl_order_search);
-    }
-
-    private void initManager() {
         mRealorderGd.setColor(Color.RED);
         mRealorderTv.setTextColor(Color.WHITE);
+        mVirtualorderGd.setColor(Color.WHITE);
         mVirtualorderTv.setTextColor(Color.BLACK);
+    }
+
+    private void initData() {
         mFragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         mRealorderFragment = new RealorderFragment();

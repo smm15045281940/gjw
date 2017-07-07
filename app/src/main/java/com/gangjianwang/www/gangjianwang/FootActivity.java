@@ -66,7 +66,6 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
                         progressDialog.dismiss();
                         myFootList.clear();
                         mAdapter.notifyDataSetChanged();
-                        ToastUtils.toast(FootActivity.this, "已清空");
                         break;
                     default:
                         break;

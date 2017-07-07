@@ -4,50 +4,62 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/x10">
+        android:background="#F5F5F5"
+        android:padding="@dimen/x2">
 
-        <ImageView
-            android:id="@+id/iv_item_goods_collect_goodsImg"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/x100"
-            android:scaleType="fitXY"
-            android:src="@mipmap/img_default" />
-
-        <TextView
-            android:id="@+id/tv_item_goods_collect_goodsName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/x5"
-            android:text="goodsName"
-            android:textSize="@dimen/x10" />
-
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/x5">
-
-            <TextView
-                android:id="@+id/tv_item_goods_collect_goodsPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="goodsPrice"
-                android:textColor="@android:color/holo_red_light"
-                android:textSize="@dimen/x13" />
+            android:background="@drawable/whitegray_selector"
+            android:clickable="true"
+            android:orientation="vertical"
+            android:padding="@dimen/x10">
 
             <ImageView
-                android:id="@+id/iv_item_goods_collect_delete"
-                android:layout_width="@dimen/x20"
-                android:layout_height="@dimen/x20"
-                android:layout_alignParentRight="true"
+                android:id="@+id/iv_item_goods_collect_goodsImg"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/x100"
                 android:scaleType="fitXY"
                 android:src="@mipmap/img_default" />
 
-        </RelativeLayout>
+            <TextView
+                android:id="@+id/tv_item_goods_collect_goodsName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/x5"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="goodsName"
+                android:textSize="@dimen/x10" />
 
-    </LinearLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/x5">
+
+                <TextView
+                    android:id="@+id/tv_item_goods_collect_goodsPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="goodsPrice"
+                    android:textColor="@android:color/holo_red_light"
+                    android:textSize="@dimen/x13" />
+
+                <ImageView
+                    android:id="@+id/iv_item_goods_collect_delete"
+                    android:layout_width="@dimen/x15"
+                    android:layout_height="@dimen/x15"
+                    android:layout_alignParentRight="true"
+                    android:scaleType="fitXY"
+                    android:src="@mipmap/del_b" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>

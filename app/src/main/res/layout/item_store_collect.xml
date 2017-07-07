@@ -7,6 +7,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/whitegray_selector"
+        android:clickable="true"
         android:padding="@dimen/x10">
 
         <ImageView
@@ -69,13 +71,18 @@
 
         <ImageView
             android:id="@+id/iv_item_store_collect_delete"
-            android:layout_width="@dimen/x20"
-            android:layout_height="@dimen/x20"
+            android:layout_width="@dimen/x15"
+            android:layout_height="@dimen/x15"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:scaleType="fitXY"
-            android:src="@mipmap/img_default" />
+            android:src="@mipmap/del_b" />
 
     </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x1"
+        android:background="#F5F5F5" />
 
 </LinearLayout>
