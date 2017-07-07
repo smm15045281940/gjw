@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -31,24 +30,22 @@ import java.util.List;
 
 import adapter.MyfootAdapter;
 import bean.MyFoot;
-import bean.UserInfo;
 import config.NetConfig;
 import utils.ToastUtils;
 import utils.UserUtils;
 
-public class FootActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemLongClickListener {
+public class FootActivity extends AppCompatActivity implements View.OnClickListener {
 
     private View rootView, emptyView;
     private RelativeLayout mBackRl, mClearRl;
     private ListView lv;
     private List<MyFoot> myFootList = new ArrayList<>();
     private MyfootAdapter mAdapter;
-    private AlertDialog deleteAd, clearAd;
-    private int deletePosition;
-    private ProgressDialog mPd;
+    private AlertDialog clearAd;
     private OkHttpClient okHttpClient;
     private boolean isLogined;
     private String key;
+    private ProgressDialog progressDialog;
 
     public Handler handler = new Handler() {
         @Override
@@ -57,14 +54,19 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
             if (msg != null) {
                 switch (msg.what) {
                     case 0:
-                        mPd.dismiss();
+                        progressDialog.dismiss();
+                        mAdapter.notifyDataSetChanged();
                         ToastUtils.toast(FootActivity.this, "无网络");
-                        lv.setEmptyView(emptyView);
                         break;
                     case 1:
-                        mPd.dismiss();
+                        progressDialog.dismiss();
                         mAdapter.notifyDataSetChanged();
-                        lv.setEmptyView(emptyView);
+                        break;
+                    case 2:
+                        progressDialog.dismiss();
+                        myFootList.clear();
+                        mAdapter.notifyDataSetChanged();
+                        ToastUtils.toast(FootActivity.this, "已清空");
                         break;
                     default:
                         break;
@@ -106,25 +108,10 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
         emptyView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         emptyView.setVisibility(View.GONE);
         ((ViewGroup) lv.getParent()).addView(emptyView);
+        lv.setEmptyView(emptyView);
     }
 
     private void initDialog() {
-        AlertDialog.Builder deleteBuilder = new AlertDialog.Builder(FootActivity.this);
-        deleteBuilder.setMessage("是否删除?");
-        deleteBuilder.setPositiveButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                deleteAd.dismiss();
-            }
-        }).setNegativeButton("删除", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                myFootList.remove(deletePosition);
-                mAdapter.notifyDataSetChanged();
-                deleteAd.dismiss();
-            }
-        });
-        deleteAd = deleteBuilder.create();
         AlertDialog.Builder clearBuilder = new AlertDialog.Builder(FootActivity.this);
         clearBuilder.setMessage("是否清空?");
         clearBuilder.setPositiveButton("取消", new DialogInterface.OnClickListener() {
@@ -135,24 +122,19 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
         }).setNegativeButton("清空", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                myFootList.clear();
-                mAdapter.notifyDataSetChanged();
                 clearAd.dismiss();
-                ToastUtils.toast(FootActivity.this, "已清空");
+                clearFoot();
             }
         });
         clearAd = clearBuilder.create();
     }
 
     private void initData() {
-        mPd = new ProgressDialog(this);
         okHttpClient = new OkHttpClient();
+        progressDialog = new ProgressDialog(this);
         mAdapter = new MyfootAdapter(this, myFootList);
         isLogined = UserUtils.isLogined(this);
-        if (isLogined) {
-            UserInfo userInfo = UserUtils.readLogin(this, isLogined);
-            key = userInfo.getKey();
-        }
+        key = UserUtils.readLogin(this, true).getKey();
     }
 
     private void setData() {
@@ -162,12 +144,12 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
     private void setListener() {
         mBackRl.setOnClickListener(this);
         mClearRl.setOnClickListener(this);
-        lv.setOnItemLongClickListener(this);
     }
 
     private void loadData() {
+        emptyView.setVisibility(View.GONE);
         if (isLogined) {
-            mPd.show();
+            progressDialog.show();
             Request request = new Request.Builder().url(NetConfig.footHeadUrl + key + NetConfig.footFootUrl).get().build();
             okHttpClient.newCall(request).enqueue(new Callback() {
                 @Override
@@ -212,7 +194,6 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
         return false;
     }
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -231,17 +212,40 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void clearFoot() {
+        progressDialog.show();
+        Request request = new Request.Builder().url(NetConfig.footHeadUrl + key + NetConfig.footFootUrl).get().build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        JSONObject objBean = new JSONObject(response.body().string());
+                        if (objBean.optInt("code") == 200) {
+                            handler.sendEmptyMessage(2);
+                        } else {
+                            handler.sendEmptyMessage(0);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
+    }
+
     @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        switch (parent.getId()) {
-            case R.id.lv_myfoot:
-                deletePosition = position - 1;
-                ToastUtils.toast(FootActivity.this, deletePosition + "");
-                deleteAd.show();
-                break;
-            default:
-                break;
-        }
-        return false;
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeMessages(0);
+        handler.removeMessages(1);
+        handler.removeMessages(2);
     }
 }

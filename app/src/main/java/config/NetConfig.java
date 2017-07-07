@@ -90,4 +90,8 @@ public interface NetConfig {
     public static final String realorderCancelUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_order&op=order_cancel";
     //虚拟订单 key state_type order_key
     public static final String virtualorderUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_vr_order&op=order_list&page=10&curpage=1";
+    //浏览记录 删除头 get
+    public static final String footDelHeadUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_goodsbrowse&op=browse_list&key=";
+    //浏览记录 删除尾 get
+    public static final String footDelFootUrl = "&curpage=1&page=10";
 }

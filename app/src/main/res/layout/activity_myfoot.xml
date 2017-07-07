@@ -54,6 +54,8 @@
     <ListView
         android:id="@+id/lv_myfoot"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/x1"
+        android:divider="@null" />
 
 </LinearLayout>
