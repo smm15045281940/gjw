@@ -1,35 +1,20 @@
 package com.gangjianwang.www.gangjianwang;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import adapter.MyFragmentPagerAdapter;
-import fragment.AccountBalanceFragment;
-import fragment.AccountCashFragment;
-import fragment.RechargeDetailFragment;
+import android.widget.TextView;
 
 public class AccountBalanceActivity extends AppCompatActivity implements View.OnClickListener {
 
     private View rootView;
     private RelativeLayout mBackRl;
-    private TabLayout mTl;
-    private ViewPager mVp;
-    private String[] mTitle;
-    private List<Fragment> mFragmentList;
-    private AccountBalanceFragment accountBalanceFragment;
-    private RechargeDetailFragment rechargeDetailFragment;
-    private AccountCashFragment accountCashFragment;
-    private MyFragmentPagerAdapter mFragmentPagerAdapter;
+    private LinearLayout accountBalanceLl,rechargeDetailLl,accountCashLl;
+    private TextView accountBalanceTv,rechargeDetailTv,accountCashTv;
+    private View accountBalanceV,rechargeDetailV,accountCashV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,27 +30,13 @@ public class AccountBalanceActivity extends AppCompatActivity implements View.On
 
     private void initView() {
         mBackRl = (RelativeLayout) rootView.findViewById(R.id.rl_accountbalance_back);
-        mTl = (TabLayout) rootView.findViewById(R.id.tl_accountbalance);
-        mVp = (ViewPager) rootView.findViewById(R.id.vp_accountbalance);
+        accountBalanceLl = (LinearLayout) rootView.findViewById(R.id.ll_account_balance);
     }
 
     private void initData() {
-        mTitle = getResources().getStringArray(R.array.accountbalance_title);
-        mFragmentList = new ArrayList<>();
-        accountBalanceFragment = new AccountBalanceFragment();
-        rechargeDetailFragment = new RechargeDetailFragment();
-        accountCashFragment = new AccountCashFragment();
-        mFragmentList.add(accountBalanceFragment);
-        mFragmentList.add(rechargeDetailFragment);
-        mFragmentList.add(accountCashFragment);
-        mFragmentPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), mTitle, mFragmentList);
     }
 
     private void setData() {
-        mVp.setAdapter(mFragmentPagerAdapter);
-        mTl.setupWithViewPager(mVp);
-        mTl.setTabTextColors(Color.BLACK, Color.RED);
-        mTl.setSelectedTabIndicatorColor(Color.RED);
     }
 
     private void setListener() {
