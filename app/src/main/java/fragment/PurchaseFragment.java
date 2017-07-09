@@ -40,6 +40,7 @@ import config.NetConfig;
 import customview.MyRefreshListView;
 import customview.OnRefreshListener;
 import utils.ToastUtils;
+import utils.UserUtils;
 
 /**
  * Created by Administrator on 2017/4/10 0010.
@@ -57,7 +58,7 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
     private List<Purchase> mDataList = new ArrayList<>();
     private PurchaseAdapter mAdapter;
     private OkHttpClient okHttpClient;
-    private ProgressDialog mPd;
+    private ProgressDialog progressDialog;
     private AlertDialog mAd;
     private final int FIRST_LOAD = 1;
     private final int REFRESH_LOAD = 2;
@@ -69,6 +70,7 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
     private final int REFRESH_DONE = 5;
     private final int LOAD_DONE = 6;
     private int cancelIndex;
+    private String key;
 
     Handler handler = new Handler() {
         @Override
@@ -77,7 +79,7 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
             if (msg != null) {
                 switch (msg.what) {
                     case FIRST_NO_NET://首次无网络
-                        mPd.dismiss();
+                        progressDialog.dismiss();
                         ToastUtils.toast(getActivity(), "无网络");
                         break;
                     case REFRESH_NO_NET://刷新无网络
@@ -89,7 +91,7 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
                         ToastUtils.toast(getActivity(), "无网络");
                         break;
                     case FIRST_DONE://首次完成
-                        mPd.dismiss();
+                        progressDialog.dismiss();
                         mAdapter.notifyDataSetChanged();
                         break;
                     case REFRESH_DONE://刷新完成
@@ -135,9 +137,10 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
 
     private void initData() {
         okHttpClient = new OkHttpClient();
-        mPd = new ProgressDialog(getActivity());
-        mPd.setMessage("加载中..");
+        progressDialog = new ProgressDialog(getActivity());
         mAdapter = new PurchaseAdapter(getActivity(), mDataList, this);
+        key = UserUtils.readLogin(getActivity(), true).getKey();
+        ToastUtils.log(getActivity(), key);
     }
 
     private void setData() {
@@ -147,8 +150,8 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
     private void loadData(int LOAD_STATE) {
         switch (LOAD_STATE) {
             case FIRST_LOAD:
-                mPd.show();
-                Request requestFirst = new Request.Builder().url(NetConfig.purchaseUrl).get().build();
+                progressDialog.show();
+                Request requestFirst = new Request.Builder().url(NetConfig.purchaseHeadUrl + key + NetConfig.purchaseFootUrl).get().build();
                 okHttpClient.newCall(requestFirst).enqueue(new Callback() {
                     @Override
                     public void onFailure(Request request, IOException e) {
@@ -167,7 +170,7 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
                 });
                 break;
             case REFRESH_LOAD:
-                Request requestRefresh = new Request.Builder().url(NetConfig.purchaseUrl).get().build();
+                Request requestRefresh = new Request.Builder().url(NetConfig.purchaseHeadUrl + key + NetConfig.purchaseFootUrl).get().build();
                 okHttpClient.newCall(requestRefresh).enqueue(new Callback() {
                     @Override
                     public void onFailure(Request request, IOException e) {

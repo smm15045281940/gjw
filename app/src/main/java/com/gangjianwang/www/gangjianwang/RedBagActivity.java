@@ -18,28 +18,30 @@ import java.util.List;
 import fragment.GetRedbagFragment;
 import fragment.MineRedbagFragment;
 
-public class RedBagActivity extends AppCompatActivity implements View.OnClickListener{
+public class RedBagActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private View rootView;
     private RelativeLayout mBackRl;
-    private RelativeLayout mMineRl,mGetRl;
-    private GradientDrawable mMineGd,mGetGd;
-    private TextView mMineTv,mGetTv;
+    private RelativeLayout mMineRl, mGetRl;
+    private GradientDrawable mMineGd, mGetGd;
+    private TextView mMineTv, mGetTv;
 
-    private FragmentManager mFragmentManager;
-    private List<Fragment> mFragmentList;
-    private int curIndex;
+    private FragmentManager fragmentManager;
+    private List<Fragment> fragmentList = new ArrayList<>();
+    private int curPosition, tarPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_red_bag);
+        rootView = View.inflate(this, R.layout.activity_red_bag, null);
+        setContentView(rootView);
         initView();
-        initManager();
+        initData();
         setListener();
     }
 
-    private void initView(){
+    private void initView() {
         mBackRl = (RelativeLayout) findViewById(R.id.rl_redbag_back);
         mMineRl = (RelativeLayout) findViewById(R.id.rl_redbag_mine);
         mGetRl = (RelativeLayout) findViewById(R.id.rl_redbag_get);
@@ -51,20 +53,18 @@ public class RedBagActivity extends AppCompatActivity implements View.OnClickLis
         mMineTv.setTextColor(Color.WHITE);
     }
 
-    private void initManager(){
-        mFragmentManager = getSupportFragmentManager();
-        mFragmentList = new ArrayList<>();
+    private void initData() {
+        fragmentManager = getSupportFragmentManager();
         MineRedbagFragment mineRedbagFragment = new MineRedbagFragment();
         GetRedbagFragment getRedbagFragment = new GetRedbagFragment();
-        mFragmentList.add(mineRedbagFragment);
-        mFragmentList.add(getRedbagFragment);
-        FragmentTransaction transaction = mFragmentManager.beginTransaction();
-        transaction.add(R.id.ll_redbag_sit,mFragmentList.get(0));
+        fragmentList.add(mineRedbagFragment);
+        fragmentList.add(getRedbagFragment);
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.add(R.id.ll_redbag_sit, fragmentList.get(curPosition));
         transaction.commit();
-        curIndex = 0;
     }
 
-    private void setListener(){
+    private void setListener() {
         mBackRl.setOnClickListener(this);
         mMineRl.setOnClickListener(this);
         mGetRl.setOnClickListener(this);
@@ -72,55 +72,52 @@ public class RedBagActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.rl_redbag_back:
                 finish();
                 break;
             case R.id.rl_redbag_mine:
-                select(0);
-                changeFragment(0);
+                tarPosition = 0;
+                changeFragment();
                 break;
             case R.id.rl_redbag_get:
-                select(1);
-                changeFragment(1);
+                tarPosition = 1;
+                changeFragment();
                 break;
             default:
                 break;
         }
     }
 
-    private void select(int a){
-        switch (a){
-            case 0:
-                mMineGd.setColor(Color.RED);
-                mGetGd.setColor(Color.WHITE);
-                mMineTv.setTextColor(Color.WHITE);
-                mGetTv.setTextColor(Color.BLACK);
-                break;
-            case 1:
-                mMineGd.setColor(Color.WHITE);
-                mGetGd.setColor(Color.RED);
-                mMineTv.setTextColor(Color.BLACK);
-                mGetTv.setTextColor(Color.WHITE);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void changeFragment(int b){
-        if(curIndex!=b){
-            FragmentTransaction transaction = mFragmentManager.beginTransaction();
-            Fragment curFragment = mFragmentList.get(curIndex);
-            Fragment tarFragment = mFragmentList.get(b);
+    private void changeFragment() {
+        if (tarPosition != curPosition) {
+            switch (tarPosition) {
+                case 0:
+                    mMineGd.setColor(Color.RED);
+                    mGetGd.setColor(Color.WHITE);
+                    mMineTv.setTextColor(Color.WHITE);
+                    mGetTv.setTextColor(Color.BLACK);
+                    break;
+                case 1:
+                    mMineGd.setColor(Color.WHITE);
+                    mGetGd.setColor(Color.RED);
+                    mMineTv.setTextColor(Color.BLACK);
+                    mGetTv.setTextColor(Color.WHITE);
+                    break;
+                default:
+                    break;
+            }
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            Fragment curFragment = fragmentList.get(curPosition);
+            Fragment tarFragment = fragmentList.get(tarPosition);
             transaction.hide(curFragment);
-            if(tarFragment.isAdded()){
+            if (tarFragment.isAdded()) {
                 transaction.show(tarFragment);
-            }else{
-                transaction.replace(R.id.ll_redbag_sit,tarFragment);
+            } else {
+                transaction.add(R.id.ll_redbag_sit, tarFragment);
             }
             transaction.commit();
-            curIndex = b;
+            curPosition = tarPosition;
         }
     }
 }

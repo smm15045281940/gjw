@@ -213,7 +213,7 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
 
     private void clearFoot() {
         progressDialog.show();
-        Request request = new Request.Builder().url(NetConfig.footHeadUrl + key + NetConfig.footFootUrl).get().build();
+        Request request = new Request.Builder().url(NetConfig.footDelHeadUrl + key + NetConfig.footDelFootUrl).get().build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {

@@ -1,5 +1,6 @@
 package fragment;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -34,6 +35,7 @@ import java.io.IOException;
 
 import bean.UserInfo;
 import config.NetConfig;
+import config.ParaConfig;
 import utils.ToastUtils;
 import utils.UserUtils;
 
@@ -57,9 +59,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private String client;
     private String key;
     private UserInfo userInfo;
-    private String s;
 
-    private OkHttpClient okHttpClient = new OkHttpClient();
+    private OkHttpClient okHttpClient;
+    private ProgressDialog progressDialog;
 
     Handler handler = new Handler() {
         @Override
@@ -67,7 +69,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             super.handleMessage(msg);
             if (msg != null) {
                 switch (msg.what) {
-                    case 0:
+                    case ParaConfig.DEFEAT:
                         ToastUtils.toast(getActivity(), "无网络");
                         break;
                     case 1:
@@ -96,13 +98,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_login, null);
-        rootView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         initView();
+        initData();
         setListener();
         return rootView;
     }
 
     private void initView() {
+        rootView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         mForgetpwdTv = (TextView) rootView.findViewById(R.id.tv_login_forgetpassword);
         mUsernameEt = (EditText) rootView.findViewById(R.id.et_login_username);
         mPasswordEt = (EditText) rootView.findViewById(R.id.et_login_password);
@@ -110,6 +113,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         mClearPasswordIv = (ImageView) rootView.findViewById(R.id.iv_login_password_clear);
         mAutoLoginCb = (CheckBox) rootView.findViewById(R.id.cb_sevenday_autologin);
         mLoginRl = (RelativeLayout) rootView.findViewById(R.id.rl_login_login);
+    }
+
+    private void initData() {
+        okHttpClient = new OkHttpClient();
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setCanceledOnTouchOutside(false);
     }
 
     private void setListener() {
@@ -190,80 +199,63 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             username = mUsernameEt.getText().toString();
             password = mPasswordEt.getText().toString();
             client = "wap";
-            if (mAutoLoginCb.isChecked()) {
-                s = "1";
-            } else {
-                s = "0";
-            }
             toLogin();
         }
     }
 
     private void toLogin() {
-        RequestBody body = new FormEncodingBuilder()
-                .add("username", username)
-                .add("password", password)
-                .add("client", client)
-                .build();
-        Request request = new Request.Builder()
-                .url(NetConfig.loginUrl)
-                .post(body)
-                .build();
+        RequestBody body = new FormEncodingBuilder().add("username", username).add("password", password).add("client", client).build();
+        Request request = new Request.Builder().url(NetConfig.loginUrl).post(body).build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
-                handler.sendEmptyMessage(0);
+                handler.sendEmptyMessage(ParaConfig.DEFEAT);
             }
 
             @Override
             public void onResponse(Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String result = response.body().string();
-                    if (parseJson(result))
-                        handler.sendEmptyMessage(1);
+                    parseJson(result);
                 }
             }
         });
     }
 
-    private boolean parseJson(String json) {
+    private void parseJson(String json) {
         try {
             JSONObject objBean = new JSONObject(json);
             JSONObject objDatas = objBean.optJSONObject("datas");
             key = objDatas.optString("key");
-            return true;
+            handler.sendEmptyMessage(1);
+            return;
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return false;
+        handler.sendEmptyMessage(ParaConfig.DEFEAT);
     }
 
     private void getUserData() {
-        RequestBody body = new FormEncodingBuilder()
-                .add("key", key)
-                .build();
-        Request request = new Request.Builder()
-                .url(NetConfig.loginAfterUrl)
-                .post(body)
-                .build();
+        RequestBody body = new FormEncodingBuilder().add("key", key).build();
+        Request request = new Request.Builder().url(NetConfig.loginAfterUrl).post(body).build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
-                handler.sendEmptyMessage(0);
+                handler.sendEmptyMessage(ParaConfig.DEFEAT);
             }
 
             @Override
             public void onResponse(Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String result = response.body().string();
-                    if (parseUserData(result))
-                        handler.sendEmptyMessage(2);
+                    parseUserData(result);
+                    handler.sendEmptyMessage(2);
                 }
             }
         });
     }
 
-    private boolean parseUserData(String json) {
+    private void parseUserData(String json) {
         try {
             JSONObject objBean = new JSONObject(json);
             JSONObject objDatas = objBean.optJSONObject("datas");
@@ -274,12 +266,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             userInfo.setLevelName(objInfo.optString("level_name"));
             userInfo.setFavoritesStore(objInfo.optString("favorites_store"));
             userInfo.setFavoritersGoods(objInfo.optString("favorites_goods"));
-            userInfo.setAutoLogin(s);
+            userInfo.setAutoLogin(mAutoLoginCb.isChecked());
             userInfo.setKey(key);
-            return true;
+            ToastUtils.log(getActivity(), "userInfo-" + userInfo);
+            handler.sendEmptyMessage(2);
+            return;
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return false;
+        handler.sendEmptyMessage(ParaConfig.DEFEAT);
     }
 }

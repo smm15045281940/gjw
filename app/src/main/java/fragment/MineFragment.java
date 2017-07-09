@@ -14,6 +14,7 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,9 +58,10 @@ import static android.app.Activity.RESULT_OK;
  * Created by Administrator on 2017/4/10 0010.
  */
 
-public class MineFragment extends Fragment implements View.OnClickListener {
+public class MineFragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     private View rootView;
+    private SwipeRefreshLayout srl;
     private RelativeLayout mSettingRl;
     private ImageView mMineFaceIv, mMineCircleFaceIv;
     private RelativeLayout mBackcoloranimRl;
@@ -76,7 +78,8 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     private Handler mChangeFragHandler;
     private boolean isLogined;
     private OkHttpClient okHttpClient;
-    private String key, autoLogin;
+    private String key;
+    private boolean autoLogin;
 
     public Handler handler = new Handler() {
         @Override
@@ -88,6 +91,10 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                         ToastUtils.toast(getActivity(), "无网络");
                         break;
                     case 1:
+                        loadData();
+                        break;
+                    case 2:
+                        srl.setRefreshing(false);
                         loadData();
                         break;
                     default:
@@ -122,40 +129,6 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         if (!hidden) {
             animSet.start();
             oa.start();
-            if (isLogined) {
-                UserInfo userInfo = UserUtils.readLogin(getActivity(), isLogined);
-                key = userInfo.getKey();
-                autoLogin = userInfo.getAutoLogin();
-                RequestBody body = new FormEncodingBuilder()
-                        .add("key", key)
-                        .build();
-                Request request = new Request.Builder()
-                        .url(NetConfig.loginAfterUrl)
-                        .post(body)
-                        .build();
-                okHttpClient.newCall(request).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Request request, IOException e) {
-                        handler.sendEmptyMessage(0);
-                    }
-
-                    @Override
-                    public void onResponse(Response response) throws IOException {
-                        if (response.isSuccessful()) {
-                            UserUtils.clearLogin(getActivity());
-                            if (parseUserData(response.body().string())) {
-                                handler.sendEmptyMessage(1);
-                            } else {
-                                handler.sendEmptyMessage(0);
-                            }
-                        } else {
-                            handler.sendEmptyMessage(0);
-                        }
-                    }
-                });
-            } else {
-                handler.sendEmptyMessage(0);
-            }
         } else {
             animSet.cancel();
             oa.cancel();
@@ -163,6 +136,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initView() {
+        srl = (SwipeRefreshLayout) rootView.findViewById(R.id.srl_me);
         mSettingRl = (RelativeLayout) rootView.findViewById(R.id.rl_mine_setting);
         mMineFaceIv = (ImageView) rootView.findViewById(R.id.iv_mine_face);
         mMineCircleFaceIv = (ImageView) rootView.findViewById(R.id.iv_mine_circle_face);
@@ -191,9 +165,11 @@ public class MineFragment extends Fragment implements View.OnClickListener {
 
     private void initData() {
         okHttpClient = new OkHttpClient();
+        srl.setColorSchemeResources(android.R.color.holo_blue_light, android.R.color.holo_red_light, android.R.color.holo_orange_light, android.R.color.holo_green_light);
     }
 
     private void setListener() {
+        srl.setOnRefreshListener(this);
         mSettingRl.setOnClickListener(this);
         mMineFaceIv.setOnClickListener(this);
         mGoodscollectRl.setOnClickListener(this);
@@ -417,46 +393,6 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (isLogined) {
-            UserInfo userInfo = UserUtils.readLogin(getActivity(), isLogined);
-            key = userInfo.getKey();
-            autoLogin = userInfo.getAutoLogin();
-            RequestBody body = new FormEncodingBuilder()
-                    .add("key", key)
-                    .build();
-            Request request = new Request.Builder()
-                    .url(NetConfig.loginAfterUrl)
-                    .post(body)
-                    .build();
-            okHttpClient.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Request request, IOException e) {
-                    handler.sendEmptyMessage(0);
-                }
-
-                @Override
-                public void onResponse(Response response) throws IOException {
-                    if (response.isSuccessful()) {
-                        UserUtils.clearLogin(getActivity());
-                        if (parseUserData(response.body().string())) {
-                            handler.sendEmptyMessage(1);
-                        } else {
-                            handler.sendEmptyMessage(0);
-                        }
-                    } else {
-                        handler.sendEmptyMessage(0);
-                    }
-                }
-            });
-        } else {
-            handler.sendEmptyMessage(0);
-        }
-    }
-
     private boolean parseUserData(String json) {
         try {
             JSONObject objBean = new JSONObject(json);
@@ -476,5 +412,43 @@ public class MineFragment extends Fragment implements View.OnClickListener {
             e.printStackTrace();
         }
         return false;
+    }
+
+    @Override
+    public void onRefresh() {
+        if (isLogined) {
+            UserInfo userInfo = UserUtils.readLogin(getActivity(), isLogined);
+            key = userInfo.getKey();
+            autoLogin = userInfo.isAutoLogin();
+            RequestBody body = new FormEncodingBuilder()
+                    .add("key", key)
+                    .build();
+            Request request = new Request.Builder()
+                    .url(NetConfig.loginAfterUrl)
+                    .post(body)
+                    .build();
+            okHttpClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    handler.sendEmptyMessage(0);
+                }
+
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        UserUtils.clearLogin(getActivity());
+                        if (parseUserData(response.body().string())) {
+                            handler.sendEmptyMessage(2);
+                        } else {
+                            handler.sendEmptyMessage(0);
+                        }
+                    } else {
+                        handler.sendEmptyMessage(0);
+                    }
+                }
+            });
+        } else {
+            srl.setRefreshing(false);
+        }
     }
 }

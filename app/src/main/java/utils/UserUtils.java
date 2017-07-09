@@ -62,6 +62,7 @@ public class UserUtils {
             et.putString("favoriteGoods", userInfo.getFavoritersGoods());
             et.putString("favoriteStore", userInfo.getFavoritesStore());
             et.putString("key", userInfo.getKey());
+            et.putBoolean("autoLogin", userInfo.isAutoLogin());
             et.commit();
         }
     }
@@ -78,6 +79,7 @@ public class UserUtils {
             userInfo.setFavoritersGoods(sp.getString("favoriteGoods", ""));
             userInfo.setFavoritesStore(sp.getString("favoriteStore", ""));
             userInfo.setKey(sp.getString("key", ""));
+            userInfo.setAutoLogin(sp.getBoolean("autoLogin", false));
         } else {
             userInfo = new UserInfo();
             userInfo.setUserName("点击登录");
@@ -85,6 +87,8 @@ public class UserUtils {
             userInfo.setLevelName("");
             userInfo.setFavoritersGoods("0");
             userInfo.setFavoritesStore("0");
+            userInfo.setKey("");
+            userInfo.setAutoLogin(false);
         }
         return userInfo;
     }
@@ -100,6 +104,7 @@ public class UserUtils {
         et.remove("favoriteGoods");
         et.remove("favoriteStore");
         et.remove("key");
+        et.remove("autoLogin");
         et.commit();
     }
 }
