@@ -28,11 +28,11 @@ import java.util.List;
 import adapter.ChangeCityAdapter;
 import bean.City;
 import config.NetConfig;
+import config.PersonConfig;
 import customview.LruJsonCache;
 import customview.MyRefreshListView;
 import customview.OnRefreshListener;
 import customview.SlideBar;
-import utils.ToastUtils;
 
 public class ChangeCityActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, OnRefreshListener {
 
@@ -43,7 +43,7 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
     private List<City> mDataList = new ArrayList<>();
     private ChangeCityAdapter mAdapter;
     private String[] lowerLetter;
-    private ProgressDialog mPd;
+    private ProgressDialog progressDialog;
     private OkHttpClient okHttpClient;
     private final int LOAD_FIRST = 1;
     private final int LOAD_REFRESH = 2;
@@ -56,23 +56,20 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
             if (msg != null) {
                 switch (msg.what) {
                     case 0:
-                        mPd.dismiss();
+                        progressDialog.dismiss();
                         headView.setVisibility(View.VISIBLE);
                         footView.setVisibility(View.VISIBLE);
                         mAdapter.notifyDataSetChanged();
-                        ToastUtils.toast(ChangeCityActivity.this, "首次加载");
                         break;
                     case 1:
                         mLv.hideHeadView();
                         mAdapter.notifyDataSetChanged();
-                        ToastUtils.toast(ChangeCityActivity.this, "已刷新");
                         break;
                     case 2:
-                        mPd.dismiss();
+                        progressDialog.dismiss();
                         headView.setVisibility(View.VISIBLE);
                         footView.setVisibility(View.VISIBLE);
                         mAdapter.notifyDataSetChanged();
-                        ToastUtils.toast(ChangeCityActivity.this, "加载本地缓存");
                         break;
                     default:
                         break;
@@ -104,8 +101,8 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
 
     private void initData() {
         lowerLetter = getResources().getStringArray(R.array.lowerletter);
-        mPd = new ProgressDialog(this);
-        mPd.setMessage("加载中..");
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCanceledOnTouchOutside(false);
         okHttpClient = new OkHttpClient();
         lruJsonCache = LruJsonCache.get(ChangeCityActivity.this);
     }
@@ -136,7 +133,7 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
     private void loadData(int LOAD_STATE) {
         switch (LOAD_STATE) {
             case LOAD_FIRST:
-                mPd.show();
+                progressDialog.show();
                 headView.setVisibility(View.GONE);
                 footView.setVisibility(View.GONE);
                 String cacheData = lruJsonCache.getAsString("city");
@@ -155,7 +152,7 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
                         public void onResponse(Response response) throws IOException {
                             if (response.isSuccessful()) {
                                 String json = response.body().string();
-                                lruJsonCache.put("city", json, 10);
+                                lruJsonCache.put("city", json, PersonConfig.CITY_CACHE_TIME);
                                 parseJson(json);
                                 mainHandler.sendEmptyMessage(0);
                             }
@@ -177,7 +174,7 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
                         if (response.isSuccessful()) {
                             mDataList.clear();
                             String json = response.body().string();
-                            lruJsonCache.put("city", json, 10);
+                            lruJsonCache.put("city", json, PersonConfig.CITY_CACHE_TIME);
                             parseJson(json);
                             mainHandler.sendEmptyMessage(1);
                         }

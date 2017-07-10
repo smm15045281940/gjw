@@ -31,6 +31,7 @@ import java.util.List;
 import adapter.MyfootAdapter;
 import bean.MyFoot;
 import config.NetConfig;
+import config.ParaConfig;
 import utils.ToastUtils;
 import utils.UserUtils;
 
@@ -41,7 +42,7 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
     private ListView lv;
     private List<MyFoot> myFootList = new ArrayList<>();
     private MyfootAdapter mAdapter;
-    private AlertDialog clearAd;
+    private AlertDialog alertDialog;
     private OkHttpClient okHttpClient;
     private boolean isLogined;
     private String key;
@@ -111,21 +112,19 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initDialog() {
-        AlertDialog.Builder clearBuilder = new AlertDialog.Builder(FootActivity.this);
-        clearBuilder.setMessage("是否清空?");
-        clearBuilder.setPositiveButton("取消", new DialogInterface.OnClickListener() {
+        alertDialog = new AlertDialog.Builder(this).setMessage(ParaConfig.DELETE_CLEAR).setPositiveButton(ParaConfig.DELETE_NO, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                clearAd.dismiss();
+                alertDialog.dismiss();
             }
-        }).setNegativeButton("清空", new DialogInterface.OnClickListener() {
+        }).setNegativeButton(ParaConfig.DELETE_YES, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                clearAd.dismiss();
-                clearFoot();
+                alertDialog.dismiss();
+                clear();
             }
-        });
-        clearAd = clearBuilder.create();
+        }).create();
+        alertDialog.setCanceledOnTouchOutside(false);
     }
 
     private void initData() {
@@ -201,9 +200,9 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.rl_myfoot_clear:
                 if (!myFootList.isEmpty()) {
-                    clearAd.show();
+                    alertDialog.show();
                 } else {
-                    ToastUtils.toast(FootActivity.this, "没有什么可清空的");
+                    ToastUtils.toast(FootActivity.this, "已经空了");
                 }
                 break;
             default:
@@ -211,7 +210,7 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void clearFoot() {
+    private void clear() {
         progressDialog.show();
         Request request = new Request.Builder().url(NetConfig.footDelHeadUrl + key + NetConfig.footDelFootUrl).get().build();
         okHttpClient.newCall(request).enqueue(new Callback() {

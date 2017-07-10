@@ -4,23 +4,25 @@
     android:id="@+id/activity_address_manager"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/gray"
     android:orientation="vertical"
     tools:context="com.gangjianwang.www.gangjianwang.AddressManagerActivity">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/x40">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white">
 
         <RelativeLayout
             android:id="@+id/rl_addressmanage_back"
-            android:layout_width="@dimen/x40"
-            android:layout_height="match_parent"
-            android:background="@drawable/default_gray_selector"
-            android:padding="@dimen/x10">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/default_gray_selector">
 
             <ImageView
                 android:layout_width="@dimen/x20"
                 android:layout_height="@dimen/x20"
+                android:layout_margin="@dimen/x10"
                 android:scaleType="fitXY"
                 android:src="@mipmap/back_black" />
 
@@ -28,15 +30,15 @@
 
         <RelativeLayout
             android:id="@+id/rl_addressmanage_add"
-            android:layout_width="@dimen/x40"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:background="@drawable/default_gray_selector"
-            android:padding="@dimen/x10">
+            android:background="@drawable/default_gray_selector">
 
             <ImageView
                 android:layout_width="@dimen/x20"
                 android:layout_height="@dimen/x20"
+                android:layout_margin="@dimen/x10"
                 android:scaleType="fitXY"
                 android:src="@mipmap/address_add" />
 
@@ -48,9 +50,11 @@
 
     </RelativeLayout>
 
-    <ListView
+    <customview.MyRefreshListView
         android:id="@+id/lv_address_manager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:divider="@color/gray"
+        android:dividerHeight="@dimen/x10" />
 
 </LinearLayout>

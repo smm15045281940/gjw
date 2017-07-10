@@ -4,49 +4,51 @@
     android:id="@+id/activity_myfoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
     android:orientation="vertical"
     tools:context="com.gangjianwang.www.gangjianwang.FootActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/x40"
-        android:background="@android:color/white">
+        android:layout_height="wrap_content">
 
         <RelativeLayout
             android:id="@+id/rl_myfoot_back"
-            android:layout_width="@dimen/x40"
-            android:layout_height="match_parent"
-            android:background="@drawable/default_gray_selector"
-            android:padding="@dimen/x10">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/default_gray_selector">
 
             <ImageView
                 android:layout_width="@dimen/x20"
                 android:layout_height="@dimen/x20"
+                android:layout_margin="@dimen/x10"
                 android:src="@mipmap/back_black" />
 
         </RelativeLayout>
 
         <TextView
-            style="@style/tv_title"
-            android:text="浏览记录" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="浏览记录"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/x18" />
 
         <RelativeLayout
             android:id="@+id/rl_myfoot_clear"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="@dimen/x40"
+            android:layout_height="@dimen/x40"
             android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:background="@drawable/default_gray_selector">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_marginLeft="@dimen/x10"
-                android:layout_marginRight="@dimen/x10"
                 android:text="清空"
                 android:textColor="@android:color/holo_red_dark"
                 android:textSize="@dimen/x15" />
+
         </RelativeLayout>
 
     </RelativeLayout>
@@ -56,6 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/x1"
-        android:divider="@null" />
+        android:divider="@color/gray"
+        android:dividerHeight="@dimen/x1" />
 
 </LinearLayout>

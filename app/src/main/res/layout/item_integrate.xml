@@ -40,6 +40,7 @@
                 android:id="@+id/tv_item_integrate_pl_points"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right"
                 android:textColor="@android:color/holo_red_light"
                 android:textSize="@dimen/x15" />
 
@@ -47,6 +48,7 @@
                 android:id="@+id/tv_item_integrate_addtimetext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right"
                 android:layout_marginTop="@dimen/x5"
                 android:textSize="@dimen/x12" />
 

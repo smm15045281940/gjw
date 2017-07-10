@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import bean.Address;
 import utils.RegularUtils;
 import utils.ToastUtils;
 
@@ -53,6 +54,19 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
         Intent intent = getIntent();
         if (intent != null) {
             titleTv.setText(intent.getStringExtra("title"));
+            Address address = (Address) intent.getSerializableExtra("address");
+            if (address != null) {
+                nameEt.setText(address.getTrueName());
+                nameEt.setSelection(address.getTrueName().length());
+                phoneEt.setText(address.getMobPhone());
+                addressEt.setText(address.getAddress());
+                areaTv.setText(address.getAreaInfo());
+                if (address.getIsDefault().equals("0")) {
+                    defaultSh.setChecked(false);
+                } else {
+                    defaultSh.setChecked(true);
+                }
+            }
         }
     }
 

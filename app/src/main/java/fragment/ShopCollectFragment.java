@@ -1,11 +1,13 @@
 package fragment;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +38,7 @@ import adapter.StoreCollectListAdapter;
 import bean.StoreCollect;
 import bean.UserInfo;
 import config.NetConfig;
+import config.ParaConfig;
 import utils.ToastUtils;
 import utils.UserUtils;
 
@@ -47,13 +50,14 @@ public class ShopCollectFragment extends Fragment implements ListItemClickHelp {
 
     private View rootView, emptyView;
     private ListView lv;
-    private ProgressDialog mPd;
+    private ProgressDialog progressDialog;
     private OkHttpClient okHttpClient;
     private List<StoreCollect> storeCollectList = new ArrayList<>();
     private StoreCollectListAdapter storeCollectListAdapter;
     private boolean isLogined;
     private String key;
     private int delPosition;
+    private AlertDialog alertDialog;
 
     public Handler handler = new Handler() {
         @Override
@@ -62,16 +66,17 @@ public class ShopCollectFragment extends Fragment implements ListItemClickHelp {
             if (msg != null) {
                 switch (msg.what) {
                     case 0:
-                        mPd.dismiss();
+                        progressDialog.dismiss();
                         ToastUtils.toast(getActivity(), "无网络");
                         lv.setEmptyView(emptyView);
                         break;
                     case 1:
-                        mPd.dismiss();
+                        progressDialog.dismiss();
                         storeCollectListAdapter.notifyDataSetChanged();
                         lv.setEmptyView(emptyView);
                         break;
                     case 2:
+                        progressDialog.dismiss();
                         storeCollectList.remove(delPosition);
                         storeCollectListAdapter.notifyDataSetChanged();
                         ToastUtils.toast(getActivity(), "删除成功");
@@ -97,6 +102,7 @@ public class ShopCollectFragment extends Fragment implements ListItemClickHelp {
     private void initView() {
         initRoot();
         initEmpty();
+        initDialog();
     }
 
     private void initRoot() {
@@ -115,8 +121,24 @@ public class ShopCollectFragment extends Fragment implements ListItemClickHelp {
         emptyView.setVisibility(View.GONE);
     }
 
+    private void initDialog() {
+        alertDialog = new AlertDialog.Builder(getActivity()).setMessage(ParaConfig.DELETE_MESSAGE).setNegativeButton(ParaConfig.DELETE_YES, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                alertDialog.dismiss();
+                delete(delPosition);
+            }
+        }).setPositiveButton(ParaConfig.DELETE_NO, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                alertDialog.dismiss();
+            }
+        }).create();
+        alertDialog.setCanceledOnTouchOutside(false);
+    }
+
     private void initData() {
-        mPd = new ProgressDialog(getActivity());
+        progressDialog = new ProgressDialog(getActivity());
         okHttpClient = new OkHttpClient();
         storeCollectListAdapter = new StoreCollectListAdapter(getActivity(), storeCollectList, this);
         isLogined = UserUtils.isLogined(getActivity());
@@ -132,7 +154,7 @@ public class ShopCollectFragment extends Fragment implements ListItemClickHelp {
 
     private void loadData() {
         if (isLogined) {
-            mPd.show();
+            progressDialog.show();
             Request request = new Request.Builder().url(NetConfig.storeCollectHeadUrl + key + NetConfig.storeCollectFootUrl).get().build();
             okHttpClient.newCall(request).enqueue(new Callback() {
                 @Override
@@ -186,7 +208,7 @@ public class ShopCollectFragment extends Fragment implements ListItemClickHelp {
         switch (which) {
             case R.id.iv_item_store_collect_delete:
                 delPosition = position;
-                delete(delPosition);
+                alertDialog.show();
                 break;
             default:
                 break;
@@ -194,6 +216,7 @@ public class ShopCollectFragment extends Fragment implements ListItemClickHelp {
     }
 
     private void delete(int position) {
+        progressDialog.show();
         String store_id = storeCollectList.get(position).getStoreId();
         RequestBody body = new FormEncodingBuilder()
                 .add("key", key)

@@ -56,6 +56,7 @@ import bean.GoodsPost;
 import bean.GoodsRecommend;
 import bean.GoodsShow;
 import config.NetConfig;
+import config.PersonConfig;
 import customview.MyRefreshListView;
 import customview.OnRefreshListener;
 import utils.ToastUtils;
@@ -415,7 +416,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, OnRe
                         isLoop = false;
                         break;
                     case MotionEvent.ACTION_UP:
-                        handler.sendEmptyMessageDelayed(VIEWPAGER_RESHOW, 5000);
+                        handler.sendEmptyMessageDelayed(VIEWPAGER_RESHOW, PersonConfig.rotateCut_time);
                         break;
                     default:
                         break;
@@ -433,7 +434,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, OnRe
                 super.run();
                 while (true) {
                     if (isLoop) {
-                        SystemClock.sleep(3000);
+                        SystemClock.sleep(PersonConfig.rotateCut_time);
                         curPosition++;
                         handler.sendEmptyMessage(VIEWPAGER_SHOW);
                     }

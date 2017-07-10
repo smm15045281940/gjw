@@ -1,11 +1,13 @@
 package fragment;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +38,7 @@ import adapter.GoodsCollectGridAdapter;
 import bean.GoodsCollect;
 import bean.UserInfo;
 import config.NetConfig;
+import config.ParaConfig;
 import utils.ToastUtils;
 import utils.UserUtils;
 
@@ -46,6 +49,7 @@ import utils.UserUtils;
 public class GoodsCollectFragment extends Fragment implements ListItemClickHelp {
 
     private View rootView, emptyView;
+    private AlertDialog alertDialog;
     private GridView gv;
     private List<GoodsCollect> goodsCollectList = new ArrayList<>();
     private GoodsCollectGridAdapter goodsCollectGridAdapter;
@@ -72,6 +76,7 @@ public class GoodsCollectFragment extends Fragment implements ListItemClickHelp 
                         gv.setEmptyView(emptyView);
                         break;
                     case 2:
+                        progressDialog.dismiss();
                         goodsCollectList.remove(delPosition);
                         goodsCollectGridAdapter.notifyDataSetChanged();
                         ToastUtils.toast(getActivity(), "删除成功");
@@ -97,6 +102,7 @@ public class GoodsCollectFragment extends Fragment implements ListItemClickHelp 
     private void initView() {
         initRoot();
         initEmpty();
+        initDialog();
     }
 
     private void initRoot() {
@@ -112,6 +118,22 @@ public class GoodsCollectFragment extends Fragment implements ListItemClickHelp 
         ((TextView) emptyView.findViewById(R.id.tv_empty_type_myfoot_recommend)).setText("可以去看看哪些商品值得收藏");
         ((ViewGroup) gv.getParent()).addView(emptyView);
         emptyView.setVisibility(View.GONE);
+    }
+
+    private void initDialog() {
+        alertDialog = new AlertDialog.Builder(getActivity()).setMessage(ParaConfig.DELETE_MESSAGE).setNegativeButton(ParaConfig.DELETE_YES, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                alertDialog.dismiss();
+                delete(delPosition);
+            }
+        }).setPositiveButton(ParaConfig.DELETE_NO, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                alertDialog.dismiss();
+            }
+        }).create();
+        alertDialog.setCanceledOnTouchOutside(false);
     }
 
     private void initData() {
@@ -181,7 +203,7 @@ public class GoodsCollectFragment extends Fragment implements ListItemClickHelp 
         switch (which) {
             case R.id.iv_item_goods_collect_delete:
                 delPosition = position;
-                delete(delPosition);
+                alertDialog.show();
                 break;
             default:
                 break;
@@ -189,6 +211,7 @@ public class GoodsCollectFragment extends Fragment implements ListItemClickHelp 
     }
 
     private void delete(int position) {
+        progressDialog.show();
         String fav_id = goodsCollectList.get(position).getFavId();
         RequestBody body = new FormEncodingBuilder()
                 .add("key", key)

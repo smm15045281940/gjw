@@ -5,10 +5,10 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/whitegray_selector"
+        android:clickable="true"
         android:orientation="horizontal"
         android:padding="@dimen/x10">
 
@@ -30,20 +30,14 @@
             android:textSize="@dimen/x15" />
 
         <TextView
-            android:layout_marginLeft="@dimen/x10"
             android:id="@+id/tv_item_myfoot_goodsPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/x10"
             android:gravity="right"
             android:textColor="@android:color/holo_red_dark" />
 
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/x1"
-        android:background="#F5F5F5" />
-
 
 </LinearLayout>
