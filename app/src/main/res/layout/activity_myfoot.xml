@@ -4,12 +4,14 @@
     android:id="@+id/activity_myfoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/gray"
     android:orientation="vertical"
     tools:context="com.gangjianwang.www.gangjianwang.FootActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@android:color/white">
 
         <RelativeLayout
             android:id="@+id/rl_myfoot_back"
@@ -53,11 +55,10 @@
 
     </RelativeLayout>
 
-    <ListView
+    <customview.MyRefreshListView
         android:id="@+id/lv_myfoot"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/x1"
         android:divider="@color/gray"
         android:dividerHeight="@dimen/x1" />
 

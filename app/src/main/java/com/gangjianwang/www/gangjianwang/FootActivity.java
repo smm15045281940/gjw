@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -32,21 +31,23 @@ import adapter.MyfootAdapter;
 import bean.MyFoot;
 import config.NetConfig;
 import config.ParaConfig;
+import customview.MyRefreshListView;
+import customview.OnRefreshListener;
 import utils.ToastUtils;
 import utils.UserUtils;
 
-public class FootActivity extends AppCompatActivity implements View.OnClickListener {
+public class FootActivity extends AppCompatActivity implements View.OnClickListener, OnRefreshListener {
 
     private View rootView, emptyView;
     private RelativeLayout mBackRl, mClearRl;
-    private ListView lv;
+    private MyRefreshListView lv;
     private List<MyFoot> myFootList = new ArrayList<>();
     private MyfootAdapter mAdapter;
     private AlertDialog alertDialog;
     private OkHttpClient okHttpClient;
-    private boolean isLogined;
     private String key;
     private ProgressDialog progressDialog;
+    private int STATE = ParaConfig.FIRST;
 
     public Handler handler = new Handler() {
         @Override
@@ -57,10 +58,20 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
                     case 0:
                         progressDialog.dismiss();
                         mAdapter.notifyDataSetChanged();
-                        ToastUtils.toast(FootActivity.this, "无网络");
+                        if (STATE == ParaConfig.FIRST) {
+                            ToastUtils.toast(FootActivity.this, ParaConfig.NETWORK_ERROR);
+                        } else if (STATE == ParaConfig.REFRESH) {
+                            ToastUtils.toast(FootActivity.this, ParaConfig.REFRESH_DEFEAT_ERROR);
+                        }
                         break;
                     case 1:
-                        progressDialog.dismiss();
+                        if (STATE == ParaConfig.FIRST) {
+                            progressDialog.dismiss();
+                        } else if (STATE == ParaConfig.REFRESH) {
+                            lv.hideHeadView();
+                            STATE = ParaConfig.FIRST;
+                            ToastUtils.toast(FootActivity.this, ParaConfig.REFRESH_SUCCESS);
+                        }
                         mAdapter.notifyDataSetChanged();
                         break;
                     case 2:
@@ -97,7 +108,7 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
     private void initRoot() {
         mBackRl = (RelativeLayout) rootView.findViewById(R.id.rl_myfoot_back);
         mClearRl = (RelativeLayout) rootView.findViewById(R.id.rl_myfoot_clear);
-        lv = (ListView) rootView.findViewById(R.id.lv_myfoot);
+        lv = (MyRefreshListView) rootView.findViewById(R.id.lv_myfoot);
     }
 
     private void initEmpty() {
@@ -131,7 +142,6 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
         okHttpClient = new OkHttpClient();
         progressDialog = new ProgressDialog(this);
         mAdapter = new MyfootAdapter(this, myFootList);
-        isLogined = UserUtils.isLogined(this);
         key = UserUtils.readLogin(this, true).getKey();
     }
 
@@ -142,33 +152,37 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
     private void setListener() {
         mBackRl.setOnClickListener(this);
         mClearRl.setOnClickListener(this);
+        lv.setOnRefreshListener(this);
     }
 
     private void loadData() {
-        emptyView.setVisibility(View.GONE);
-        if (isLogined) {
+        if (STATE == ParaConfig.FIRST) {
+            emptyView.setVisibility(View.GONE);
             progressDialog.show();
-            Request request = new Request.Builder().url(NetConfig.footHeadUrl + key + NetConfig.footFootUrl).get().build();
-            okHttpClient.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Request request, IOException e) {
-                    handler.sendEmptyMessage(0);
-                }
+        }
+        Request request = new Request.Builder().url(NetConfig.footHeadUrl + key + NetConfig.footFootUrl).get().build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
 
-                @Override
-                public void onResponse(Response response) throws IOException {
-                    if (response.isSuccessful()) {
-                        if (parseJson(response.body().string())) {
-                            handler.sendEmptyMessage(1);
-                        } else {
-                            handler.sendEmptyMessage(0);
-                        }
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    if (STATE == ParaConfig.REFRESH) {
+                        myFootList.clear();
+                    }
+                    if (parseJson(response.body().string())) {
+                        handler.sendEmptyMessage(1);
                     } else {
                         handler.sendEmptyMessage(0);
                     }
+                } else {
+                    handler.sendEmptyMessage(0);
                 }
-            });
-        }
+            }
+        });
     }
 
     private boolean parseJson(String json) {
@@ -245,5 +259,16 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
         handler.removeMessages(0);
         handler.removeMessages(1);
         handler.removeMessages(2);
+    }
+
+    @Override
+    public void onDownPullRefresh() {
+        STATE = ParaConfig.REFRESH;
+        loadData();
+    }
+
+    @Override
+    public void onLoadingMore() {
+        lv.hideFootView();
     }
 }
