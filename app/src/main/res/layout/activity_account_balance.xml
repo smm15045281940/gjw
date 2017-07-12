@@ -9,19 +9,19 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/x40">
+        android:layout_height="wrap_content">
 
         <RelativeLayout
             android:id="@+id/rl_accountbalance_back"
-            android:layout_width="@dimen/x40"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="@drawable/default_gray_selector"
-            android:clickable="true"
-            android:padding="@dimen/x10">
+            android:clickable="true">
 
             <ImageView
                 android:layout_width="@dimen/x20"
                 android:layout_height="@dimen/x20"
+                android:layout_margin="@dimen/x10"
                 android:scaleType="fitXY"
                 android:src="@mipmap/back_black" />
 
@@ -53,7 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:padding="5dp"
+                android:layout_margin="@dimen/x5"
                 android:text="预存款余额"
                 android:textColor="@android:color/white" />
 
@@ -61,8 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:padding="5dp"
-                android:text="0.00"
+                android:layout_margin="@dimen/x5"
                 android:textColor="@android:color/white" />
 
         </LinearLayout>

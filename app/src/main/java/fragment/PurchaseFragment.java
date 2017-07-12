@@ -37,6 +37,7 @@ import java.util.List;
 import adapter.PurchaseAdapter;
 import bean.Purchase;
 import config.NetConfig;
+import config.ParaConfig;
 import customview.MyRefreshListView;
 import customview.OnRefreshListener;
 import utils.ToastUtils;
@@ -60,17 +61,9 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
     private OkHttpClient okHttpClient;
     private ProgressDialog progressDialog;
     private AlertDialog mAd;
-    private final int FIRST_LOAD = 1;
-    private final int REFRESH_LOAD = 2;
-    private final int LOAD_LOAD = 3;
-    private final int FIRST_NO_NET = 1;
-    private final int REFRESH_NO_NET = 2;
-    private final int LOAD_NO_NET = 3;
-    private final int FIRST_DONE = 4;
-    private final int REFRESH_DONE = 5;
-    private final int LOAD_DONE = 6;
     private int cancelIndex;
     private String key;
+    private int STATE = ParaConfig.FIRST;
 
     Handler handler = new Handler() {
         @Override
@@ -78,33 +71,35 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
             super.handleMessage(msg);
             if (msg != null) {
                 switch (msg.what) {
-                    case FIRST_NO_NET://首次无网络
-                        progressDialog.dismiss();
-                        ToastUtils.toast(getActivity(), "无网络");
+                    case 0:
+                        switch (STATE) {
+                            case ParaConfig.FIRST:
+                                progressDialog.dismiss();
+                                ToastUtils.toast(getActivity(), ParaConfig.NETWORK_ERROR);
+                                break;
+                            case ParaConfig.REFRESH:
+                                mLv.hideHeadView();
+                                ToastUtils.toast(getActivity(), ParaConfig.REFRESH_DEFEAT_ERROR);
+                                break;
+                        }
                         break;
-                    case REFRESH_NO_NET://刷新无网络
-                        mLv.hideHeadView();
-                        ToastUtils.toast(getActivity(), "无网络");
-                        break;
-                    case LOAD_NO_NET://加载无网络
-                        mLv.hideFootView();
-                        ToastUtils.toast(getActivity(), "无网络");
-                        break;
-                    case FIRST_DONE://首次完成
-                        progressDialog.dismiss();
-                        mAdapter.notifyDataSetChanged();
-                        break;
-                    case REFRESH_DONE://刷新完成
-                        mLv.hideHeadView();
-                        mAdapter.notifyDataSetChanged();
-                        break;
-                    case LOAD_DONE://加载完成
-                        mLv.hideFootView();
-                        mAdapter.notifyDataSetChanged();
+                    case 1:
+                        switch (STATE) {
+                            case ParaConfig.FIRST:
+                                progressDialog.dismiss();
+                                break;
+                            case ParaConfig.REFRESH:
+                                mLv.hideHeadView();
+                                ToastUtils.toast(getActivity(), ParaConfig.REFRESH_SUCCESS);
+                                break;
+                            default:
+                                break;
+                        }
                         break;
                     default:
                         break;
                 }
+                mAdapter.notifyDataSetChanged();
             }
         }
     };
@@ -117,8 +112,15 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
         initData();
         setData();
         setListener();
-        loadData(FIRST_LOAD);
+        loadData();
         return rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        handler.removeMessages(0);
+        handler.removeMessages(1);
     }
 
     private void initView() {
@@ -147,53 +149,29 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
         mLv.setAdapter(mAdapter);
     }
 
-    private void loadData(int LOAD_STATE) {
-        switch (LOAD_STATE) {
-            case FIRST_LOAD:
-                progressDialog.show();
-                Request requestFirst = new Request.Builder().url(NetConfig.purchaseHeadUrl + key + NetConfig.purchaseFootUrl).get().build();
-                okHttpClient.newCall(requestFirst).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Request request, IOException e) {
-                        handler.sendEmptyMessage(FIRST_NO_NET);
-                    }
-
-                    @Override
-                    public void onResponse(Response response) throws IOException {
-                        if (response.isSuccessful()) {
-                            String json = response.body().string();
-                            mDataList.clear();
-                            if (parseJson(json))
-                                handler.sendEmptyMessage(FIRST_DONE);
-                        }
-                    }
-                });
-                break;
-            case REFRESH_LOAD:
-                Request requestRefresh = new Request.Builder().url(NetConfig.purchaseHeadUrl + key + NetConfig.purchaseFootUrl).get().build();
-                okHttpClient.newCall(requestRefresh).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Request request, IOException e) {
-                        handler.sendEmptyMessage(REFRESH_NO_NET);
-                    }
-
-                    @Override
-                    public void onResponse(Response response) throws IOException {
-                        if (response.isSuccessful()) {
-                            String json = response.body().string();
-                            mDataList.clear();
-                            if (parseJson(json))
-                                handler.sendEmptyMessage(REFRESH_DONE);
-                        }
-                    }
-                });
-                break;
-            case LOAD_LOAD:
-                handler.sendEmptyMessage(5);
-                break;
-            default:
-                break;
+    private void loadData() {
+        if (STATE == ParaConfig.FIRST) {
+            progressDialog.show();
         }
+        Request requestFirst = new Request.Builder().url(NetConfig.purchaseHeadUrl + key + NetConfig.purchaseFootUrl).get().build();
+        okHttpClient.newCall(requestFirst).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String json = response.body().string();
+                    if (STATE == ParaConfig.REFRESH) {
+                        mDataList.clear();
+                    }
+                    if (parseJson(json))
+                        handler.sendEmptyMessage(1);
+                }
+            }
+        });
     }
 
     private boolean parseJson(String json) {
@@ -259,12 +237,12 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onDownPullRefresh() {
-        loadData(REFRESH_LOAD);
+        STATE = ParaConfig.REFRESH;
+        loadData();
     }
 
     @Override
     public void onLoadingMore() {
-//        loadData(LOAD_LOAD);
         mLv.hideFootView();
     }
 

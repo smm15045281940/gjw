@@ -49,6 +49,7 @@ import java.io.IOException;
 
 import bean.UserInfo;
 import config.NetConfig;
+import config.ParaConfig;
 import utils.ToastUtils;
 import utils.UserUtils;
 
@@ -88,7 +89,7 @@ public class MineFragment extends Fragment implements View.OnClickListener, Swip
             if (msg != null) {
                 switch (msg.what) {
                     case 0:
-                        ToastUtils.toast(getActivity(), "无网络");
+                        ToastUtils.toast(getActivity(), ParaConfig.NETWORK_ERROR);
                         break;
                     case 1:
                         loadData();
@@ -133,6 +134,14 @@ public class MineFragment extends Fragment implements View.OnClickListener, Swip
             animSet.cancel();
             oa.cancel();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        handler.removeMessages(0);
+        handler.removeMessages(1);
+        handler.removeMessages(2);
     }
 
     private void initView() {

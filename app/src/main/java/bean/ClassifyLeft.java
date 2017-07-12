@@ -9,6 +9,7 @@ public class ClassifyLeft {
     private String id;
     private String imgUrl;
     private String title;
+    private boolean check;
 
     public ClassifyLeft() {
     }
@@ -35,5 +36,13 @@ public class ClassifyLeft {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public boolean isCheck() {
+        return check;
+    }
+
+    public void setCheck(boolean check) {
+        this.check = check;
     }
 }

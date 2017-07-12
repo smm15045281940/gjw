@@ -101,7 +101,7 @@ public class MyRefreshListView extends ListView implements AbsListView.OnScrollL
                 break;
             case MotionEvent.ACTION_MOVE:
                 int moveY = (int) ev.getY();
-                int diff = (moveY - downY) / 3;//间距
+                int diff = (moveY - downY) / 2;//间距
                 int paddingTop = -headViewHeight + diff;
                 if (firstVisibleItemPosition == 0 && -headViewHeight < paddingTop) {
                     if (paddingTop > 0 && currentState == DOWN_PULL_REFRESH) {//完全显示

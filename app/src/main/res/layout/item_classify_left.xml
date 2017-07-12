@@ -5,10 +5,12 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/ll_item_classify_left"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/x10">
+        android:padding="@dimen/x10"
+        android:background="@android:color/white">
 
         <ImageView
             android:id="@+id/iv_item_classify_left_icon"

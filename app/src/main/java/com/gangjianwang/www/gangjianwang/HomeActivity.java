@@ -43,7 +43,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private Fragment mHomeFragment, mPurchaseFragment, mCalculateFragment, mShopcarFragment, mMineFragment;
     private List<Fragment> mFragmentList = new ArrayList<>();
     private FragmentManager mFragmentManager;
-    private int curPosition = 0;
+    private int curPosition, tarPosition;
     private long exitTime = 0;
     private LocationClient locationClient;
     private BDLocationListener bdLocationListener;
@@ -58,21 +58,22 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             if (msg != null) {
                 switch (msg.what) {
                     case 0:
-                        changeFrag(0);
+                        tarPosition = 0;
                         break;
                     case 1:
-                        changeFrag(1);
+                        tarPosition = 1;
                         break;
                     case 2:
-                        changeFrag(2);
+                        tarPosition = 2;
                         break;
                     case 3:
-                        changeFrag(3);
+                        tarPosition = 3;
                         break;
                     case 4:
-                        changeFrag(4);
+                        tarPosition = 4;
                         break;
                 }
+                changeFrag();
             }
         }
     };
@@ -84,13 +85,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             int a = intent.getIntExtra("what", 0);
             switch (a) {
                 case 0:
-                    changeFrag(0);
+                    tarPosition = 0;
+                    changeFrag();
                     break;
                 case 3:
-                    changeFrag(3);
+                    tarPosition = 3;
+                    changeFrag();
                     break;
                 case 4:
-                    changeFrag(4);
+                    tarPosition = 4;
+                    changeFrag();
                     mLoadUserHandler.sendEmptyMessage(1);
                     break;
             }
@@ -115,31 +119,36 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.rl_home_firstpage:
-                changeFrag(0);
+                tarPosition = 0;
+                changeFrag();
                 break;
             case R.id.rl_home_purchase:
                 if (UserUtils.isLogined(this)) {
-                    changeFrag(1);
+                    tarPosition = 1;
+                    changeFrag();
                 } else {
                     startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                 }
                 break;
             case R.id.rl_home_calculate:
                 if (UserUtils.isLogined(this)) {
-                    changeFrag(2);
+                    tarPosition = 2;
+                    changeFrag();
                 } else {
                     startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                 }
                 break;
             case R.id.rl_home_shopcar:
                 if (UserUtils.isLogined(this)) {
-                    changeFrag(3);
+                    tarPosition = 3;
+                    changeFrag();
                 } else {
                     startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                 }
                 break;
             case R.id.rl_home_me:
-                changeFrag(4);
+                tarPosition = 4;
+                changeFrag();
                 break;
         }
     }
@@ -233,7 +242,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mMeRl.setOnClickListener(this);
     }
 
-    private void changeFrag(int tarPosition) {
+    private void changeFrag() {
         if (curPosition != tarPosition) {
             switch (tarPosition) {
                 case 0:

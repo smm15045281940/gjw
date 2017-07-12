@@ -487,13 +487,11 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
             goodsDetailGoods.setIfStoreCn(objgoodsHairInfo.optString("if_store_cn"));
             goodsDetailGoods.setContent(objgoodsHairInfo.optString("content"));
             mMainList.add(goodsDetailGoods);
-
             String imgStr = objDatas.optString("goods_image");
             String[] imgArr = imgStr.split(",");
             for (int i = 0; i < imgArr.length; i++) {
                 goodsImageUrlList.add(imgArr[i]);
             }
-
             JSONObject objStoreInfo = objDatas.optJSONObject("store_info");
             storeAvatarUrl = objStoreInfo.optString("store_avatar");
             JSONObject objStoreCredit = objStoreInfo.optJSONObject("store_credit");

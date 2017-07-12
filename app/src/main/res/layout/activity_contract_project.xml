@@ -4,9 +4,8 @@
     android:id="@+id/activity_contract_project"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
     android:orientation="vertical"
-    tools:context="com.gangjianwang.www.gangjianwang.ContractProjectActivity">
+    tools:context="com.gangjianwang.www.gangjianwang.StoreActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -72,6 +71,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@android:color/white"
         android:orientation="horizontal">
 
         <RelativeLayout
@@ -169,7 +169,9 @@
         <ListView
             android:id="@+id/lv_contractProject"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:divider="@color/gray"
+            android:dividerHeight="@dimen/x1" />
 
         <GridView
             android:id="@+id/gv_contractProject"

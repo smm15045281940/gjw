@@ -7,7 +7,6 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -28,23 +27,25 @@ import adapter.IntegrateAdapter;
 import bean.Integrate;
 import config.NetConfig;
 import config.ParaConfig;
+import customview.MyRefreshListView;
+import customview.OnRefreshListener;
 import utils.ToastUtils;
 import utils.UserUtils;
 
-public class IntegrateActivity extends AppCompatActivity implements View.OnClickListener {
+public class IntegrateActivity extends AppCompatActivity implements View.OnClickListener, OnRefreshListener {
 
     private View rootView;
     private RelativeLayout mBackRl;
     private TextView pointsTv;
-    private ListView lv;
+    private MyRefreshListView lv;
     private ProgressDialog progressDialog;
     private OkHttpClient okHttpClient;
     private List<Integrate> integrateList = new ArrayList<>();
     private IntegrateAdapter integrateAdapter;
     private String point;
-    private boolean isLogined;
     private String key;
     private int curPage = 1;
+    private int STATE = ParaConfig.FIRST;
 
     public Handler handler = new Handler() {
         @Override
@@ -53,14 +54,25 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
             if (msg != null) {
                 switch (msg.what) {
                     case 0:
-                        progressDialog.dismiss();
-                        ToastUtils.toast(IntegrateActivity.this, ParaConfig.NETWORK_ERROR);
+                        if (STATE == ParaConfig.FIRST) {
+                            progressDialog.dismiss();
+                            ToastUtils.toast(IntegrateActivity.this, ParaConfig.NETWORK_ERROR);
+                        } else if (STATE == ParaConfig.REFRESH) {
+                            lv.hideHeadView();
+                            ToastUtils.toast(IntegrateActivity.this, ParaConfig.REFRESH_DEFEAT_ERROR);
+                        }
                         break;
                     case 1:
                         pointsTv.setText(point);
                         break;
                     case 2:
-                        progressDialog.dismiss();
+                        if (STATE == ParaConfig.FIRST) {
+                            progressDialog.dismiss();
+                        } else if (STATE == ParaConfig.REFRESH) {
+                            lv.hideHeadView();
+                            ToastUtils.toast(IntegrateActivity.this, ParaConfig.REFRESH_SUCCESS);
+                            STATE = ParaConfig.FIRST;
+                        }
                         integrateAdapter.notifyDataSetChanged();
                         break;
                     default:
@@ -89,6 +101,7 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
         handler.removeMessages(0);
         handler.removeMessages(1);
         handler.removeMessages(2);
+        integrateList.clear();
     }
 
     private void initView() {
@@ -98,7 +111,7 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
     private void initRoot() {
         mBackRl = (RelativeLayout) rootView.findViewById(R.id.rl_integrate_back);
         pointsTv = (TextView) rootView.findViewById(R.id.tv_integrate_point);
-        lv = (ListView) rootView.findViewById(R.id.lv_integrate);
+        lv = (MyRefreshListView) rootView.findViewById(R.id.lv_integrate);
     }
 
     private void initData() {
@@ -106,10 +119,7 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
         progressDialog.setCanceledOnTouchOutside(false);
         okHttpClient = new OkHttpClient();
         integrateAdapter = new IntegrateAdapter(this, integrateList);
-        isLogined = UserUtils.isLogined(this);
-        if (isLogined) {
-            key = UserUtils.readLogin(this, isLogined).getKey();
-        }
+        key = UserUtils.readLogin(this, true).getKey();
     }
 
     private void setData() {
@@ -118,44 +128,48 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
 
     private void setListener() {
         mBackRl.setOnClickListener(this);
+        lv.setOnRefreshListener(this);
     }
 
     private void loadData() {
-        if (isLogined) {
+        if (STATE == ParaConfig.FIRST) {
             progressDialog.show();
-            Request requestNum = new Request.Builder().url(NetConfig.integrateNumHeadUrl + key + NetConfig.integrateNumFootUrl).get().build();
-            okHttpClient.newCall(requestNum).enqueue(new Callback() {
-                @Override
-                public void onFailure(Request request, IOException e) {
-                    handler.sendEmptyMessage(0);
-                }
-
-                @Override
-                public void onResponse(Response response) throws IOException {
-                    if (response.isSuccessful()) {
-                        parseJsonNum(response.body().string());
-                    } else {
-                        handler.sendEmptyMessage(0);
-                    }
-                }
-            });
-            Request request = new Request.Builder().url(NetConfig.integrateHeadUrl + key + NetConfig.integrateFootPageHeadUrl + curPage + NetConfig.integrateFootPageFootUrl).get().build();
-            okHttpClient.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Request request, IOException e) {
-                    handler.sendEmptyMessage(0);
-                }
-
-                @Override
-                public void onResponse(Response response) throws IOException {
-                    if (response.isSuccessful()) {
-                        parseJson(response.body().string());
-                    } else {
-                        handler.sendEmptyMessage(0);
-                    }
-                }
-            });
         }
+        Request requestNum = new Request.Builder().url(NetConfig.integrateNumHeadUrl + key + NetConfig.integrateNumFootUrl).get().build();
+        okHttpClient.newCall(requestNum).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    parseJsonNum(response.body().string());
+                } else {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
+        Request request = new Request.Builder().url(NetConfig.integrateHeadUrl + key + NetConfig.integrateFootPageHeadUrl + curPage + NetConfig.integrateFootPageFootUrl).get().build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    if (STATE == ParaConfig.REFRESH) {
+                        integrateList.clear();
+                    }
+                    parseJson(response.body().string());
+                } else {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
     }
 
     private void parseJsonNum(String json) {
@@ -202,5 +216,16 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onDownPullRefresh() {
+        STATE = ParaConfig.REFRESH;
+        loadData();
+    }
+
+    @Override
+    public void onLoadingMore() {
+        lv.hideFootView();
     }
 }

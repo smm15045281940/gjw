@@ -7,33 +7,35 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.gangjianwang.www.gangjianwang.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import bean.GoodsDetailDetail;
+import bean.HomeBlockInner;
 
 /**
- * Created by Administrator on 2017/5/23.
+ * Created by Administrator on 2017/7/12.
  */
 
-public class GoodsDetailDetailAdapter extends BaseAdapter {
+public class HomeBlockInnerAdapter extends BaseAdapter {
 
     private Context context;
-    private List<GoodsDetailDetail> list;
+    private List<HomeBlockInner> homeBlockInnerList;
+    private ViewHolder holder;
 
-    public GoodsDetailDetailAdapter(Context context, List<GoodsDetailDetail> list) {
+    public HomeBlockInnerAdapter(Context context, List<HomeBlockInner> homeBlockInnerList) {
         this.context = context;
-        this.list = list;
+        this.homeBlockInnerList = homeBlockInnerList;
     }
 
     @Override
     public int getCount() {
-        return list.size();
+        return homeBlockInnerList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return list.get(position);
+        return homeBlockInnerList.get(position);
     }
 
     @Override
@@ -43,24 +45,26 @@ public class GoodsDetailDetailAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
         if (convertView == null) {
-            convertView = View.inflate(context, R.layout.item_goodsdetaildetail, null);
+            convertView = View.inflate(context, R.layout.item_home_grid_2, null);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.iv.setImageResource(R.mipmap.img_default);
+        HomeBlockInner homeBlockInner = homeBlockInnerList.get(position);
+        if (homeBlockInner != null) {
+            Picasso.with(context).load(homeBlockInner.getImage()).placeholder(holder.imageIv.getDrawable()).into(holder.imageIv);
+        }
         return convertView;
     }
 
     class ViewHolder {
 
-        private ImageView iv;
+        private ImageView imageIv;
 
         public ViewHolder(View itemView) {
-            iv = (ImageView) itemView.findViewById(R.id.iv_item_goodsdetaildetail);
+            imageIv = (ImageView) itemView.findViewById(R.id.iv_item_home_grid_2_image);
         }
     }
 }

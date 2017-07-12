@@ -40,9 +40,10 @@ import adapter.ContractCompanyGridAdapter;
 import adapter.ContractCompanyListAdapter;
 import bean.ContractCompany;
 import config.NetConfig;
+import config.ParaConfig;
 import utils.ToastUtils;
 
-public class ContractProjectActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class StoreActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     private View rootView, mMultiRankPopView;
     private RelativeLayout mBackRl, mSearchRl, mChangeStyleRl, mSceenRl, mPriorityRl, mMutiRankRl;
@@ -60,8 +61,8 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
     private int CURRENT_STYLE_STATE;
     private final int LIST_STATE = 0;
     private final int GRID_STATE = 1;
-    private OkHttpClient okHttpClient;
-    private ProgressDialog mPd;
+    private OkHttpClient okHttpClient = new OkHttpClient();
+    private ProgressDialog progressDialog;
     private final int SHOP_LIST_STATE = 1;
     private final int CONTRACT_PROJECT_STATE = 2;
     private int STATE;
@@ -75,11 +76,11 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
             if (msg != null) {
                 switch (msg.what) {
                     case 0:
-                        mPd.dismiss();
-                        ToastUtils.toast(ContractProjectActivity.this, "无网络");
+                        progressDialog.dismiss();
+                        ToastUtils.toast(StoreActivity.this, ParaConfig.NETWORK_ERROR);
                         break;
                     case 1:
-                        mPd.dismiss();
+                        progressDialog.dismiss();
                         mListAdapter.notifyDataSetChanged();
                         mGridAdapter.notifyDataSetChanged();
                         break;
@@ -116,7 +117,7 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
         mChangeStyleIv = (ImageView) rootView.findViewById(R.id.iv_contractProject_changeStyle);
         mContractProjectLv = (ListView) rootView.findViewById(R.id.lv_contractProject);
         mContractProjectGv = (GridView) rootView.findViewById(R.id.gv_contractProject);
-        mMultiRankPopView = View.inflate(ContractProjectActivity.this, R.layout.pop_multirank, null);
+        mMultiRankPopView = View.inflate(StoreActivity.this, R.layout.pop_multirank, null);
         mMultiRankPop = new PopupWindow(mMultiRankPopView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         mMultiRankPop.setFocusable(true);
         mMultiRankPop.setTouchable(true);
@@ -129,31 +130,36 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
         mPopUptoDownRl = (RelativeLayout) mMultiRankPopView.findViewById(R.id.rl_pop_multirank_uptodown);
         mPopDowntoUpRl = (RelativeLayout) mMultiRankPopView.findViewById(R.id.rl_pop_multirank_downtoup);
         mPopPopularityRl = (RelativeLayout) mMultiRankPopView.findViewById(R.id.rl_pop_multirank_popularity);
+        initProgress();
+    }
+
+    private void initProgress() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCanceledOnTouchOutside(false);
     }
 
     private void initData() {
         Intent intent = getIntent();
-        int stateId = intent.getIntExtra("stateId", 0);
-        gcId = intent.getStringExtra("gc_id");
-        switch (stateId) {
-            case 0:
-                STATE = SHOP_LIST_STATE;
-                break;
-            case 1:
-                STATE = CONTRACT_PROJECT_STATE;
-                break;
-            default:
-                break;
+        if (intent != null) {
+            int stateId = intent.getIntExtra("stateId", 0);
+            gcId = intent.getStringExtra("gc_id");
+            switch (stateId) {
+                case 0:
+                    STATE = SHOP_LIST_STATE;
+                    break;
+                case 1:
+                    STATE = CONTRACT_PROJECT_STATE;
+                    break;
+                default:
+                    break;
+            }
         }
-        mPd = new ProgressDialog(this);
-        mPd.setMessage("加载中..");
-        okHttpClient = new OkHttpClient();
     }
 
     private void setData() {
-        mListAdapter = new ContractCompanyListAdapter(ContractProjectActivity.this, mDataList);
+        mListAdapter = new ContractCompanyListAdapter(StoreActivity.this, mDataList);
         mContractProjectLv.setAdapter(mListAdapter);
-        mGridAdapter = new ContractCompanyGridAdapter(ContractProjectActivity.this, mDataList);
+        mGridAdapter = new ContractCompanyGridAdapter(StoreActivity.this, mDataList);
         mContractProjectGv.setAdapter(mGridAdapter);
     }
 
@@ -177,12 +183,12 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
         switch (state) {
             case SHOP_LIST_STATE:
                 String url;
-                if (gcId.equals("")) {
+                if (TextUtils.isEmpty(gcId)) {
                     url = NetConfig.shopListUrl;
                 } else {
                     url = NetConfig.shopListUrl + "&gc_id=" + gcId;
                 }
-                mPd.show();
+                progressDialog.show();
                 Request requestShopList = new Request.Builder().url(url).get().build();
                 okHttpClient.newCall(requestShopList).enqueue(new Callback() {
                     @Override
@@ -202,7 +208,7 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
                 });
                 break;
             case CONTRACT_PROJECT_STATE:
-                mPd.show();
+                progressDialog.show();
                 Request request = new Request.Builder().url(NetConfig.contractprojectUrl + pageIndex).get().build();
                 okHttpClient.newCall(request).enqueue(new Callback() {
                     @Override
@@ -265,9 +271,9 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
             case R.id.rl_contractproject_search:
                 String searchContentStr = mEtSearchContentEt.getText().toString();
                 if (TextUtils.isEmpty(searchContentStr)) {
-                    ToastUtils.toast(ContractProjectActivity.this, "搜索内容不能为空!");
+                    ToastUtils.toast(StoreActivity.this, "搜索内容不能为空!");
                 } else {
-                    ToastUtils.toast(ContractProjectActivity.this, "正在搜索:" + searchContentStr);
+                    ToastUtils.toast(StoreActivity.this, "正在搜索:" + searchContentStr);
                 }
                 closeSoftKeyboard();
                 break;
@@ -291,10 +297,10 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
                 mMultiRankTv.setText(mPopPopularityTv.getText().toString());
                 break;
             case R.id.rl_contractProject_salesPriority:
-                Toast.makeText(ContractProjectActivity.this, "销量优先", Toast.LENGTH_SHORT).show();
+                Toast.makeText(StoreActivity.this, "销量优先", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.rl_contractProject_screen:
-                startActivity(new Intent(ContractProjectActivity.this, GoodsScreenActivity.class));
+                startActivity(new Intent(StoreActivity.this, GoodsScreenActivity.class));
                 break;
             case R.id.rl_contractProject_changeStyle:
                 switch (CURRENT_STYLE_STATE) {
@@ -321,7 +327,7 @@ public class ContractProjectActivity extends AppCompatActivity implements View.O
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = new Intent(ContractProjectActivity.this, GoodsDetailActivity.class);
+        Intent intent = new Intent(StoreActivity.this, GoodsDetailActivity.class);
         intent.putExtra("goods_id", mDataList.get(position).getGoodsId());
         startActivity(intent);
     }

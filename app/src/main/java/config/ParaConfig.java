@@ -50,6 +50,7 @@ public interface ParaConfig {
     //删除对话
     public static final String DELETE_MESSAGE = "确认删除？";
     public static final String DELETE_CLEAR = "确认清空？";
+    public static final String QUIT_MESSAGE = "确认退出？";
     public static final String DELETE_YES = "确认";
     public static final String DELETE_NO = "取消";
     //加载状态
