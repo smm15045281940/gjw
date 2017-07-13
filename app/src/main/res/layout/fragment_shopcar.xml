@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/x40"
         android:layout_alignParentBottom="true"
+        android:background="@android:color/white"
         android:orientation="horizontal">
 
         <CheckBox
@@ -90,6 +91,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/ll_shopcar_bottom"
-        android:divider="@null" />
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="@dimen/x5" />
 
 </RelativeLayout>

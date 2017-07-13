@@ -96,4 +96,8 @@ public interface NetConfig {
     public static final String footDelHeadUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_goodsbrowse&op=browse_list&key=";
     //浏览记录 删除尾 get
     public static final String footDelFootUrl = "&curpage=1&page=10";
+    //商品详情分类 store_id goods_id
+    public static final String goodsDetailClassifyUrl = "http://www.gangjianwang.com/mobile/index.php?act=store&op=store_goods_second_class";
+    //购物车 key
+    public static final String shopCarUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_cart&op=cart_list";
 }

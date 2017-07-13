@@ -1,11 +1,13 @@
 package adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.gangjianwang.www.gangjianwang.GjBuyActivity;
 import com.gangjianwang.www.gangjianwang.R;
 import com.squareup.picasso.Picasso;
 
@@ -52,9 +54,18 @@ public class HomeBlockInnerAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        HomeBlockInner homeBlockInner = homeBlockInnerList.get(position);
+        final HomeBlockInner homeBlockInner = homeBlockInnerList.get(position);
         if (homeBlockInner != null) {
             Picasso.with(context).load(homeBlockInner.getImage()).placeholder(holder.imageIv.getDrawable()).into(holder.imageIv);
+            holder.imageIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, GjBuyActivity.class);
+                    intent.putExtra("keyword", homeBlockInner.getData());
+                    context.startActivity(intent);
+                }
+            });
+
         }
         return convertView;
     }

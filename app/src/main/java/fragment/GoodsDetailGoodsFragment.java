@@ -18,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,8 +33,10 @@ import com.gangjianwang.www.gangjianwang.MakeSureOrderActivity;
 import com.gangjianwang.www.gangjianwang.R;
 import com.gangjianwang.www.gangjianwang.ShopDetailActivity;
 import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.squareup.picasso.Picasso;
 
@@ -47,14 +48,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import adapter.GoodsDetailGoodsHeadGvAdapter;
+import adapter.GoodsDetailClassifyLeftAdapter;
+import adapter.GoodsDetailClassifyTopAdapter;
 import adapter.GoodsDetailGoodsLvAdapter;
 import adapter.MyPagerAdapter;
+import bean.GoodsDetailClassifyLeft;
+import bean.GoodsDetailClassifyTop;
 import bean.GoodsDetailGoods;
 import bean.GoodsDetailOtherGoods;
 import config.NetConfig;
+import config.ParaConfig;
 import customview.FlowLayout;
-import customview.LazyFragment;
 import customview.SizeThickTextView;
 import utils.HeightUtils;
 import utils.ToastUtils;
@@ -85,12 +89,12 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
     private ViewPager headVp;
     private LinearLayout pointsLl;
     private RelativeLayout customServiceRl, shopcarServiceRl, buyNowRl, addShopcarRl;
-    private List<String> leftList = new ArrayList<>();
-    private List<String> rightList = new ArrayList<>();
-    private List<String> gridList = new ArrayList<>();
+    private List<GoodsDetailClassifyLeft> leftList = new ArrayList<>();
+    private GoodsDetailClassifyLeftAdapter leftAdapter;
+    private List<GoodsDetailClassifyTop> gridList = new ArrayList<>();
     private List<ImageView> imageList = new ArrayList<>();
-    private ArrayAdapter<String> leftAdapter;
-    private GoodsDetailGoodsHeadGvAdapter gridAdapter;
+
+    private GoodsDetailClassifyTopAdapter gridAdapter;
     private MyPagerAdapter myPagerAdapter;
 
     private List<GoodsDetailGoods> mMainList = new ArrayList<>();
@@ -103,6 +107,7 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
     private OkHttpClient okHttpClient = new OkHttpClient();
     private ProgressDialog mPd;
     private String goodsId;
+    private String storeId;
     private String result;
 
     private ImageView storeAvatarIv;
@@ -119,29 +124,23 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg != null) {
+                mPd.dismiss();
                 switch (msg.what) {
                     case 0:
-                        mPd.dismiss();
-                        ToastUtils.log(getActivity(), "无网络");
+                        ToastUtils.toast(getActivity(), ParaConfig.NETWORK_ERROR);
                         break;
                     case 1:
+                        leftAdapter.notifyDataSetChanged();
+                        gridAdapter.notifyDataSetChanged();
+                        HeightUtils.setGridViewHeight(headGv);
+                        break;
+                    case 2:
                         mPd.dismiss();
+                        goodsDetailGoodsLvAdapter.notifyDataSetChanged();
                         setView();
                         break;
-                }
-            }
-        }
-    };
-
-    public Handler firstloadHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg != null) {
-                if (msg.what == 1) {
-                    mPd.dismiss();
-                    leftAdapter.notifyDataSetChanged();
-                    gridAdapter.notifyDataSetChanged();
+                    default:
+                        break;
                 }
             }
         }
@@ -152,7 +151,7 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
         goodsId = bundle.getString("goodsId");
-        ToastUtils.log(getActivity(), goodsId);
+        storeId = bundle.getString("storeId");
     }
 
     @Nullable
@@ -166,6 +165,13 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
         setListener();
         loadData();
         return rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        handler.removeMessages(0);
+        handler.removeMessages(1);
     }
 
     private void initView() {
@@ -430,29 +436,17 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
     }
 
     private void setData() {
-        leftAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, leftList);
+        leftAdapter = new GoodsDetailClassifyLeftAdapter(getActivity(), leftList);
         leftLv.setAdapter(leftAdapter);
         goodsDetailGoodsLvAdapter = new GoodsDetailGoodsLvAdapter(getActivity(), mMainList, mOtherList, this);
         rightLv.setAdapter(goodsDetailGoodsLvAdapter);
-        gridAdapter = new GoodsDetailGoodsHeadGvAdapter(getActivity(), gridList, this);
+        gridAdapter = new GoodsDetailClassifyTopAdapter(getActivity(), gridList);
         headGv.setAdapter(gridAdapter);
     }
 
     private void loadData() {
-        firstloadHandler.sendEmptyMessageDelayed(1, 1000);
-        leftList.add("圆管");
-        leftList.add("方管");
-        leftList.add("矩管");
-        leftList.add("花管");
-        for (int i = 0; i < 30; i++) {
-            rightList.add("圆管" + i);
-        }
-        for (int i = 0; i < 10; i++) {
-            gridList.add("门系列");
-        }
-        HeightUtils.setGridViewHeight(headGv);
-
         mPd.show();
+        loadLeftTopData();
         Request request = new Request.Builder().url(NetConfig.contractprojectDetailHeadUrl + goodsId + NetConfig.contractprojectDetailFootUrl).get().build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -465,11 +459,64 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
                 if (response.isSuccessful()) {
                     result = response.body().string();
                     if (parseJson(result))
-                        handler.sendEmptyMessage(1);
+                        handler.sendEmptyMessage(2);
                 }
             }
         });
 
+    }
+
+    private void loadLeftTopData() {
+        RequestBody body = new FormEncodingBuilder().add("store_id", storeId).add("goods_id", goodsId).build();
+        Request request = new Request.Builder().url(NetConfig.goodsDetailClassifyUrl).post(body).build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    if (parseLeftJson(response.body().string()))
+                        handler.sendEmptyMessage(1);
+                } else {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
+    }
+
+    private boolean parseLeftJson(String json) {
+        try {
+            JSONObject objBean = new JSONObject(json);
+            if (objBean.optInt("code") == 200) {
+                JSONObject objDatas = objBean.optJSONObject("datas");
+                JSONArray arrStoreGoodsClass3 = objDatas.optJSONArray("store_goods_class_3");
+                for (int i = 0; i < arrStoreGoodsClass3.length(); i++) {
+                    JSONObject o = arrStoreGoodsClass3.optJSONObject(i);
+                    GoodsDetailClassifyLeft goodsDetailClassify = new GoodsDetailClassifyLeft();
+                    goodsDetailClassify.setGcId(o.optString("gc_id"));
+                    goodsDetailClassify.setGcName(o.optString("gc_name"));
+                    goodsDetailClassify.setGoodsId(o.optString("goods_id"));
+                    goodsDetailClassify.setStyle(o.optString("style"));
+                    leftList.add(goodsDetailClassify);
+                }
+                JSONArray arrStoreGoodsClass2 = objDatas.optJSONArray("store_goods_class_2");
+                for (int i = 0; i < arrStoreGoodsClass2.length(); i++) {
+                    JSONObject o = arrStoreGoodsClass2.optJSONObject(i);
+                    GoodsDetailClassifyTop goodsDetailClassifyTop = new GoodsDetailClassifyTop();
+                    goodsDetailClassifyTop.setGcId(o.optString("gc_id"));
+                    goodsDetailClassifyTop.setGcName(o.optString("gc_name"));
+                    goodsDetailClassifyTop.setStoreId(o.optString("store_id"));
+                    gridList.add(goodsDetailClassifyTop);
+                }
+                return true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private boolean parseJson(String json) {
@@ -656,16 +703,16 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
 
     @Override
     public void onClick(View item, View widget, int position, int which, boolean isCheckeed) {
-        switch (which) {
-            case R.id.tv_item_gridview_head_goodsdetailgoods:
-                ToastUtils.toast(getActivity(), gridList.get(position) + ":" + position);
-                break;
-            case R.id.tv_item_goodsdetailgoods_areaname:
-                startActivityForResult(new Intent(getActivity(), ReceiveAreaActivity.class), 1);
-                break;
-            default:
-                break;
-        }
+//        switch (which) {
+//            case R.id.tv_item_gridview_head_goodsdetailgoods:
+//                ToastUtils.toast(getActivity(), gridList.get(position) + ":" + position);
+//                break;
+//            case R.id.tv_item_goodsdetailgoods_areaname:
+//                startActivityForResult(new Intent(getActivity(), ReceiveAreaActivity.class), 1);
+//                break;
+//            default:
+//                break;
+//        }
     }
 
     @Override

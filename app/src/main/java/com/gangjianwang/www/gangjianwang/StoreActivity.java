@@ -245,6 +245,7 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
                 contractCompany.setCompanyAddress2(o.optString("store_address"));
                 contractCompany.setCompanyImgurl(o.optString("store_avatar"));
                 contractCompany.setGoodsId(o.optString("goods_id"));
+                contractCompany.setStoreId(o.optString("store_id"));
                 mDataList.add(contractCompany);
             }
         } catch (JSONException e) {
@@ -329,6 +330,7 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent(StoreActivity.this, GoodsDetailActivity.class);
         intent.putExtra("goods_id", mDataList.get(position).getGoodsId());
+        intent.putExtra("storeId",mDataList.get(position).getStoreId());
         startActivity(intent);
     }
 }

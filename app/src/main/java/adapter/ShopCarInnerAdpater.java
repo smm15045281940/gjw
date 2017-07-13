@@ -6,10 +6,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -23,12 +25,14 @@ public class ShopCarInnerAdpater extends BaseAdapter {
 
     private Context context;
     private List<ShopCarGoods> list;
-    private ViewHolder holder;
+    private int outPosition;
     private ListItemClickHelp callback;
+    private ViewHolder holder;
 
-    public ShopCarInnerAdpater(Context context, List<ShopCarGoods> list, ListItemClickHelp callback) {
+    public ShopCarInnerAdpater(Context context, List<ShopCarGoods> list, int outPosition,ListItemClickHelp callback) {
         this.context = context;
         this.list = list;
+        this.outPosition = outPosition;
         this.callback = callback;
     }
 
@@ -56,7 +60,7 @@ public class ShopCarInnerAdpater extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        ShopCarGoods shopCarGoods = list.get(position);
+        final ShopCarGoods shopCarGoods = list.get(position);
         holder.goodsCb.setChecked(shopCarGoods.isChecked());
         final View view = convertView;
         final int p = position;
@@ -67,19 +71,22 @@ public class ShopCarInnerAdpater extends BaseAdapter {
                 callback.onClick(view, parent, p, id, isChecked);
             }
         });
+        Picasso.with(context).load(shopCarGoods.getGoodsImageUrl()).placeholder(holder.imageIv.getDrawable()).into(holder.imageIv);
         holder.goodsNameTv.setText(shopCarGoods.getGoodsName());
         holder.goodsSizeTv.setText(shopCarGoods.getGoodsSize());
-        holder.goodsPriceTv.setText(shopCarGoods.getGoodsPrice());
+        holder.goodsPriceTv.setText("¥" + shopCarGoods.getGoodsPrice());
         return convertView;
     }
 
     class ViewHolder {
 
         private CheckBox goodsCb;
+        private ImageView imageIv;
         private TextView goodsNameTv, goodsSizeTv, goodsPriceTv;
 
         public ViewHolder(View itemView) {
             goodsCb = (CheckBox) itemView.findViewById(R.id.cb_item_shopcar_inner);
+            imageIv = (ImageView) itemView.findViewById(R.id.iv_item_shopcar_inner_goodsicon);
             goodsNameTv = (TextView) itemView.findViewById(R.id.tv_item_shopcar_inner_goodsname);
             goodsSizeTv = (TextView) itemView.findViewById(R.id.tv_item_shopcar_inner_goodssize);
             goodsPriceTv = (TextView) itemView.findViewById(R.id.tv_item_shopcar_inner_goodsprice);

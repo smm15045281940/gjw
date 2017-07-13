@@ -11,17 +11,7 @@ public class ShopCarGoods {
     private String goodsSize;
     private String goodsPrice;
     private String goodsCount;
-
-    public ShopCarGoods() {
-    }
-
-    public ShopCarGoods(boolean isChecked, String goodsName, String goodsSize, String goodsPrice, String goodsCount) {
-        this.isChecked = isChecked;
-        this.goodsName = goodsName;
-        this.goodsSize = goodsSize;
-        this.goodsPrice = goodsPrice;
-        this.goodsCount = goodsCount;
-    }
+    private String goodsImageUrl;
 
     public boolean isChecked() {
         return isChecked;
@@ -61,5 +51,13 @@ public class ShopCarGoods {
 
     public void setGoodsCount(String goodsCount) {
         this.goodsCount = goodsCount;
+    }
+
+    public String getGoodsImageUrl() {
+        return goodsImageUrl;
+    }
+
+    public void setGoodsImageUrl(String goodsImageUrl) {
+        this.goodsImageUrl = goodsImageUrl;
     }
 }

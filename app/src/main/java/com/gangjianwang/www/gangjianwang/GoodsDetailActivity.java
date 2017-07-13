@@ -30,6 +30,7 @@ public class GoodsDetailActivity extends AppCompatActivity implements View.OnCli
     private List<Fragment> fragmentList;
     private Fragment goodsDetailGoodsFragment, goodsDetailDetailFragment, goodsDetailEvaluateFragment;
     private String goodsId = "";
+    private String storeId = "";
     private int curPosition = 0;
 
     @Override
@@ -75,8 +76,10 @@ public class GoodsDetailActivity extends AppCompatActivity implements View.OnCli
         transaction.commit();
         Intent intent = getIntent();
         goodsId = intent.getStringExtra("goods_id");
+        storeId = intent.getStringExtra("storeId");
         Bundle bundle = new Bundle();
         bundle.putString("goodsId", goodsId);
+        bundle.putString("storeId", storeId);
         goodsDetailGoodsFragment.setArguments(bundle);
     }
 

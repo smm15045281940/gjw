@@ -18,7 +18,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import adapter.GoodsDetailGoodsHeadGvAdapter;
 import fragment.AllGoodsFragment;
 import fragment.GoodsNewFragment;
 import fragment.ShopActionFragment;
@@ -35,7 +34,6 @@ public class ShopDetailActivity extends AppCompatActivity implements View.OnClic
     private RelativeLayout collectRl;
     private TextView collectTv, fanCountTv;
     private GridView mGv;
-    private GoodsDetailGoodsHeadGvAdapter mGvAdapter;
     private List<String> mGvList = new ArrayList<>();
     private final int YES_COLLECT_STATE = 1;
     private final int NO_COLLECT_STATE = 2;
@@ -102,8 +100,6 @@ public class ShopDetailActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void setData() {
-        mGvAdapter = new GoodsDetailGoodsHeadGvAdapter(this, mGvList, this);
-        mGv.setAdapter(mGvAdapter);
     }
 
     private void loadData() {
@@ -118,7 +114,6 @@ public class ShopDetailActivity extends AppCompatActivity implements View.OnClic
         mGvList.add("焊接配件");
         mGvList.add("电动工具");
         HeightUtils.setGridViewHeight(mGv);
-        mGvAdapter.notifyDataSetChanged();
     }
 
     private void setListener() {

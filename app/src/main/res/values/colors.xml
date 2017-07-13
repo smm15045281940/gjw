@@ -6,4 +6,7 @@
     <color name="red">@android:color/holo_red_light</color>
     <color name="tv_home_default">#909090</color>
     <color name="gray">#F5F5F5</color>
+
+    <color name="press_true">@android:color/darker_gray</color>
+    <color name="press_false">@android:color/white</color>
 </resources>

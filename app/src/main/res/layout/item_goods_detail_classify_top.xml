@@ -8,23 +8,22 @@
         android:layout_height="match_parent">
 
         <RelativeLayout
-            android:layout_marginTop="@dimen/x5"
-            android:layout_marginBottom="@dimen/x5"
-            android:layout_marginLeft="@dimen/x5"
-            android:layout_marginRight="@dimen/x5"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
+            android:layout_marginBottom="@dimen/x5"
+            android:layout_marginLeft="@dimen/x5"
+            android:layout_marginRight="@dimen/x5"
+            android:layout_marginTop="@dimen/x5"
             android:background="@drawable/gv_head_goodsdetailgoods">
 
             <TextView
-                android:layout_marginTop="@dimen/x5"
-                android:layout_marginBottom="@dimen/x5"
-                android:layout_centerInParent="true"
-                android:id="@+id/tv_item_gridview_head_goodsdetailgoods"
+                android:id="@+id/tv_item_goods_detail_classify_top"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="电动工具"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="@dimen/x5"
+                android:layout_marginTop="@dimen/x5"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/x10" />
 
