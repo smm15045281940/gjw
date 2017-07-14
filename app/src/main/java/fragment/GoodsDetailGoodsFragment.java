@@ -26,10 +26,9 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.gangjianwang.www.gangjianwang.ReceiveAreaActivity;
 import com.gangjianwang.www.gangjianwang.HomeActivity;
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
-import com.gangjianwang.www.gangjianwang.MakeSureOrderActivity;
+import com.gangjianwang.www.gangjianwang.SureOrderActivity;
 import com.gangjianwang.www.gangjianwang.R;
 import com.gangjianwang.www.gangjianwang.ShopDetailActivity;
 import com.squareup.okhttp.Callback;
@@ -658,7 +657,7 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
                 getActivity().startActivity(intentPop);
                 break;
             case R.id.rl_pop_goodsdetailgoods_buynow:
-                startActivity(new Intent(getActivity(), MakeSureOrderActivity.class));
+                startActivity(new Intent(getActivity(), SureOrderActivity.class));
                 break;
             case R.id.rl_pop_goodsdetailgoods_addshopcar:
                 ToastUtils.toast(getActivity(), "加入购物车");

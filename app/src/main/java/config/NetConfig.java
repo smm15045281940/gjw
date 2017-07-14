@@ -82,6 +82,8 @@ public interface NetConfig {
     public static final String integrateFootPageFootUrl = "&page=10";
     //地址管理(HomePost) 字段key
     public static final String addressManageUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_address&op=address_list";
+    //地址新增 key,true_name,mob_phone,address,city_id,area_id,area_info,is_default
+    public static final String addressAddUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_address&op=address_add";
     //地址管理删除(HomePost) 字段 address_id key
     public static final String addressManageDeleteUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_address&op=address_del";
     //实物订单全部订单(post)头 key state_type order_key
@@ -100,4 +102,8 @@ public interface NetConfig {
     public static final String goodsDetailClassifyUrl = "http://www.gangjianwang.com/mobile/index.php?act=store&op=store_goods_second_class";
     //购物车 key
     public static final String shopCarUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_cart&op=cart_list";
+    //购物车删除 key cart_id
+    public static final String shopCarDeleteUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_cart&op=cart_del";
+    //确认订单 key cart_id 123|1,124|1,125|1 quotation_id ifcart address_id
+    public static final String sureOrderUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_buy&op=buy_step1";
 }

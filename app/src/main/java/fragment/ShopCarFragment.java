@@ -1,12 +1,14 @@
 package fragment;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +16,14 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.HomeActivity;
 import com.gangjianwang.www.gangjianwang.InquiryListActivity;
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
+import com.gangjianwang.www.gangjianwang.SureOrderActivity;
 import com.gangjianwang.www.gangjianwang.R;
+import com.gangjianwang.www.gangjianwang.ShopCarClickHelp;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
@@ -46,19 +51,23 @@ import utils.UserUtils;
  * Created by Administrator on 2017/4/10 0010.
  */
 
-public class ShopCarFragment extends Fragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, ListItemClickHelp {
+public class ShopCarFragment extends Fragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, ListItemClickHelp, ShopCarClickHelp {
 
     private View rootView, emptyView;
     private ListView mLv;
     private RelativeLayout lookAroundRl;
     private Handler changehandler;
     private CheckBox cbAll;
+    private TextView numPriceTv;
     private RelativeLayout createOrderPriceRl, sureInfoRl;
     private ProgressDialog progressDialog;
     private OkHttpClient okHttpClient;
     private List<ShopCar> mList = new ArrayList<>();
     private ShopCarOuterAdapter mAdapter;
     private String key;
+
+    private AlertDialog delAd;
+    private int delOutPosition, delInPosition;
 
     public Handler handler = new Handler() {
         @Override
@@ -76,6 +85,7 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
                         break;
                 }
                 mAdapter.notifyDataSetChanged();
+                calculate();
             }
         }
     };
@@ -103,11 +113,13 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
         initRoot();
         initEmpty();
         initProgress();
+        initDialog();
     }
 
     private void initRoot() {
         mLv = (ListView) rootView.findViewById(R.id.lv_shopcar);
         cbAll = (CheckBox) rootView.findViewById(R.id.cb_shopcar_cbAll);
+        numPriceTv = (TextView) rootView.findViewById(R.id.tv_shopcar_summoney);
         createOrderPriceRl = (RelativeLayout) rootView.findViewById(R.id.rl_shopcar_createorderprice);
         sureInfoRl = (RelativeLayout) rootView.findViewById(R.id.rl_shopcar_sureinfo);
     }
@@ -126,10 +138,25 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
         progressDialog.setCanceledOnTouchOutside(false);
     }
 
+    private void initDialog() {
+        delAd = new AlertDialog.Builder(getActivity()).setMessage(ParaConfig.DELETE_MESSAGE).setNegativeButton(ParaConfig.DELETE_YES, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                delAd.dismiss();
+                delete();
+            }
+        }).setPositiveButton(ParaConfig.DELETE_NO, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                delAd.dismiss();
+            }
+        }).create();
+    }
+
     private void initData() {
         okHttpClient = new OkHttpClient();
         key = UserUtils.readLogin(getActivity(), true).getKey();
-        mAdapter = new ShopCarOuterAdapter(getActivity(), mList, this);
+        mAdapter = new ShopCarOuterAdapter(getActivity(), mList, this, this);
     }
 
     private void setData() {
@@ -166,12 +193,18 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
                 for (int i = 0; i < arrCartList.length(); i++) {
                     JSONObject out = arrCartList.optJSONObject(i);
                     ShopCar shopCar = new ShopCar();
+                    shopCar.setStoreId(out.optString("store_id"));
                     shopCar.setShopName(out.optString("store_name"));
+                    shopCar.setChecked(true);
                     List<ShopCarGoods> shopCarGoodsList = new ArrayList<>();
                     JSONArray arrGoods = out.optJSONArray("goods");
                     for (int j = 0; j < arrGoods.length(); j++) {
                         JSONObject in = arrGoods.optJSONObject(j);
                         ShopCarGoods shopCarGoods = new ShopCarGoods();
+                        shopCarGoods.setChecked(true);
+                        shopCarGoods.setCartId(in.optString("cart_id"));
+                        shopCarGoods.setGoodsNum(in.optString("goods_num"));
+                        shopCarGoods.setStoreId(in.optString("store_id"));
                         shopCarGoods.setGoodsName(in.optString("goods_name"));
                         shopCarGoods.setGoodsSize(in.optString("goods_spec"));
                         shopCarGoods.setGoodsPrice(in.optString("goods_price"));
@@ -206,7 +239,7 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
                 startActivity(new Intent(getActivity(), InquiryListActivity.class));
                 break;
             case R.id.rl_shopcar_sureinfo:
-                ToastUtils.toast(getActivity(), "确认信息");
+                startActivity(new Intent(getActivity(), SureOrderActivity.class));
                 break;
             default:
                 break;
@@ -226,6 +259,7 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
             }
         }
         mAdapter.notifyDataSetChanged();
+        calculate();
     }
 
     @Override
@@ -238,11 +272,105 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
                 }
                 mAdapter.notifyDataSetChanged();
                 break;
+            default:
+                break;
+        }
+        calculate();
+    }
+
+    @Override
+    public void onClick(View item, View widget, int position, int which, String storeId, boolean isChecked) {
+        switch (which) {
             case R.id.cb_item_shopcar_inner:
-                ToastUtils.log(getActivity(), "inner:" + position);
+                for (int i = 0; i < mList.size(); i++) {
+                    if (storeId.equals(mList.get(i).getStoreId())) {
+                        mList.get(i).getGoodsList().get(position).setChecked(isChecked);
+                    }
+                }
+                break;
+            case R.id.tv_item_shopcar_inner_goodsnum_sub:
+                for (int i = 0; i < mList.size(); i++) {
+                    if (storeId.equals(mList.get(i).getStoreId())) {
+                        int goodsNum = Integer.parseInt(mList.get(i).getGoodsList().get(position).getGoodsNum());
+                        if (goodsNum > 1) {
+                            goodsNum--;
+                            mList.get(i).getGoodsList().get(position).setGoodsNum(goodsNum + "");
+                        }
+                    }
+                }
+                break;
+            case R.id.tv_item_shopcar_inner_goodsnum_add:
+                for (int i = 0; i < mList.size(); i++) {
+                    if (storeId.equals(mList.get(i).getStoreId())) {
+                        int goodsNum = Integer.parseInt(mList.get(i).getGoodsList().get(position).getGoodsNum());
+                        goodsNum++;
+                        mList.get(i).getGoodsList().get(position).setGoodsNum(goodsNum + "");
+                    }
+                }
+                break;
+            case R.id.iv_item_shopcar_inner_delete:
+                for (int i = 0; i < mList.size(); i++) {
+                    if (storeId.equals(mList.get(i).getStoreId())) {
+                        delOutPosition = i;
+                        delInPosition = position;
+                        delAd.show();
+                    }
+                }
                 break;
             default:
                 break;
         }
+        mAdapter.notifyDataSetChanged();
+        calculate();
+    }
+
+    private void calculate() {
+        double num = 0;
+        for (int i = 0; i < mList.size(); i++) {
+            for (int j = 0; j < mList.get(i).getGoodsList().size(); j++) {
+                if (mList.get(i).getGoodsList().get(j).isChecked()) {
+                    num += Double.parseDouble(mList.get(i).getGoodsList().get(j).getGoodsPrice()) * Double.parseDouble(mList.get(i).getGoodsList().get(j).getGoodsNum());
+                }
+            }
+        }
+        numPriceTv.setText("¥" + String.format("%.2f", num));
+    }
+
+    private void delete() {
+        progressDialog.show();
+        String cartId = mList.get(delOutPosition).getGoodsList().get(delInPosition).getCartId();
+        RequestBody body = new FormEncodingBuilder().add("key", key).add("cart_id", cartId).build();
+        Request request = new Request.Builder().url(NetConfig.shopCarDeleteUrl).post(body).build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful() && parseDelJson(response.body().string())) {
+                    mList.get(delOutPosition).getGoodsList().remove(delInPosition);
+                    if (mList.get(delOutPosition).getGoodsList().size() == 0) {
+                        mList.remove(delOutPosition);
+                    }
+                    handler.sendEmptyMessage(1);
+                } else {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
+    }
+
+    private boolean parseDelJson(String json) {
+        try {
+            JSONObject objBean = new JSONObject(json);
+            if (objBean.optInt("code") == 200) {
+                return true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

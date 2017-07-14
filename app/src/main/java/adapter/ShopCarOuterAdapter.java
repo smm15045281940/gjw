@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.R;
+import com.gangjianwang.www.gangjianwang.ShopCarClickHelp;
 
 import java.util.List;
 
@@ -21,18 +22,20 @@ import utils.HeightUtils;
  * Created by Administrator on 2017/6/7.
  */
 
-public class ShopCarOuterAdapter extends BaseAdapter implements ListItemClickHelp {
+public class ShopCarOuterAdapter extends BaseAdapter implements ShopCarClickHelp {
 
     private Context context;
     private List<ShopCar> list;
-    private ListItemClickHelp callback;
+    private ShopCarClickHelp callback;
+    private ListItemClickHelp lcallback;
     private ShopCarInnerAdpater mAdapter;
     private ViewHolder holder;
 
-    public ShopCarOuterAdapter(Context context, List<ShopCar> list, ListItemClickHelp callback) {
+    public ShopCarOuterAdapter(Context context, List<ShopCar> list, ShopCarClickHelp callback, ListItemClickHelp lcallback) {
         this.context = context;
         this.list = list;
         this.callback = callback;
+        this.lcallback = lcallback;
     }
 
     @Override
@@ -67,20 +70,21 @@ public class ShopCarOuterAdapter extends BaseAdapter implements ListItemClickHel
         holder.shopCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                callback.onClick(view, parent, p, id, isChecked);
+                lcallback.onClick(view, parent, p, id, isChecked);
             }
         });
         holder.shopNameTv.setText(shopCar.getShopName());
-        mAdapter = new ShopCarInnerAdpater(context, shopCar.getGoodsList(), p, this);
+        mAdapter = new ShopCarInnerAdpater(context, shopCar.getGoodsList(), this);
         holder.goodsLv.setAdapter(mAdapter);
         HeightUtils.setListViewHeight(holder.goodsLv);
         return convertView;
     }
 
     @Override
-    public void onClick(View item, View widget, int position, int which, boolean isChecked) {
-        callback.onClick(item, widget, position, which, isChecked);
+    public void onClick(View item, View widget, int position, int which, String storeId, boolean isChecked) {
+        callback.onClick(item, widget, position, which, storeId, isChecked);
     }
+
 
     class ViewHolder {
 

@@ -79,7 +79,7 @@
         <activity android:name=".GoodsDetailActivity" />
         <activity android:name=".ReceiveAreaActivity" />
         <activity android:name=".ShopDetailActivity" />
-        <activity android:name=".MakeSureOrderActivity" />
+        <activity android:name=".SureOrderActivity" />
         <activity android:name=".ReceiveAddressManageActivity" />
         <activity android:name=".AddReceiveAddressActivity" />
         <activity android:name=".ChoosePayWayActivity" />

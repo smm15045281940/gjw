@@ -16,7 +16,7 @@ import bean.AddAddress;
  * Created by Administrator on 2017/5/26.
  */
 
-public class ReceiveAddressManageAdapter extends BaseAdapter{
+public class ReceiveAddressManageAdapter extends BaseAdapter {
 
     private Context context;
     private List<AddAddress> list;
@@ -44,30 +44,38 @@ public class ReceiveAddressManageAdapter extends BaseAdapter{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        if(convertView == null){
-            convertView = View.inflate(context,R.layout.item_receiveaddressmanage,null);
+        if (convertView == null) {
+            convertView = View.inflate(context, R.layout.item_receiveaddressmanage, null);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
-        }else{
+        } else {
             holder = (ViewHolder) convertView.getTag();
         }
         AddAddress addAddress = list.get(position);
-        holder.nameTv.setText(addAddress.getName());
-        holder.numberTv.setText(addAddress.getNumber());
-        holder.roughAddressTv.setText(addAddress.getRoughAddress());
-        holder.detailAddressTv.setText(addAddress.getDetailAddress());
+        if (addAddress != null) {
+            holder.nameTv.setText(addAddress.getName());
+            holder.numberTv.setText(addAddress.getNumber());
+            holder.roughAddressTv.setText(addAddress.getRoughAddress());
+            holder.detailAddressTv.setText(addAddress.getDetailAddress());
+            if (addAddress.getIsDefault().equals("1")) {
+                holder.isDefaultTv.setVisibility(View.VISIBLE);
+            } else {
+                holder.isDefaultTv.setVisibility(View.INVISIBLE);
+            }
+        }
         return convertView;
     }
 
-    class ViewHolder{
+    class ViewHolder {
 
-        private TextView nameTv,numberTv,roughAddressTv,detailAddressTv;
+        private TextView nameTv, numberTv, roughAddressTv, detailAddressTv, isDefaultTv;
 
         public ViewHolder(View itemView) {
             nameTv = (TextView) itemView.findViewById(R.id.tv_item_receiveaddressmanage_name);
             numberTv = (TextView) itemView.findViewById(R.id.tv_item_receiveaddressmanage_number);
             roughAddressTv = (TextView) itemView.findViewById(R.id.tv_item_receiveaddressmanage_roughaddress);
             detailAddressTv = (TextView) itemView.findViewById(R.id.tv_item_receiveaddressmanage_detailaddress);
+            isDefaultTv = (TextView) itemView.findViewById(R.id.tv_item_receiveaddressmanage_isdefault);
         }
     }
 }

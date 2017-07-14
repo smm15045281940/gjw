@@ -189,17 +189,19 @@ public class ReceiveAreaActivity extends AppCompatActivity implements View.OnCli
             case FIRST:
                 STATE = SECOND;
                 firstAddressTv.setText(mDataList.get(position - 1).getName());
-                secondId = mDataList.get(position - 1).getId();
                 loadData(mDataList.get(position - 1).getId());
                 break;
             case SECOND:
                 STATE = THIRD;
+                secondId = mDataList.get(position - 1).getId();
                 secondAddressTv.setText(mDataList.get(position - 1).getName());
                 loadData(mDataList.get(position - 1).getId());
                 break;
             case THIRD:
                 Intent intent = new Intent();
                 String sendAddress = firstAddressTv.getText().toString() + " " + secondAddressTv.getText().toString() + " " + mDataList.get(position - 1).getName();
+                intent.putExtra("cityId", secondId);
+                intent.putExtra("areaId", mDataList.get(position - 1).getId());
                 intent.putExtra("sendAddress", sendAddress);
                 setResult(1, intent);
                 finish();
