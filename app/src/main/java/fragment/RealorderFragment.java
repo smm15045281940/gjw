@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -36,6 +35,7 @@ import adapter.OrderOuterAdapter;
 import bean.OrderInner;
 import bean.OrderOuter;
 import config.NetConfig;
+import config.ParaConfig;
 import utils.ToastUtils;
 import utils.UserUtils;
 
@@ -44,7 +44,7 @@ import utils.UserUtils;
  * Created by Administrator on 2017/4/14 0014.
  */
 
-public class RealorderFragment extends Fragment implements View.OnClickListener, AbsListView.OnScrollListener {
+public class RealorderFragment extends Fragment implements View.OnClickListener {
 
     private View rootView, emptyView;
     private LinearLayout allLl, waitpayLl, waitreceiveLl, waitselfLl, waitevaluateLl;
@@ -62,25 +62,23 @@ public class RealorderFragment extends Fragment implements View.OnClickListener,
     private final int REFRESH = 0;
     private final int LOAD = 1;
     private int LOAD_STATE = REFRESH;
-    private boolean isNext;
 
     public Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg != null) {
+                progressDialog.dismiss();
                 switch (msg.what) {
                     case 0:
-                        progressDialog.dismiss();
-                        ToastUtils.toast(getActivity(), "无网络");
+                        ToastUtils.toast(getActivity(), ParaConfig.NETWORK_ERROR);
                         break;
                     case 1:
-                        progressDialog.dismiss();
-                        orderOuterAdapter.notifyDataSetChanged();
                         break;
                     default:
                         break;
                 }
+                orderOuterAdapter.notifyDataSetChanged();
             }
         }
     };
@@ -155,7 +153,6 @@ public class RealorderFragment extends Fragment implements View.OnClickListener,
         waitreceiveLl.setOnClickListener(this);
         waitselfLl.setOnClickListener(this);
         waitevaluateLl.setOnClickListener(this);
-        lv.setOnScrollListener(this);
     }
 
     @Override
@@ -303,54 +300,41 @@ public class RealorderFragment extends Fragment implements View.OnClickListener,
     private boolean parseJson(String json) {
         try {
             JSONObject objBean = new JSONObject(json);
-            JSONObject objDatas = objBean.optJSONObject("datas");
-            JSONArray arrOrderGroupList = objDatas.optJSONArray("order_group_list");
-            for (int i = 0; i < arrOrderGroupList.length(); i++) {
-                OrderOuter orderOuter = new OrderOuter();
-                List<OrderInner> list = new ArrayList<>();
-                JSONObject obj = arrOrderGroupList.getJSONObject(i);
-                JSONArray arrOrderList = obj.optJSONArray("order_list");
-                for (int j = 0; j < arrOrderList.length(); j++) {
-                    JSONObject objArr = arrOrderList.optJSONObject(j);
-                    orderOuter.setOrderId(objArr.optString("order_id"));
-                    orderOuter.setStoreName(objArr.optString("store_name"));
-                    orderOuter.setStateDesc(objArr.optString("state_desc"));
-                    orderOuter.setGoodsAmount("?");
-                    orderOuter.setOrderAmount(objArr.optString("order_amount"));
-                    JSONArray arrArr = objArr.optJSONArray("extend_order_goods");
-                    for (int k = 0; k < arrArr.length(); k++) {
-                        OrderInner orderInner = new OrderInner();
-                        JSONObject o = arrArr.optJSONObject(k);
-                        orderInner.setGoodsImageUrl(o.optString("goods_image_url"));
-                        orderInner.setGoodsName(o.optString("goods_name"));
-                        orderInner.setGoodsSpec(o.optString("goods_spec"));
-                        orderInner.setGoodsPrice(o.optString("goods_price"));
-                        orderInner.setGoodsNum(o.optString("goods_num"));
-                        list.add(orderInner);
+            if (objBean.optInt("code") == 200) {
+                JSONObject objDatas = objBean.optJSONObject("datas");
+                JSONArray arrOrderGroupList = objDatas.optJSONArray("order_group_list");
+                if (arrOrderGroupList.length() != 0) {
+                    JSONArray arrOrderList = arrOrderGroupList.optJSONObject(0).optJSONArray("order_list");
+                    for (int i = 0; i < arrOrderList.length(); i++) {
+                        JSONObject objArr = arrOrderList.optJSONObject(i);
+                        OrderOuter orderOuter = new OrderOuter();
+                        orderOuter.setOrderId(objArr.optString("order_id"));
+                        orderOuter.setStoreName(objArr.optString("store_name"));
+                        orderOuter.setStateDesc(objArr.optString("state_desc"));
+                        orderOuter.setGoodsAmount("?");
+                        orderOuter.setOrderAmount(objArr.optString("order_amount"));
+                        List<OrderInner> list = new ArrayList<>();
+                        JSONArray arrArr = objArr.optJSONArray("extend_order_goods");
+                        for (int j = 0; j < arrArr.length(); j++) {
+                            OrderInner orderInner = new OrderInner();
+                            JSONObject o = arrArr.optJSONObject(j);
+                            orderInner.setGoodsImageUrl(o.optString("goods_image_url"));
+                            orderInner.setGoodsName(o.optString("goods_name"));
+                            orderInner.setGoodsSpec(o.optString("goods_spec"));
+                            orderInner.setGoodsPrice(o.optString("goods_price"));
+                            orderInner.setGoodsNum(o.optString("goods_num"));
+                            list.add(orderInner);
+                        }
+                        orderOuter.setOrderInnerList(list);
+                        orderOuterList.add(orderOuter);
                     }
+                    return true;
                 }
-                orderOuter.setOrderInnerList(list);
-                orderOuterList.add(orderOuter);
             }
-            return true;
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-        if (isNext && scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-            ToastUtils.toast(getActivity(), "到底了");
-//            LOAD_STATE = LOAD;
-//            curPage++;
-//            loadData();
-        }
-    }
-
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        isNext = (firstVisibleItem + visibleItemCount == totalItemCount);
-    }
 }
