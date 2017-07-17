@@ -30,7 +30,7 @@ import com.gangjianwang.www.gangjianwang.HomeActivity;
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.SureOrderActivity;
 import com.gangjianwang.www.gangjianwang.R;
-import com.gangjianwang.www.gangjianwang.ShopDetailActivity;
+import com.gangjianwang.www.gangjianwang.StoreDetailActivity;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
@@ -636,7 +636,7 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ll_goodsdetailgoods_lefttop:
-                startActivity(new Intent(getActivity(), ShopDetailActivity.class));
+                startActivity(new Intent(getActivity(), StoreDetailActivity.class));
                 break;
             case R.id.iv_pop_goodsdetailgoods_close:
                 popWindow.dismiss();

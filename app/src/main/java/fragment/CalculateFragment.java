@@ -106,7 +106,7 @@ public class CalculateFragment extends Fragment implements View.OnClickListener,
                 switch (msg.what) {
                     case 0:
                         progressDialog.dismiss();
-                        ToastUtils.toast(getActivity(), "无网络");
+                        ToastUtils.toast(getActivity(), ParaConfig.NETWORK_ERROR);
                         break;
                     case 1:
                         progressDialog.dismiss();

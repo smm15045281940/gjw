@@ -565,7 +565,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, OnRe
                 getActivity().startActivity(new Intent(getActivity(), GjSpecialSaleActivity.class));
                 break;
             case R.id.rl_foot_home_contact:
-                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:400-0788-889"));
+                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + ParaConfig.SERVICE_PHONE));
                 if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }

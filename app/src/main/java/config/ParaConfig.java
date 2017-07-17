@@ -8,6 +8,8 @@ import com.gangjianwang.www.gangjianwang.R;
 
 public interface ParaConfig {
 
+    public static final String SERVICE_PHONE = "400-0788-889";
+
     public static final int DEFEAT = 0;
     public static final int SUCCESS = 1;
     public static final String NETWORK_ERROR = "网络异常";

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.R;
@@ -57,19 +57,26 @@ public class ShopHostRecAdapter extends BaseAdapter {
         } else {
             holder.shopHostRecTv.setVisibility(View.INVISIBLE);
         }
-        ShopHostRec shopHostRec1 = list.get(position);
-        holder.goodsNameTv.setText(shopHostRec1.getGoodsName());
-        holder.goodsPriceTv.setText(shopHostRec1.getGoodsPrice());
+        ShopHostRec shopHostRec = list.get(position);
+        if (shopHostRec != null) {
+//            if (!TextUtils.isEmpty(shopHostRec.getImageUrl())) {
+//                Picasso.with(context).load(shopHostRec.getImageUrl()).placeholder(holder.imageIv.getDrawable()).into(holder.imageIv);
+//            }
+            holder.goodsNameTv.setText(shopHostRec.getGoodsName());
+            holder.goodsPriceTv.setText(shopHostRec.getGoodsPrice());
+        }
         return convertView;
     }
 
     class ViewHolder {
 
         private TextView shopHostRecTv;
+        private ImageView imageIv;
         private TextView goodsNameTv, goodsPriceTv;
 
         public ViewHolder(View itemView) {
             shopHostRecTv = (TextView) itemView.findViewById(R.id.tv_item_shopfirstpage_headergridview_shophostrec);
+            imageIv = (ImageView) itemView.findViewById(R.id.iv_item_shopfirstpage_headergridview_goodsicon);
             goodsNameTv = (TextView) itemView.findViewById(R.id.tv_item_shopfirstpage_headergridview_goodsname);
             goodsPriceTv = (TextView) itemView.findViewById(R.id.tv_item_shopfirstpage_headergridview_goodsprice);
         }

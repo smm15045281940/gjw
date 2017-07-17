@@ -330,7 +330,7 @@ public class StoreActivity extends AppCompatActivity implements View.OnClickList
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent(StoreActivity.this, GoodsDetailActivity.class);
         intent.putExtra("goods_id", mDataList.get(position).getGoodsId());
-        intent.putExtra("storeId",mDataList.get(position).getStoreId());
+        intent.putExtra("store_id", mDataList.get(position).getStoreId());
         startActivity(intent);
     }
 }

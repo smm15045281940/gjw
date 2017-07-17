@@ -108,4 +108,12 @@ public interface NetConfig {
     public static final String shopCarDeleteUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_cart&op=cart_del";
     //确认订单 key cart_id 123|1,124|1,125|1 quotation_id ifcart address_id
     public static final String sureOrderUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_buy&op=buy_step1";
+    //店铺详情 key,store_id
+    public static final String storeDetailUrl = "http://www.gangjianwang.com/mobile/index.php?act=store&op=store_info";
+    //店铺介绍 key,store_id
+    public static final String storeIntroUrl = "http://www.gangjianwang.com/mobile/index.php?act=store&op=store_intro";
+    //店铺介绍收藏 key,store_id
+    public static final String storeIntroCollectUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_favorites_store&op=favorites_add";
+    //店铺介绍取消收藏 key,store_id
+    public static final String storeIntroCollectCancelUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_favorites_store&op=favorites_del";
 }

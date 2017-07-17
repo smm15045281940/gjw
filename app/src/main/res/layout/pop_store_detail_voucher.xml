@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x320"
+        android:background="@android:color/white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/x5">
+
+            <ImageView
+                android:layout_width="@dimen/x20"
+                android:layout_height="@dimen/x20"
+                android:layout_gravity="center_vertical"
+                android:scaleType="fitXY"
+                android:src="@mipmap/store_b" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/x5"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="领取店铺代金券"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/x15" />
+
+            <ImageView
+                android:id="@+id/iv_pop_store_detail_voucher_close"
+                android:layout_width="@dimen/x20"
+                android:layout_height="@dimen/x20"
+                android:layout_gravity="center_vertical"
+                android:scaleType="fitXY"
+                android:src="@mipmap/close_window" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/x1"
+            android:background="@android:color/darker_gray" />
+
+        <ListView
+            android:id="@+id/lv_pop_store_detail_voucher"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@android:color/darker_gray"
+            android:dividerHeight="@dimen/x1" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -2,12 +2,13 @@ package fragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -19,6 +20,7 @@ import java.util.List;
 import adapter.ShopHostRecAdapter;
 import bean.ShopHostRec;
 import customview.HeaderGridView;
+import utils.ToastUtils;
 
 import static com.gangjianwang.www.gangjianwang.R.id.v_head_shopfirstpage_headgridview_collectrank;
 
@@ -41,15 +43,46 @@ public class ShopFirstpageFragment extends Fragment implements View.OnClickListe
     private int RANK_STATE;
     private int TARGET_STATE;
 
+    private String key;
+    private String store_id;
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg != null) {
+                switch (msg.what) {
+                    case 0:
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        handler.removeMessages(0);
+        handler.removeMessages(1);
+        handler.removeMessages(2);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_shopfirstpage, null);
         headView = inflater.inflate(R.layout.head_shopfirstpage_headgridview, null);
         initView();
+        initData();
         setData();
-        loadData();
         setListener();
+        loadData();
         return rootView;
     }
 
@@ -67,9 +100,17 @@ public class ShopFirstpageFragment extends Fragment implements View.OnClickListe
         RANK_STATE = COLLECT;
     }
 
+    private void initData() {
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            String test = bundle.getString("store_id");
+            ToastUtils.log(getActivity(), test);
+        }
+//        mAdapter = new ShopHostRecAdapter(getActivity(), mList);
+    }
+
     private void setData() {
-        mAdapter = new ShopHostRecAdapter(getActivity(), mList);
-        mHgv.setAdapter(mAdapter);
+//        mHgv.setAdapter(mAdapter);
     }
 
     private void loadData() {
@@ -77,9 +118,10 @@ public class ShopFirstpageFragment extends Fragment implements View.OnClickListe
             ShopHostRec shopHostRec = new ShopHostRec();
             shopHostRec.setGoodsName("圆管");
             shopHostRec.setGoodsPrice("¥10.00");
+            shopHostRec.setImageUrl("");
             mList.add(shopHostRec);
         }
-        mAdapter.notifyDataSetChanged();
+//        mAdapter.notifyDataSetChanged();
     }
 
     private void setListener() {

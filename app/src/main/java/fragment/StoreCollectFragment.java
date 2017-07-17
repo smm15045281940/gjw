@@ -57,7 +57,7 @@ public class StoreCollectFragment extends Fragment implements ListItemClickHelp 
     private int delPosition;
     private AlertDialog alertDialog;
 
-    public Handler handler = new Handler() {
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
