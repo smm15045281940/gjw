@@ -36,7 +36,6 @@ import java.util.List;
 
 import adapter.StoreCollectListAdapter;
 import bean.StoreCollect;
-import bean.UserInfo;
 import config.NetConfig;
 import config.ParaConfig;
 import utils.ToastUtils;
@@ -46,7 +45,7 @@ import utils.UserUtils;
  * Created by Administrator on 2017/4/17 0017.
  */
 
-public class ShopCollectFragment extends Fragment implements ListItemClickHelp {
+public class StoreCollectFragment extends Fragment implements ListItemClickHelp {
 
     private View rootView, emptyView;
     private ListView lv;
@@ -54,7 +53,6 @@ public class ShopCollectFragment extends Fragment implements ListItemClickHelp {
     private OkHttpClient okHttpClient;
     private List<StoreCollect> storeCollectList = new ArrayList<>();
     private StoreCollectListAdapter storeCollectListAdapter;
-    private boolean isLogined;
     private String key;
     private int delPosition;
     private AlertDialog alertDialog;
@@ -64,26 +62,21 @@ public class ShopCollectFragment extends Fragment implements ListItemClickHelp {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg != null) {
+                progressDialog.dismiss();
                 switch (msg.what) {
                     case 0:
-                        progressDialog.dismiss();
-                        ToastUtils.toast(getActivity(), "无网络");
-                        lv.setEmptyView(emptyView);
+                        ToastUtils.toast(getActivity(), ParaConfig.NETWORK_ERROR);
                         break;
                     case 1:
-                        progressDialog.dismiss();
-                        storeCollectListAdapter.notifyDataSetChanged();
-                        lv.setEmptyView(emptyView);
                         break;
                     case 2:
-                        progressDialog.dismiss();
                         storeCollectList.remove(delPosition);
-                        storeCollectListAdapter.notifyDataSetChanged();
-                        ToastUtils.toast(getActivity(), "删除成功");
+                        ToastUtils.toast(getActivity(), ParaConfig.DELETE_SUCCESS);
                         break;
                     default:
                         break;
                 }
+                storeCollectListAdapter.notifyDataSetChanged();
             }
         }
     };
@@ -119,6 +112,7 @@ public class ShopCollectFragment extends Fragment implements ListItemClickHelp {
         lv = (ListView) rootView.findViewById(R.id.lv_store_collect);
         ((ViewGroup) lv.getParent()).addView(emptyView);
         emptyView.setVisibility(View.GONE);
+        lv.setEmptyView(emptyView);
     }
 
     private void initDialog() {
@@ -141,11 +135,7 @@ public class ShopCollectFragment extends Fragment implements ListItemClickHelp {
         progressDialog = new ProgressDialog(getActivity());
         okHttpClient = new OkHttpClient();
         storeCollectListAdapter = new StoreCollectListAdapter(getActivity(), storeCollectList, this);
-        isLogined = UserUtils.isLogined(getActivity());
-        if (isLogined) {
-            UserInfo userInfo = UserUtils.readLogin(getActivity(), isLogined);
-            key = userInfo.getKey();
-        }
+        key = UserUtils.readLogin(getActivity(), true).getKey();
     }
 
     private void setData() {
@@ -153,29 +143,28 @@ public class ShopCollectFragment extends Fragment implements ListItemClickHelp {
     }
 
     private void loadData() {
-        if (isLogined) {
-            progressDialog.show();
-            Request request = new Request.Builder().url(NetConfig.storeCollectHeadUrl + key + NetConfig.storeCollectFootUrl).get().build();
-            okHttpClient.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Request request, IOException e) {
-                    handler.sendEmptyMessage(0);
-                }
+        emptyView.setVisibility(View.INVISIBLE);
+        progressDialog.show();
+        Request request = new Request.Builder().url(NetConfig.storeCollectHeadUrl + key + NetConfig.storeCollectFootUrl).get().build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
 
-                @Override
-                public void onResponse(Response response) throws IOException {
-                    if (response.isSuccessful()) {
-                        if (parseJson(response.body().string())) {
-                            handler.sendEmptyMessage(1);
-                        } else {
-                            handler.sendEmptyMessage(0);
-                        }
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    if (parseJson(response.body().string())) {
+                        handler.sendEmptyMessage(1);
                     } else {
                         handler.sendEmptyMessage(0);
                     }
+                } else {
+                    handler.sendEmptyMessage(0);
                 }
-            });
-        }
+            }
+        });
     }
 
     private boolean parseJson(String json) {

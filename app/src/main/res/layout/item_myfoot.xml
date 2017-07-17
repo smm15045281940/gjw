@@ -8,14 +8,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/whitegray_selector"
-        android:clickable="true"
         android:orientation="horizontal"
         android:padding="@dimen/x10">
 
         <ImageView
             android:id="@+id/iv_item_myfoot_goodsImg"
-            android:layout_width="@dimen/x100"
-            android:layout_height="@dimen/x80"
+            android:layout_width="@dimen/x80"
+            android:layout_height="@dimen/x60"
             android:scaleType="fitXY"
             android:src="@mipmap/img_default" />
 
@@ -26,8 +25,10 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/x10"
             android:layout_weight="1"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:textColor="@android:color/black"
-            android:textSize="@dimen/x15" />
+            android:textSize="@dimen/x13" />
 
         <TextView
             android:id="@+id/tv_item_myfoot_goodsPrice"
@@ -35,8 +36,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/x10"
-            android:gravity="right"
-            android:textColor="@android:color/holo_red_dark" />
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="@dimen/x10" />
 
     </LinearLayout>
 

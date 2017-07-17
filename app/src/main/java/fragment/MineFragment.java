@@ -24,7 +24,7 @@ import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.AddressManagerActivity;
 import com.gangjianwang.www.gangjianwang.FootActivity;
-import com.gangjianwang.www.gangjianwang.GoodsStoreCollectActivity;
+import com.gangjianwang.www.gangjianwang.CollectActivity;
 import com.gangjianwang.www.gangjianwang.HomeActivity;
 import com.gangjianwang.www.gangjianwang.IntegrateActivity;
 import com.gangjianwang.www.gangjianwang.LoginActivity;
@@ -260,14 +260,14 @@ public class MineFragment extends Fragment implements View.OnClickListener, Swip
                 break;
             case R.id.rl_mine_goodscollect:
                 if (UserUtils.isLogined(getActivity())) {
-                    startActivity(new Intent(getActivity(), GoodsStoreCollectActivity.class));
+                    startActivity(new Intent(getActivity(), CollectActivity.class));
                 } else {
                     startActivity(new Intent(getActivity(), LoginActivity.class));
                 }
                 break;
             case R.id.rl_mine_shopcollect:
                 if (UserUtils.isLogined(getActivity())) {
-                    Intent shopIntent = new Intent(getActivity(), GoodsStoreCollectActivity.class);
+                    Intent shopIntent = new Intent(getActivity(), CollectActivity.class);
                     shopIntent.putExtra("collect", 1);
                     startActivity(shopIntent);
                 } else {

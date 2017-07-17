@@ -17,9 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fragment.GoodsCollectFragment;
-import fragment.ShopCollectFragment;
+import fragment.StoreCollectFragment;
 
-public class GoodsStoreCollectActivity extends AppCompatActivity implements View.OnClickListener {
+public class CollectActivity extends AppCompatActivity implements View.OnClickListener {
 
     private RelativeLayout mBackRl;
     private RelativeLayout mGoodscollectRl, mShopcollectRl;
@@ -29,7 +29,7 @@ public class GoodsStoreCollectActivity extends AppCompatActivity implements View
     private FragmentManager mFragmentManager;
     private List<Fragment> fragmentList = new ArrayList<>();
     private GoodsCollectFragment goodsCollectFragment;
-    private ShopCollectFragment shopCollectFragment;
+    private StoreCollectFragment shopCollectFragment;
     private int curPosition;
 
     @Override
@@ -60,7 +60,7 @@ public class GoodsStoreCollectActivity extends AppCompatActivity implements View
     private void initData() {
         mFragmentManager = getSupportFragmentManager();
         goodsCollectFragment = new GoodsCollectFragment();
-        shopCollectFragment = new ShopCollectFragment();
+        shopCollectFragment = new StoreCollectFragment();
         fragmentList.add(goodsCollectFragment);
         fragmentList.add(shopCollectFragment);
         FragmentTransaction transaction = mFragmentManager.beginTransaction();

@@ -66,8 +66,10 @@ public interface NetConfig {
     public static final String storeDeleteUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_favorites_store&op=favorites_del";
     //足迹头
     public static final String footHeadUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_goodsbrowse&op=browse_list&key=";
-    //足迹尾
-    public static final String footFootUrl = "&curpage=1&page=10";
+    //足迹尾页头
+    public static final String footFootPageHeadUrl = "&curpage=";
+    //足迹尾页尾
+    public static final String footFootPageFootUrl = "&page=10";
     //我的财产头
     public static final String propertyHeadUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_index&op=my_asset&key=";
     //积分头(总)

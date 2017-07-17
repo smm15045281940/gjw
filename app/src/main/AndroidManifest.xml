@@ -51,7 +51,7 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".PropertyActivity" />
         <activity android:name=".PhoneproveActivity" />
-        <activity android:name=".GoodsStoreCollectActivity" />
+        <activity android:name=".CollectActivity" />
         <activity android:name=".FootActivity" />
         <activity android:name=".RefundActivity" />
         <activity android:name=".IntegrateActivity" />

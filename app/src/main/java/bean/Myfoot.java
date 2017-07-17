@@ -7,6 +7,7 @@ package bean;
 public class MyFoot {
 
     private String goodsId;
+    private String storeId;
     private String goodsName;
     private String goodsPrice;
     private String goodsImgUrl;
@@ -17,6 +18,14 @@ public class MyFoot {
 
     public void setGoodsId(String goodsId) {
         this.goodsId = goodsId;
+    }
+
+    public String getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
     }
 
     public String getGoodsName() {

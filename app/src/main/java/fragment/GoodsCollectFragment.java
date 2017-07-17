@@ -2,6 +2,7 @@ package fragment;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,12 +12,14 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.gangjianwang.www.gangjianwang.GoodsDetailActivity;
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.R;
 import com.squareup.okhttp.Callback;
@@ -46,7 +49,7 @@ import utils.UserUtils;
  * Created by Administrator on 2017/4/17 0017.
  */
 
-public class GoodsCollectFragment extends Fragment implements ListItemClickHelp {
+public class GoodsCollectFragment extends Fragment implements ListItemClickHelp, AdapterView.OnItemClickListener {
 
     private View rootView, emptyView;
     private AlertDialog alertDialog;
@@ -95,6 +98,7 @@ public class GoodsCollectFragment extends Fragment implements ListItemClickHelp 
         initView();
         initData();
         setData();
+        setListener();
         loadData();
         return rootView;
     }
@@ -149,6 +153,10 @@ public class GoodsCollectFragment extends Fragment implements ListItemClickHelp 
 
     private void setData() {
         gv.setAdapter(goodsCollectGridAdapter);
+    }
+
+    private void setListener() {
+        gv.setOnItemClickListener(this);
     }
 
     private void loadData() {
@@ -255,5 +263,13 @@ public class GoodsCollectFragment extends Fragment implements ListItemClickHelp 
             e.printStackTrace();
         }
         return b;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = new Intent(getActivity(), GoodsDetailActivity.class);
+        intent.putExtra("store_id", goodsCollectList.get(position).getStoreId());
+        intent.putExtra("goods_id", goodsCollectList.get(position).getGoodsId());
+        startActivity(intent);
     }
 }

@@ -132,6 +132,9 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
                         leftAdapter.notifyDataSetChanged();
                         gridAdapter.notifyDataSetChanged();
                         HeightUtils.setGridViewHeight(headGv);
+                        if (mOtherList.size() == 0) {
+                            footView.setVisibility(View.GONE);
+                        }
                         break;
                     case 2:
                         mPd.dismiss();
@@ -149,8 +152,8 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
-        goodsId = bundle.getString("goodsId");
-        storeId = bundle.getString("storeId");
+        goodsId = bundle.getString("goods_id");
+        storeId = bundle.getString("store_id");
     }
 
     @Nullable

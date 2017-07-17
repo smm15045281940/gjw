@@ -6,23 +6,23 @@
     android:layout_height="match_parent"
     android:background="#F5F5F5"
     android:orientation="vertical"
-    tools:context="com.gangjianwang.www.gangjianwang.GoodsStoreCollectActivity">
+    tools:context="com.gangjianwang.www.gangjianwang.CollectActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/x40"
+        android:layout_height="wrap_content"
         android:background="@android:color/white">
 
         <RelativeLayout
             android:id="@+id/rl_collect_back"
             android:layout_width="@dimen/x40"
-            android:layout_height="match_parent"
-            android:background="@drawable/default_gray_selector"
-            android:padding="@dimen/x10">
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_press">
 
             <ImageView
                 android:layout_width="@dimen/x20"
                 android:layout_height="@dimen/x20"
+                android:layout_margin="@dimen/x10"
                 android:src="@mipmap/back_black" />
 
         </RelativeLayout>
@@ -77,11 +77,15 @@
 
     </RelativeLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x1"
+        android:background="@android:color/darker_gray" />
+
     <LinearLayout
         android:id="@+id/ll_goodsshopcollect"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/x1"
         android:orientation="vertical" />
 
 </LinearLayout>

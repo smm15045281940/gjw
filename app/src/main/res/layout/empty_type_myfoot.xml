@@ -4,6 +4,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/ll_empty_net"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -35,13 +36,13 @@
             android:textSize="@dimen/x12" />
 
         <RelativeLayout
-            android:id="@+id/rl_order_lookaround"
+            android:id="@+id/rl_empty_type_myfoot_lookaround"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/x10"
             android:background="@drawable/search_shape"
-            android:padding="5dp">
+            android:padding="@dimen/x5">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -50,6 +51,43 @@
                 android:textSize="15sp" />
 
         </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_empty_no_net"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="加载失败，请检查您当前的网络环境"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/x15" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/x10"
+            android:text="您可以点击按钮重新加载"
+            android:textSize="@dimen/x12" />
+
+        <TextView
+            android:id="@+id/tv_empty_type_myfoot_reload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/shape_shopcar_rec_cir"
+            android:padding="@dimen/x5"
+            android:text="重新加载"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/x12" />
 
     </LinearLayout>
 

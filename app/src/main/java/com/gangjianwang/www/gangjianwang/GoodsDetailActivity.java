@@ -76,10 +76,10 @@ public class GoodsDetailActivity extends AppCompatActivity implements View.OnCli
         transaction.commit();
         Intent intent = getIntent();
         goodsId = intent.getStringExtra("goods_id");
-        storeId = intent.getStringExtra("storeId");
+        storeId = intent.getStringExtra("store_id");
         Bundle bundle = new Bundle();
-        bundle.putString("goodsId", goodsId);
-        bundle.putString("storeId", storeId);
+        bundle.putString("goods_id", goodsId);
+        bundle.putString("store_id", storeId);
         goodsDetailGoodsFragment.setArguments(bundle);
     }
 

@@ -2,6 +2,7 @@ package com.gangjianwang.www.gangjianwang;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,7 +11,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -31,57 +36,48 @@ import adapter.MyfootAdapter;
 import bean.MyFoot;
 import config.NetConfig;
 import config.ParaConfig;
-import customview.MyRefreshListView;
-import customview.OnRefreshListener;
-import utils.ToastUtils;
 import utils.UserUtils;
 
-public class FootActivity extends AppCompatActivity implements View.OnClickListener, OnRefreshListener {
+public class FootActivity extends AppCompatActivity implements View.OnClickListener, AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
 
     private View rootView, emptyView;
+    private LinearLayout emptyNetLl, emptyNoNetLl;
+    private RelativeLayout lookAroundRl;
+    private TextView reLoadTv;
     private RelativeLayout mBackRl, mClearRl;
-    private MyRefreshListView lv;
+    private ListView lv;
     private List<MyFoot> myFootList = new ArrayList<>();
     private MyfootAdapter mAdapter;
     private AlertDialog alertDialog;
     private OkHttpClient okHttpClient;
     private String key;
     private ProgressDialog progressDialog;
+    private int curPage = 1, totalPage = 1;
+    private boolean isLast = false;
     private int STATE = ParaConfig.FIRST;
 
-    public Handler handler = new Handler() {
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg != null) {
+                progressDialog.dismiss();
                 switch (msg.what) {
                     case 0:
-                        progressDialog.dismiss();
-                        mAdapter.notifyDataSetChanged();
-                        if (STATE == ParaConfig.FIRST) {
-                            ToastUtils.toast(FootActivity.this, ParaConfig.NETWORK_ERROR);
-                        } else if (STATE == ParaConfig.REFRESH) {
-                            ToastUtils.toast(FootActivity.this, ParaConfig.REFRESH_DEFEAT_ERROR);
-                        }
+                        emptyNetLl.setVisibility(View.INVISIBLE);
+                        emptyNoNetLl.setVisibility(View.VISIBLE);
                         break;
                     case 1:
-                        if (STATE == ParaConfig.FIRST) {
-                            progressDialog.dismiss();
-                        } else if (STATE == ParaConfig.REFRESH) {
-                            lv.hideHeadView();
-                            STATE = ParaConfig.FIRST;
-                            ToastUtils.toast(FootActivity.this, ParaConfig.REFRESH_SUCCESS);
-                        }
-                        mAdapter.notifyDataSetChanged();
                         break;
                     case 2:
-                        progressDialog.dismiss();
                         myFootList.clear();
-                        mAdapter.notifyDataSetChanged();
+                        emptyNetLl.setVisibility(View.VISIBLE);
+                        emptyNoNetLl.setVisibility(View.INVISIBLE);
                         break;
                     default:
                         break;
                 }
+                mAdapter.notifyDataSetChanged();
             }
         }
     };
@@ -99,6 +95,14 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
         setListener();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeMessages(0);
+        handler.removeMessages(1);
+        handler.removeMessages(2);
+    }
+
     private void initView() {
         initRoot();
         initEmpty();
@@ -108,11 +112,15 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
     private void initRoot() {
         mBackRl = (RelativeLayout) rootView.findViewById(R.id.rl_myfoot_back);
         mClearRl = (RelativeLayout) rootView.findViewById(R.id.rl_myfoot_clear);
-        lv = (MyRefreshListView) rootView.findViewById(R.id.lv_myfoot);
+        lv = (ListView) rootView.findViewById(R.id.lv_myfoot);
     }
 
     private void initEmpty() {
         emptyView = View.inflate(FootActivity.this, R.layout.empty_type_myfoot, null);
+        lookAroundRl = (RelativeLayout) emptyView.findViewById(R.id.rl_empty_type_myfoot_lookaround);
+        emptyNetLl = (LinearLayout) emptyView.findViewById(R.id.ll_empty_net);
+        emptyNoNetLl = (LinearLayout) emptyView.findViewById(R.id.ll_empty_no_net);
+        reLoadTv = (TextView) emptyView.findViewById(R.id.tv_empty_type_myfoot_reload);
         ((ImageView) emptyView.findViewById(R.id.iv_empty_type_myfoot_icon)).setImageResource(R.mipmap.empty_myfoot);
         ((TextView) emptyView.findViewById(R.id.tv_empty_type_myfoot_hint)).setText("暂无您的浏览记录");
         ((TextView) emptyView.findViewById(R.id.tv_empty_type_myfoot_recommend)).setText("可以去看看哪些想要买的");
@@ -152,7 +160,10 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
     private void setListener() {
         mBackRl.setOnClickListener(this);
         mClearRl.setOnClickListener(this);
-        lv.setOnRefreshListener(this);
+        reLoadTv.setOnClickListener(this);
+        lookAroundRl.setOnClickListener(this);
+        lv.setOnItemClickListener(this);
+        lv.setOnScrollListener(this);
     }
 
     private void loadData() {
@@ -160,7 +171,7 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
             emptyView.setVisibility(View.GONE);
             progressDialog.show();
         }
-        Request request = new Request.Builder().url(NetConfig.footHeadUrl + key + NetConfig.footFootUrl).get().build();
+        Request request = new Request.Builder().url(NetConfig.footHeadUrl + key + NetConfig.footFootPageHeadUrl + curPage + NetConfig.footFootPageFootUrl).get().build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
@@ -188,18 +199,22 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
     private boolean parseJson(String json) {
         try {
             JSONObject objBean = new JSONObject(json);
-            JSONObject objDatas = objBean.optJSONObject("datas");
-            JSONArray arrGoodsbrowseList = objDatas.optJSONArray("goodsbrowse_list");
-            for (int i = 0; i < arrGoodsbrowseList.length(); i++) {
-                MyFoot myFoot = new MyFoot();
-                JSONObject o = arrGoodsbrowseList.optJSONObject(i);
-                myFoot.setGoodsId(o.optString("goods_id"));
-                myFoot.setGoodsName(o.optString("goods_name"));
-                myFoot.setGoodsPrice(o.optString("goods_promotion_price"));
-                myFoot.setGoodsImgUrl(o.optString("goods_image_url"));
-                myFootList.add(myFoot);
+            if (objBean.optInt("code") == 200) {
+                totalPage = objBean.optInt("page_total");
+                JSONObject objDatas = objBean.optJSONObject("datas");
+                JSONArray arrGoodsbrowseList = objDatas.optJSONArray("goodsbrowse_list");
+                for (int i = 0; i < arrGoodsbrowseList.length(); i++) {
+                    MyFoot myFoot = new MyFoot();
+                    JSONObject o = arrGoodsbrowseList.optJSONObject(i);
+                    myFoot.setGoodsId(o.optString("goods_id"));
+                    myFoot.setStoreId(o.optString("store_id"));
+                    myFoot.setGoodsName(o.optString("goods_name"));
+                    myFoot.setGoodsPrice(o.optString("goods_promotion_price"));
+                    myFoot.setGoodsImgUrl(o.optString("goods_image_url"));
+                    myFootList.add(myFoot);
+                }
+                return true;
             }
-            return true;
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -215,9 +230,15 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.rl_myfoot_clear:
                 if (!myFootList.isEmpty()) {
                     alertDialog.show();
-                } else {
-                    ToastUtils.toast(FootActivity.this, "已经空了");
                 }
+                break;
+            case R.id.tv_empty_type_myfoot_reload:
+                loadData();
+                break;
+            case R.id.rl_empty_type_myfoot_lookaround:
+                Intent intent = new Intent(FootActivity.this, HomeActivity.class);
+                intent.putExtra("what", 0);
+                startActivity(intent);
                 break;
             default:
                 break;
@@ -254,21 +275,27 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        handler.removeMessages(0);
-        handler.removeMessages(1);
-        handler.removeMessages(2);
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if (isLast && scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+            if (curPage < totalPage) {
+                curPage++;
+                STATE = ParaConfig.LOAD;
+                loadData();
+            }
+        }
     }
 
     @Override
-    public void onDownPullRefresh() {
-        STATE = ParaConfig.REFRESH;
-        loadData();
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        isLast = (firstVisibleItem + visibleItemCount) == totalItemCount;
     }
 
     @Override
-    public void onLoadingMore() {
-        lv.hideFootView();
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = new Intent(FootActivity.this, GoodsDetailActivity.class);
+        intent.putExtra("store_id", myFootList.get(position).getStoreId());
+        intent.putExtra("goods_id", myFootList.get(position).getGoodsId());
+        startActivity(intent);
     }
+
 }
