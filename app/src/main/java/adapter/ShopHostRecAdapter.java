@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -59,11 +60,9 @@ public class ShopHostRecAdapter extends BaseAdapter {
         }
         ShopHostRec shopHostRec = list.get(position);
         if (shopHostRec != null) {
-//            if (!TextUtils.isEmpty(shopHostRec.getImageUrl())) {
-//                Picasso.with(context).load(shopHostRec.getImageUrl()).placeholder(holder.imageIv.getDrawable()).into(holder.imageIv);
-//            }
             holder.goodsNameTv.setText(shopHostRec.getGoodsName());
             holder.goodsPriceTv.setText(shopHostRec.getGoodsPrice());
+            Picasso.with(context).load(shopHostRec.getImageUrl()).placeholder(holder.imageIv.getDrawable()).into(holder.imageIv);
         }
         return convertView;
     }

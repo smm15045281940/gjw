@@ -2,6 +2,7 @@ package fragment;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.R;
+import com.gangjianwang.www.gangjianwang.StoreDetailActivity;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
@@ -45,7 +48,7 @@ import utils.UserUtils;
  * Created by Administrator on 2017/4/17 0017.
  */
 
-public class StoreCollectFragment extends Fragment implements ListItemClickHelp {
+public class StoreCollectFragment extends Fragment implements ListItemClickHelp, AdapterView.OnItemClickListener {
 
     private View rootView, emptyView;
     private ListView lv;
@@ -88,6 +91,7 @@ public class StoreCollectFragment extends Fragment implements ListItemClickHelp 
         initView();
         initData();
         setData();
+        setListener();
         loadData();
         return rootView;
     }
@@ -140,6 +144,10 @@ public class StoreCollectFragment extends Fragment implements ListItemClickHelp 
 
     private void setData() {
         lv.setAdapter(storeCollectListAdapter);
+    }
+
+    private void setListener() {
+        lv.setOnItemClickListener(this);
     }
 
     private void loadData() {
@@ -250,5 +258,12 @@ public class StoreCollectFragment extends Fragment implements ListItemClickHelp 
             e.printStackTrace();
         }
         return b;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = new Intent(getActivity(), StoreDetailActivity.class);
+        intent.putExtra("store_id", storeCollectList.get(position).getStoreId());
+        startActivity(intent);
     }
 }

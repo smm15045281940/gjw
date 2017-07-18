@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -53,17 +54,22 @@ public class AllGoodsGridViewAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         AllGoods allGoods = list.get(position);
-        holder.goodsNameTv.setText(allGoods.getGoodsName());
-        holder.goodsPriceTv.setText(allGoods.getGoodsPrice());
-        holder.goodsSalesTv.setText(allGoods.getGoodsSales());
+        if (allGoods != null) {
+            holder.goodsNameTv.setText(allGoods.getGoodsName());
+            holder.goodsPriceTv.setText("¥" + allGoods.getGoodsPrice());
+            holder.goodsSalesTv.setText(allGoods.getGoodsSales());
+            Picasso.with(context).load(allGoods.getGoodsIcon()).placeholder(holder.imageIv.getDrawable()).into(holder.imageIv);
+        }
         return convertView;
     }
 
     class ViewHolder {
 
+        private ImageView imageIv;
         private TextView goodsNameTv, goodsPriceTv, goodsSalesTv;
 
         public ViewHolder(View itemView) {
+            imageIv = (ImageView) itemView.findViewById(R.id.iv_item_allgoods_gridview_goodsicon);
             goodsNameTv = (TextView) itemView.findViewById(R.id.tv_item_allgoods_gridview_goodsname);
             goodsPriceTv = (TextView) itemView.findViewById(R.id.tv_item_allgoods_gridview_goodsprice);
             goodsSalesTv = (TextView) itemView.findViewById(R.id.tv_item_allgoods_gridview_goodssales);

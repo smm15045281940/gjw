@@ -143,7 +143,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, OnRe
                                 lv.hideHeadView();
                                 loadViewPager();
                                 STATE = ParaConfig.FIRST;
-                                ToastUtils.toast(getActivity(), ParaConfig.REFRESH_SUCCESS);
                                 break;
                             default:
                                 break;

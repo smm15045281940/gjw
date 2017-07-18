@@ -14,11 +14,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -36,6 +38,7 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -43,6 +46,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import adapter.GoodsDetailClassifyTopAdapter;
+import bean.GoodsDetailClassifyTop;
 import config.NetConfig;
 import config.ParaConfig;
 import fragment.AllGoodsFragment;
@@ -53,14 +58,12 @@ import utils.HeightUtils;
 import utils.ToastUtils;
 import utils.UserUtils;
 
-public class StoreDetailActivity extends AppCompatActivity implements View.OnClickListener, ListItemClickHelp {
+public class StoreDetailActivity extends AppCompatActivity implements View.OnClickListener, ListItemClickHelp, AdapterView.OnItemClickListener {
 
     private View rootView, popView;
     private RelativeLayout backRl, classifyRl;
     private EditText searchEt;
     private RelativeLayout shopIntroRl, freeTicketRl, contactServiceRl;
-    private GridView mGv;
-    private List<String> mGvList = new ArrayList<>();
 
     private LinearLayout shopFirstpageLl, allGoodsLl, goodsNewLl, shopActionLl;
     private FragmentManager fragmentManager = getSupportFragmentManager();
@@ -90,6 +93,11 @@ public class StoreDetailActivity extends AppCompatActivity implements View.OnCli
     private ImageView imageIv;
     private TextView nameTv, favoriteTv, collectTv;
     private RelativeLayout favoriteRl;
+    private RequestBody body;
+
+    private List<GoodsDetailClassifyTop> gridList = new ArrayList<>();
+    private GoodsDetailClassifyTopAdapter gridAdapter;
+    private GridView gv;
 
     private Handler handler = new Handler() {
         @Override
@@ -103,7 +111,13 @@ public class StoreDetailActivity extends AppCompatActivity implements View.OnCli
                         break;
                     case 1:
                         setStoreInfo();
-//                        initFragment();
+                        break;
+                    case 2:
+                        loadStoreInfoData();
+                        break;
+                    case 3:
+                        gridAdapter.notifyDataSetChanged();
+                        HeightUtils.setGridViewHeight(gv);
                         break;
                 }
             }
@@ -113,7 +127,7 @@ public class StoreDetailActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onResume() {
         super.onResume();
-        loadData();
+        loadStoreInfoData();
     }
 
     @Override
@@ -121,6 +135,7 @@ public class StoreDetailActivity extends AppCompatActivity implements View.OnCli
         super.onDestroy();
         handler.removeMessages(0);
         handler.removeMessages(1);
+        handler.removeMessages(2);
     }
 
     @Override
@@ -133,6 +148,7 @@ public class StoreDetailActivity extends AppCompatActivity implements View.OnCli
         initData();
         setData();
         setListener();
+        loadData();
     }
 
     private void initView() {
@@ -149,7 +165,7 @@ public class StoreDetailActivity extends AppCompatActivity implements View.OnCli
         shopIntroRl = (RelativeLayout) rootView.findViewById(R.id.rl_shopdetail_shopintro);
         freeTicketRl = (RelativeLayout) rootView.findViewById(R.id.rl_shopdetail_freeticket);
         contactServiceRl = (RelativeLayout) rootView.findViewById(R.id.rl_shopdetail_contactservice);
-        mGv = (GridView) rootView.findViewById(R.id.gv_shopdetail);
+        gv = (GridView) rootView.findViewById(R.id.gv_shopdetail);
         shopFirstpageLl = (LinearLayout) rootView.findViewById(R.id.ll_shopdetail_shopfirstpage);
         allGoodsLl = (LinearLayout) rootView.findViewById(R.id.ll_shopdetail_allgoods);
         goodsNewLl = (LinearLayout) rootView.findViewById(R.id.ll_shopdetail_goodsnew);
@@ -199,13 +215,10 @@ public class StoreDetailActivity extends AppCompatActivity implements View.OnCli
     private void initData() {
         okHttpClient = new OkHttpClient();
         key = UserUtils.readLogin(this, true).getKey();
-        store_id = "6";
-    }
-
-    private void initFragment() {
-        Bundle bundle = new Bundle();
-        bundle.putString("store_id", store_id);
-        ToastUtils.log(this, "store_id:" + store_id);
+        Intent intent = getIntent();
+        if (intent != null) {
+            store_id = intent.getStringExtra("store_id");
+        }
         shopFirstpageFragment = new ShopFirstpageFragment();
         allGoodsFragment = new AllGoodsFragment();
         goodsNewFragment = new GoodsNewFragment();
@@ -217,31 +230,28 @@ public class StoreDetailActivity extends AppCompatActivity implements View.OnCli
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.ll_shopdetail_sit, fragmentList.get(0));
         fragmentTransaction.commit();
-        shopFirstpageFragment.setArguments(bundle);
         SHOP_STATE = SHOP_FIRSTPAGE;
+        gridAdapter = new GoodsDetailClassifyTopAdapter(this, gridList);
+    }
+
+    public String getStoreId() {
+        return store_id;
     }
 
     private void setData() {
+        gv.setAdapter(gridAdapter);
     }
 
     private void loadData() {
-        progressDialog.show();
-        loadStoreInfoData();
-        mGvList.add("管材(材质201)");
-        mGvList.add("板材(材质201)");
-        mGvList.add("阀门系列");
-        mGvList.add("楼梯系列");
-        mGvList.add("门系列");
-        mGvList.add("门控系列");
-        mGvList.add("装饰配件");
-        mGvList.add("抛光材料");
-        mGvList.add("焊接配件");
-        mGvList.add("电动工具");
-        HeightUtils.setGridViewHeight(mGv);
+        if (!TextUtils.isEmpty(store_id)) {
+            progressDialog.show();
+            loadStoreInfoData();
+            loadClassifyData();
+        }
     }
 
     private void loadStoreInfoData() {
-        RequestBody body = new FormEncodingBuilder().add("key", key).add("store_id", store_id).build();
+        body = new FormEncodingBuilder().add("key", key).add("store_id", store_id).build();
         Request request = new Request.Builder().url(NetConfig.storeDetailUrl).post(body).build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -270,6 +280,48 @@ public class StoreDetailActivity extends AppCompatActivity implements View.OnCli
                 imageUrl = objStoreInfo.optString("store_avatar");
                 isFavorite = objStoreInfo.optBoolean("is_favorate");
                 collect = objStoreInfo.optInt("store_collect");
+                return true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private void loadClassifyData() {
+        RequestBody body = new FormEncodingBuilder().add("store_id", store_id).build();
+        Request request = new Request.Builder().url(NetConfig.goodsDetailClassifyUrl).post(body).build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful() && parseClassifyJson(response.body().string())) {
+                    handler.sendEmptyMessage(3);
+                } else {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
+    }
+
+    private boolean parseClassifyJson(String json) {
+        try {
+            JSONObject objBean = new JSONObject(json);
+            if (objBean.optInt("code") == 200) {
+                JSONObject objDatas = objBean.optJSONObject("datas");
+                JSONArray arrStoreGoodsClass2 = objDatas.optJSONArray("store_goods_class_2");
+                for (int i = 0; i < arrStoreGoodsClass2.length(); i++) {
+                    JSONObject o = arrStoreGoodsClass2.optJSONObject(i);
+                    GoodsDetailClassifyTop goodsDetailClassifyTop = new GoodsDetailClassifyTop();
+                    goodsDetailClassifyTop.setStoreId(o.optString("store_id"));
+                    goodsDetailClassifyTop.setGcId(o.optString("gc_id"));
+                    goodsDetailClassifyTop.setGcName(o.optString("gc_name"));
+                    gridList.add(goodsDetailClassifyTop);
+                }
                 return true;
             }
         } catch (JSONException e) {
@@ -307,6 +359,8 @@ public class StoreDetailActivity extends AppCompatActivity implements View.OnCli
         goodsNewLl.setOnClickListener(this);
         shopActionLl.setOnClickListener(this);
         popCloseIv.setOnClickListener(this);
+        favoriteRl.setOnClickListener(this);
+        gv.setOnItemClickListener(this);
     }
 
     @Override
@@ -358,9 +412,70 @@ public class StoreDetailActivity extends AppCompatActivity implements View.OnCli
             case R.id.iv_pop_store_detail_voucher_close:
                 voucherPop.dismiss();
                 break;
+            case R.id.rl_store_detail_favorite:
+                collectClick();
+                break;
             default:
                 break;
         }
+    }
+
+    private void collectClick() {
+        if (isFavorite) {
+            cancelCollect();
+        } else {
+            collect();
+        }
+    }
+
+    private void collect() {
+        Request request = new Request.Builder().url(NetConfig.storeIntroCollectUrl).post(body).build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful() && parseCollectJson(response.body().string())) {
+                    handler.sendEmptyMessage(2);
+                } else {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
+    }
+
+    private void cancelCollect() {
+        Request request = new Request.Builder().url(NetConfig.storeIntroCollectCancelUrl).post(body).build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful() && parseCollectJson(response.body().string())) {
+                    handler.sendEmptyMessage(2);
+                } else {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
+    }
+
+    private boolean parseCollectJson(String json) {
+        try {
+            JSONObject objBean = new JSONObject(json);
+            if (objBean.optInt("code") == 200) {
+                return true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override
@@ -382,5 +497,13 @@ public class StoreDetailActivity extends AppCompatActivity implements View.OnCli
             fragmentTransaction.commit();
             SHOP_STATE = TARGET_STATE;
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = new Intent(this, ClassifyDetailActivity.class);
+        intent.putExtra("gc_id", gridList.get(position).getGcId());
+        intent.putExtra("store_id", gridList.get(position).getStoreId());
+        startActivity(intent);
     }
 }

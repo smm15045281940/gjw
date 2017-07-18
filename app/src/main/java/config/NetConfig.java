@@ -110,10 +110,24 @@ public interface NetConfig {
     public static final String sureOrderUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_buy&op=buy_step1";
     //店铺详情 key,store_id
     public static final String storeDetailUrl = "http://www.gangjianwang.com/mobile/index.php?act=store&op=store_info";
+    //店铺详情 排行 store_id,收藏：ordertype = collectdesc,销量：ordertype = salenumdesc,num = 3
+    public static final String storeDetailCollectUrl = "http://www.gangjianwang.com/mobile/index.php?act=store&op=store_goods_rank";
+    //店铺详情 全部商品头
+    public static final String storeDetailAllGoodsHeadUrl = "http://www.gangjianwang.com/mobile/index.php?act=store&op=store_goods&store_id=";
+    //店铺详情 全部商品尾页头
+    public static final String storeDetailAllGoodsFootPageHeadUrl = "&curpage=";
+    //店铺详情 全部商品尾页尾
+    public static final String storeDetailAllGoodsFootPageFootUrl = "&page=10";
+    //店铺详情分类跳转详情 http://www.gangjianwang.com/mobile/index.php?act=goods&op=goods_list&gc_id=4&store_id=6&page=10&curpage=1&gc_id=4
+    public static final String classifyDetailUrl1 = "http://www.gangjianwang.com/mobile/index.php?act=goods&op=goods_list&gc_id=";
+    public static final String classifyDetailUrl2 = "&store_id=";
+    public static final String classifyDetailUrl3 = "&page=10&curpage=";
+    public static final String classifyDetailUrl4 = "&gc_id=";
     //店铺介绍 key,store_id
     public static final String storeIntroUrl = "http://www.gangjianwang.com/mobile/index.php?act=store&op=store_intro";
     //店铺介绍收藏 key,store_id
     public static final String storeIntroCollectUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_favorites_store&op=favorites_add";
     //店铺介绍取消收藏 key,store_id
     public static final String storeIntroCollectCancelUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_favorites_store&op=favorites_del";
+
 }

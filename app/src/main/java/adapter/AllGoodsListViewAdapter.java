@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -53,9 +54,12 @@ public class AllGoodsListViewAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         AllGoods allGoods = list.get(position);
-        holder.goodsNameTv.setText(allGoods.getGoodsName());
-        holder.goodsSalesTv.setText(allGoods.getGoodsSales());
-        holder.goodsPriceTv.setText(allGoods.getGoodsPrice());
+        if (allGoods != null) {
+            holder.goodsNameTv.setText(allGoods.getGoodsName());
+            holder.goodsSalesTv.setText(allGoods.getGoodsSales());
+            holder.goodsPriceTv.setText("¥"+allGoods.getGoodsPrice());
+            Picasso.with(context).load(allGoods.getGoodsIcon()).placeholder(holder.goodsIconIv.getDrawable()).into(holder.goodsIconIv);
+        }
         return convertView;
     }
 

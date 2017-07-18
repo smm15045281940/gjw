@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,6 +27,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.gangjianwang.www.gangjianwang.ClassifyDetailActivity;
 import com.gangjianwang.www.gangjianwang.HomeActivity;
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.SureOrderActivity;
@@ -66,7 +68,7 @@ import utils.ToastUtils;
  * Created by Administrator on 2017/5/23.
  */
 
-public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickListener, ListItemClickHelp {
+public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickListener, ListItemClickHelp, AdapterView.OnItemClickListener {
 
     private View rootView, headView, footView, popView;
     private PopupWindow popWindow;
@@ -243,6 +245,7 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
 
     private void initPro() {
         mPd = new ProgressDialog(getActivity());
+        mPd.setCanceledOnTouchOutside(false);
     }
 
     private void initAnim() {
@@ -630,13 +633,16 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
         popShopCarRl.setOnClickListener(this);
         popBuyNowRl.setOnClickListener(this);
         popAddShopCarRl.setOnClickListener(this);
+        headGv.setOnItemClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ll_goodsdetailgoods_lefttop:
-                startActivity(new Intent(getActivity(), StoreDetailActivity.class));
+                Intent intentTop = new Intent(getActivity(), StoreDetailActivity.class);
+                intentTop.putExtra("store_id", storeId);
+                startActivity(intentTop);
                 break;
             case R.id.iv_pop_goodsdetailgoods_close:
                 popWindow.dismiss();
@@ -739,5 +745,19 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
         deliverycreditCreditTv.setText(deliverycreditCredit);
         goodsDetailGoodsLvAdapter.notifyDataSetChanged();
         createVp(goodsImageUrlList.size());
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        switch (parent.getId()) {
+            case R.id.gv_head_goodsdetailgoods:
+                Intent intent = new Intent(getActivity(), ClassifyDetailActivity.class);
+                intent.putExtra("gc_id", gridList.get(position).getGcId());
+                intent.putExtra("store_id", gridList.get(position).getStoreId());
+                startActivity(intent);
+                break;
+            default:
+                break;
+        }
     }
 }

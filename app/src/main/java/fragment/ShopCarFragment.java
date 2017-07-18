@@ -68,6 +68,7 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
 
     private AlertDialog delAd;
     private int delOutPosition, delInPosition;
+    private int LOAD_STATE;
 
     public Handler handler = new Handler() {
         @Override
@@ -97,6 +98,15 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
         changehandler = homeActivity.mChangeFragHandler;
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            LOAD_STATE = ParaConfig.REFRESH;
+            loadData();
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -104,8 +114,8 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
         initView();
         initData();
         setData();
-        loadData();
         setListener();
+        loadData();
         return rootView;
     }
 
@@ -154,6 +164,7 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
     }
 
     private void initData() {
+        LOAD_STATE = ParaConfig.FIRST;
         okHttpClient = new OkHttpClient();
         key = UserUtils.readLogin(getActivity(), true).getKey();
         mAdapter = new ShopCarOuterAdapter(getActivity(), mList, this, this);
@@ -164,7 +175,10 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
     }
 
     private void loadData() {
-        progressDialog.show();
+        if (LOAD_STATE == ParaConfig.FIRST) {
+            progressDialog.show();
+        }
+        mList.clear();
         RequestBody body = new FormEncodingBuilder().add("key", key).build();
         Request request = new Request.Builder().url(NetConfig.shopCarUrl).post(body).build();
         okHttpClient.newCall(request).enqueue(new Callback() {

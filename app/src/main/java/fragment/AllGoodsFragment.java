@@ -1,30 +1,46 @@
 package fragment;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.gangjianwang.www.gangjianwang.R;
+import com.gangjianwang.www.gangjianwang.StoreDetailActivity;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import adapter.AllGoodsGridViewAdapter;
 import adapter.AllGoodsListViewAdapter;
 import bean.AllGoods;
+import config.NetConfig;
+import config.ParaConfig;
 import utils.ToastUtils;
 
 /**
  * Created by Administrator on 2017/6/6.
  */
 
-public class AllGoodsFragment extends Fragment implements View.OnClickListener {
+public class AllGoodsFragment extends Fragment implements View.OnClickListener, AbsListView.OnScrollListener {
 
     private View rootView;
     private RelativeLayout synthOrderRl, salesPriorityRl, screenRl, changeRl;
@@ -36,12 +52,45 @@ public class AllGoodsFragment extends Fragment implements View.OnClickListener {
     private final int LIST = 1;
     private final int GRID = 2;
     private int STATE;
+    private int curPage = 1, totalPage;
+    private String store_id;
+    private ProgressDialog progressDialog;
+    private OkHttpClient okHttpClient;
+    private int LOAD_STATE = ParaConfig.FIRST;
+    private boolean isLast;
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg != null) {
+                progressDialog.dismiss();
+                switch (msg.what) {
+                    case 0:
+                        ToastUtils.toast(getActivity(), ParaConfig.NETWORK_ERROR);
+                        break;
+                    case 1:
+                        break;
+                }
+                mListViewAdapter.notifyDataSetChanged();
+                mGridViewAdapter.notifyDataSetChanged();
+            }
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        handler.removeMessages(0);
+        handler.removeMessages(1);
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_allgoods, null);
         initView();
+        initData();
         setData();
         loadData();
         setListener();
@@ -49,6 +98,11 @@ public class AllGoodsFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initView() {
+        initRoot();
+        initProgress();
+    }
+
+    private void initRoot() {
         mLv = (ListView) rootView.findViewById(R.id.lv_allgoods);
         mGv = (GridView) rootView.findViewById(R.id.gv_allgoods);
         mGv.setVisibility(View.INVISIBLE);
@@ -59,23 +113,67 @@ public class AllGoodsFragment extends Fragment implements View.OnClickListener {
         changeRl = (RelativeLayout) rootView.findViewById(R.id.rl_allgoods_change);
     }
 
-    private void setData() {
+    private void initProgress() {
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setCanceledOnTouchOutside(false);
+    }
+
+    private void initData() {
+        okHttpClient = new OkHttpClient();
+        store_id = ((StoreDetailActivity) getActivity()).getStoreId();
         mListViewAdapter = new AllGoodsListViewAdapter(getActivity(), mList);
-        mLv.setAdapter(mListViewAdapter);
         mGridViewAdapter = new AllGoodsGridViewAdapter(getActivity(), mList);
+    }
+
+    private void setData() {
+        mLv.setAdapter(mListViewAdapter);
         mGv.setAdapter(mGridViewAdapter);
     }
 
     private void loadData() {
-        for (int i = 0; i < 10; i++) {
-            AllGoods allGoods = new AllGoods();
-            allGoods.setGoodsName("花管");
-            allGoods.setGoodsSales("1");
-            allGoods.setGoodsPrice("¥10.00");
-            mList.add(allGoods);
+        if (LOAD_STATE == ParaConfig.FIRST) {
+            progressDialog.show();
         }
-        mListViewAdapter.notifyDataSetChanged();
-        mGridViewAdapter.notifyDataSetChanged();
+        Request request = new Request.Builder().url(NetConfig.storeDetailAllGoodsHeadUrl + store_id + NetConfig.storeDetailAllGoodsFootPageHeadUrl + curPage + NetConfig.storeDetailAllGoodsFootPageFootUrl).build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful() && parseJson(response.body().string())) {
+                    handler.sendEmptyMessage(1);
+                } else {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
+    }
+
+    private boolean parseJson(String json) {
+        try {
+            JSONObject objBean = new JSONObject(json);
+            if (objBean.optInt("code") == 200) {
+                totalPage = objBean.optInt("page_total");
+                JSONObject objDatas = objBean.optJSONObject("datas");
+                JSONArray arrGoodsList = objDatas.optJSONArray("goods_list");
+                for (int i = 0; i < arrGoodsList.length(); i++) {
+                    JSONObject o = arrGoodsList.optJSONObject(i);
+                    AllGoods allGoods = new AllGoods();
+                    allGoods.setGoodsName(o.optString("goods_name"));
+                    allGoods.setGoodsPrice(o.optString("goods_price"));
+                    allGoods.setGoodsSales(o.optString("goods_salenum"));
+                    allGoods.setGoodsIcon(o.optString("goods_image_url"));
+                    mList.add(allGoods);
+                }
+                return true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private void setListener() {
@@ -83,6 +181,8 @@ public class AllGoodsFragment extends Fragment implements View.OnClickListener {
         salesPriorityRl.setOnClickListener(this);
         screenRl.setOnClickListener(this);
         changeRl.setOnClickListener(this);
+        mLv.setOnScrollListener(this);
+        mGv.setOnScrollListener(this);
     }
 
     @Override
@@ -129,5 +229,21 @@ public class AllGoodsFragment extends Fragment implements View.OnClickListener {
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if (isLast && scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+            if (curPage < totalPage) {
+                LOAD_STATE = ParaConfig.LOAD;
+                curPage++;
+                loadData();
+            }
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        isLast = (firstVisibleItem + visibleItemCount) == totalItemCount;
     }
 }

@@ -51,7 +51,7 @@ public class GoodsDetailClassifyTopAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        GoodsDetailClassifyTop goodsDetailClassifyTop = list.get(position);
+        final GoodsDetailClassifyTop goodsDetailClassifyTop = list.get(position);
         if (goodsDetailClassifyTop != null) {
             holder.tv.setText(goodsDetailClassifyTop.getGcName());
         }

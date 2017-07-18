@@ -23,7 +23,7 @@
                 android:layout_height="@dimen/x20"
                 android:layout_centerInParent="true"
                 android:scaleType="fitXY"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/img_default" />
 
         </RelativeLayout>
 
@@ -41,7 +41,7 @@
                 android:layout_height="@dimen/x20"
                 android:layout_centerInParent="true"
                 android:scaleType="fitXY"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/img_default" />
 
         </RelativeLayout>
 
@@ -59,7 +59,7 @@
                 android:layout_height="@dimen/x20"
                 android:layout_centerInParent="true"
                 android:scaleType="fitXY"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/img_default" />
 
         </RelativeLayout>
 
@@ -77,7 +77,7 @@
                 android:layout_height="@dimen/x20"
                 android:layout_centerInParent="true"
                 android:scaleType="fitXY"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/img_default" />
 
         </RelativeLayout>
 
