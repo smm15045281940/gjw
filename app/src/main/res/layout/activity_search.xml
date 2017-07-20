@@ -16,7 +16,7 @@
             android:id="@+id/rl_search_back"
             android:layout_width="@dimen/x40"
             android:layout_height="match_parent"
-            android:background="@drawable/default_gray_selector"
+            android:background="@drawable/selector_press"
             android:padding="@dimen/x10">
 
             <ImageView
@@ -83,7 +83,7 @@
             android:id="@+id/rl_search_toSearch"
             android:layout_width="@dimen/x40"
             android:layout_height="match_parent"
-            android:background="@drawable/default_gray_selector"
+            android:background="@drawable/selector_press"
             android:padding="@dimen/x10">
 
             <ImageView

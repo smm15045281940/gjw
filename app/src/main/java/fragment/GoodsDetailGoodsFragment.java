@@ -1,16 +1,20 @@
 package fragment;
 
 
+import android.Manifest;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
@@ -63,6 +67,7 @@ import customview.FlowLayout;
 import customview.SizeThickTextView;
 import utils.HeightUtils;
 import utils.ToastUtils;
+import utils.UserUtils;
 
 /**
  * Created by Administrator on 2017/5/23.
@@ -120,6 +125,10 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
     private GoodsDetailGoods goodsDetailGoods;
     private List<String> goodsImageUrlList = new ArrayList<>();
 
+    private TextView cartcountTv;
+    private int cartCount;
+    private String key;
+
     public Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -143,6 +152,9 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
                         goodsDetailGoodsLvAdapter.notifyDataSetChanged();
                         setView();
                         break;
+                    case 3:
+                        setCartCountView();
+                        break;
                     default:
                         break;
                 }
@@ -151,11 +163,12 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
     };
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Bundle bundle = getArguments();
-        goodsId = bundle.getString("goods_id");
-        storeId = bundle.getString("store_id");
+    public void onDestroy() {
+        super.onDestroy();
+        handler.removeMessages(0);
+        handler.removeMessages(1);
+        handler.removeMessages(2);
+        handler.removeMessages(3);
     }
 
     @Nullable
@@ -169,13 +182,6 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
         setListener();
         loadData();
         return rootView;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        handler.removeMessages(0);
-        handler.removeMessages(1);
     }
 
     private void initView() {
@@ -204,6 +210,8 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
         servicecreditCreditTv = (TextView) rootView.findViewById(R.id.tv_goodsdetailgoods_store_servicecredit_credit);
         deliverycreditTextTv = (TextView) rootView.findViewById(R.id.tv_goodsdetailgoods_store_deliverycredit_text);
         deliverycreditCreditTv = (TextView) rootView.findViewById(R.id.tv_goodsdetailgoods_store_deliverycredit_credit);
+
+        cartcountTv = (TextView) rootView.findViewById(R.id.tv_goodsdetailgoods_shopcar_cart_count);
     }
 
     private void initHead() {
@@ -264,6 +272,10 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
     }
 
     private void initData() {
+        key = UserUtils.readLogin(getActivity(), true).getKey();
+        Bundle bundle = getArguments();
+        goodsId = bundle.getString("goods_id");
+        storeId = bundle.getString("store_id");
         sizeList.add("13");
         sizeList.add("16");
         sizeList.add("19");
@@ -452,6 +464,7 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
     private void loadData() {
         mPd.show();
         loadLeftTopData();
+        loadCartCountData();
         Request request = new Request.Builder().url(NetConfig.contractprojectDetailHeadUrl + goodsId + NetConfig.contractprojectDetailFootUrl).get().build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -490,6 +503,49 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
                 }
             }
         });
+    }
+
+    private void loadCartCountData() {
+        RequestBody body = new FormEncodingBuilder().add("key", key).build();
+        Request request = new Request.Builder().url(NetConfig.cartCountUrl).post(body).build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful() && parseCartCountJson(response.body().string())) {
+                    handler.sendEmptyMessage(3);
+                } else {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
+    }
+
+    private boolean parseCartCountJson(String json) {
+        try {
+            JSONObject objBean = new JSONObject(json);
+            if (objBean.optInt("code") == 200) {
+                JSONObject objDatas = objBean.optJSONObject("datas");
+                cartCount = objDatas.optInt("cart_count");
+                return true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private void setCartCountView() {
+        if (cartCount != 0) {
+            cartcountTv.setText(cartCount + "");
+            cartcountTv.setVisibility(View.VISIBLE);
+        } else {
+            cartcountTv.setVisibility(View.INVISIBLE);
+        }
     }
 
     private boolean parseLeftJson(String json) {
@@ -673,7 +729,11 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
                 startAnim();
                 break;
             case R.id.rl_goodsdetailgoods_customservice:
-                ToastUtils.toast(getActivity(), "客服");
+                Intent intentKf = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + ParaConfig.SERVICE_PHONE));
+                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                getActivity().startActivity(intentKf);
                 break;
             case R.id.rl_goodsdetailgoods_shopcar:
                 Intent intent = new Intent(getActivity(), HomeActivity.class);

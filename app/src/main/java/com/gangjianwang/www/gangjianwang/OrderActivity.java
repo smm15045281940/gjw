@@ -18,8 +18,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import fragment.RealorderFragment;
-import fragment.VirtualorderFragment;
+import fragment.RealOrderFragment;
+import fragment.VirtualOrderFragment;
 import utils.ToastUtils;
 
 public class OrderActivity extends AppCompatActivity implements OnClickListener {
@@ -71,8 +71,8 @@ public class OrderActivity extends AppCompatActivity implements OnClickListener 
     private void initData() {
         mFragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
-        mRealorderFragment = new RealorderFragment();
-        mVirtualorderFragment = new VirtualorderFragment();
+        mRealorderFragment = new RealOrderFragment();
+        mVirtualorderFragment = new VirtualOrderFragment();
         mFragmentList = new ArrayList<>();
         mFragmentList.add(mRealorderFragment);
         mFragmentList.add(mVirtualorderFragment);

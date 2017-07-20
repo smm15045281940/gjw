@@ -17,7 +17,7 @@
             android:id="@+id/rl_addressmanage_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/default_gray_selector">
+            android:background="@drawable/selector_press">
 
             <ImageView
                 android:layout_width="@dimen/x20"
@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:background="@drawable/default_gray_selector">
+            android:background="@drawable/selector_press">
 
             <ImageView
                 android:layout_width="@dimen/x20"

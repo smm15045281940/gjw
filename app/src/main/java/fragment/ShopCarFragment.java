@@ -14,16 +14,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.HomeActivity;
 import com.gangjianwang.www.gangjianwang.InquiryListActivity;
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
-import com.gangjianwang.www.gangjianwang.SureOrderActivity;
 import com.gangjianwang.www.gangjianwang.R;
 import com.gangjianwang.www.gangjianwang.ShopCarClickHelp;
+import com.gangjianwang.www.gangjianwang.SureOrderActivity;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
@@ -44,6 +43,8 @@ import bean.ShopCar;
 import bean.ShopCarGoods;
 import config.NetConfig;
 import config.ParaConfig;
+import customview.MyRefreshListView;
+import customview.OnRefreshListener;
 import utils.ToastUtils;
 import utils.UserUtils;
 
@@ -51,10 +52,10 @@ import utils.UserUtils;
  * Created by Administrator on 2017/4/10 0010.
  */
 
-public class ShopCarFragment extends Fragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, ListItemClickHelp, ShopCarClickHelp {
+public class ShopCarFragment extends Fragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, ListItemClickHelp, ShopCarClickHelp, OnRefreshListener {
 
     private View rootView, emptyView;
-    private ListView mLv;
+    private MyRefreshListView mLv;
     private RelativeLayout lookAroundRl;
     private Handler changehandler;
     private CheckBox cbAll;
@@ -76,13 +77,13 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
             super.handleMessage(msg);
             if (msg != null) {
                 progressDialog.dismiss();
+                mLv.hideHeadView();
                 switch (msg.what) {
                     case 0:
                         ToastUtils.toast(getActivity(), ParaConfig.NETWORK_ERROR);
                         break;
                     case 1:
-                        break;
-                    default:
+                        cbAll.setChecked(true);
                         break;
                 }
                 mAdapter.notifyDataSetChanged();
@@ -96,15 +97,6 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
         super.onCreate(savedInstanceState);
         HomeActivity homeActivity = (HomeActivity) getActivity();
         changehandler = homeActivity.mChangeFragHandler;
-    }
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if (!hidden) {
-            LOAD_STATE = ParaConfig.REFRESH;
-            loadData();
-        }
     }
 
     @Nullable
@@ -127,7 +119,7 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
     }
 
     private void initRoot() {
-        mLv = (ListView) rootView.findViewById(R.id.lv_shopcar);
+        mLv = (MyRefreshListView) rootView.findViewById(R.id.lv_shopcar);
         cbAll = (CheckBox) rootView.findViewById(R.id.cb_shopcar_cbAll);
         numPriceTv = (TextView) rootView.findViewById(R.id.tv_shopcar_summoney);
         createOrderPriceRl = (RelativeLayout) rootView.findViewById(R.id.rl_shopcar_createorderprice);
@@ -174,11 +166,20 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
         mLv.setAdapter(mAdapter);
     }
 
+    private void setListener() {
+        mLv.setOnRefreshListener(this);
+        lookAroundRl.setOnClickListener(this);
+        cbAll.setOnCheckedChangeListener(this);
+        createOrderPriceRl.setOnClickListener(this);
+        sureInfoRl.setOnClickListener(this);
+    }
+
     private void loadData() {
         if (LOAD_STATE == ParaConfig.FIRST) {
             progressDialog.show();
+        } else if (LOAD_STATE == ParaConfig.REFRESH) {
+            mList.clear();
         }
-        mList.clear();
         RequestBody body = new FormEncodingBuilder().add("key", key).build();
         Request request = new Request.Builder().url(NetConfig.shopCarUrl).post(body).build();
         okHttpClient.newCall(request).enqueue(new Callback() {
@@ -234,13 +235,6 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
             e.printStackTrace();
         }
         return false;
-    }
-
-    private void setListener() {
-        lookAroundRl.setOnClickListener(this);
-        cbAll.setOnCheckedChangeListener(this);
-        createOrderPriceRl.setOnClickListener(this);
-        sureInfoRl.setOnClickListener(this);
     }
 
     @Override
@@ -386,5 +380,16 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
             e.printStackTrace();
         }
         return false;
+    }
+
+    @Override
+    public void onDownPullRefresh() {
+        LOAD_STATE = ParaConfig.REFRESH;
+        loadData();
+    }
+
+    @Override
+    public void onLoadingMore() {
+        mLv.hideFootView();
     }
 }

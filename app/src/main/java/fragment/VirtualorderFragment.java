@@ -36,7 +36,7 @@ import utils.UserUtils;
  * Created by Administrator on 2017/4/14 0014.
  */
 
-public class VirtualorderFragment extends Fragment implements View.OnClickListener {
+public class VirtualOrderFragment extends Fragment implements View.OnClickListener {
 
     private View rootView, emptyView;
     private LinearLayout allLl, waitpayLl, waituseLl;

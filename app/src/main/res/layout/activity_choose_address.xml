@@ -15,7 +15,7 @@
             android:id="@+id/rl_chooseaddress_back"
             android:layout_width="@dimen/x40"
             android:layout_height="match_parent"
-            android:background="@drawable/default_gray_selector"
+            android:background="@drawable/selector_press"
             android:clickable="true"
             android:padding="@dimen/x10">
 

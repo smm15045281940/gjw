@@ -4,8 +4,8 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">#FF6207</item>
-        <item name="colorAccent">#FF6207</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <!--首页RelativeLayout样式-->
@@ -14,7 +14,6 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:clickable">true</item>
-        <item name="android:background">@drawable/selector_press</item>
     </style>
 
     <!--首页LinearLayout样式-->
@@ -50,7 +49,7 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@drawable/default_gray_selector</item>
+        <item name="android:background">@drawable/selector_press</item>
     </style>
 
     <!--我的中灰线性布局样式-->
@@ -268,19 +267,6 @@
         <item name="android:windowEnterAnimation">@anim/goodsdetailgoods_popshow_anim</item>
         <item name="android:windowExitAnimation">@anim/goodsdetailgoods_pophidden_anim</item>
     </style>
-
-    <!--订单tab下划线样式-->
-    <style name="TabLayoutTextStyle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
-        <item name="android:textSize">@dimen/x15</item>
-    </style>
-
-    <!--订单tab下划线样式
-    <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="商品类型"
-                    android:textSize="@dimen/x15" />
-    -->
 
     <!--商品筛选小标题样式-->
     <style name="style_tv_smalltitle_goods_screen">

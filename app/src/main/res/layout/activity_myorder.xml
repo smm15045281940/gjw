@@ -17,7 +17,7 @@
             android:id="@+id/rl_myorder_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/default_gray_selector">
+            android:background="@drawable/selector_press">
 
             <ImageView
                 android:layout_width="@dimen/x20"
@@ -94,7 +94,7 @@
             android:hint="输入商品标题或订单号进行搜索"
             android:padding="@dimen/x5"
             android:singleLine="true"
-            android:textCursorDrawable="@drawable/color_cursor"
+            android:textCursorDrawable="@null"
             android:textSize="@dimen/x15" />
 
         <RelativeLayout
@@ -103,7 +103,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/x10"
-            android:background="@drawable/default_gray_selector"
+            android:background="@drawable/selector_press"
             android:clickable="true"
             android:padding="@dimen/x5">
 

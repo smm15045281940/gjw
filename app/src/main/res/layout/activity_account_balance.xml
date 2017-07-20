@@ -15,7 +15,7 @@
             android:id="@+id/rl_accountbalance_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/default_gray_selector"
+            android:background="@drawable/selector_press"
             android:clickable="true">
 
             <ImageView
@@ -79,7 +79,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/default_gray_selector"
+            android:background="@drawable/selector_press"
             android:clickable="true"
             android:orientation="vertical">
 
@@ -107,7 +107,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/default_gray_selector"
+            android:background="@drawable/selector_press"
             android:clickable="true"
             android:orientation="vertical">
 
@@ -136,7 +136,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/default_gray_selector"
+            android:background="@drawable/selector_press"
             android:clickable="true"
             android:orientation="vertical">
 

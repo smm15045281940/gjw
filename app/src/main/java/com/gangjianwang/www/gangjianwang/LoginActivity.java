@@ -1,6 +1,5 @@
 package com.gangjianwang.www.gangjianwang;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -22,6 +21,7 @@ import fragment.RegisterFragment;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private View rootView;
     private TextView mTitleTv, mLogregTv;
     private RelativeLayout mBackRl, mLogregRl;
     private FragmentManager mFragmentManager;
@@ -31,8 +31,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private final int LOGIN = 0;
     private final int REGESTER = 1;
     private final int FORGETPWD = 2;
-    private int NOWSTATE = LOGIN;
-    private int TODOSTATE;
+    private int NOWSTATE, TODOSTATE;
 
     public Handler forgetpwdHandler = new Handler() {
         @Override
@@ -47,38 +46,35 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     };
 
-    public Handler loginHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg != null) {
-                if (msg.what == 1) {
-                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    intent.putExtra("what", 4);
-                    startActivity(intent);
-                }
-            }
-        }
-    };
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        forgetpwdHandler.removeMessages(100);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_login);
+        rootView = View.inflate(this, R.layout.activity_login, null);
+        setContentView(rootView);
         initView();
-        initManager();
+        initData();
         setListener();
     }
 
     private void initView() {
-        mTitleTv = (TextView) findViewById(R.id.tv_login_title);
-        mLogregTv = (TextView) findViewById(R.id.tv_login_logreg);
-        mBackRl = (RelativeLayout) findViewById(R.id.rl_login_back);
-        mLogregRl = (RelativeLayout) findViewById(R.id.rl_login_logreg);
+        initRoot();
     }
 
-    private void initManager() {
+    private void initRoot() {
+        mTitleTv = (TextView) rootView.findViewById(R.id.tv_login_title);
+        mLogregTv = (TextView) rootView.findViewById(R.id.tv_login_logreg);
+        mBackRl = (RelativeLayout) rootView.findViewById(R.id.rl_login_back);
+        mLogregRl = (RelativeLayout) rootView.findViewById(R.id.rl_login_logreg);
+    }
+
+    private void initData() {
         mFragmentManager = getSupportFragmentManager();
         mLoginFragment = new LoginFragment();
         mRegisterFragment = new RegisterFragment();
@@ -90,6 +86,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transaction.add(R.id.ll_login_sit, mFragmentList.get(0));
         transaction.commit();
+        NOWSTATE = LOGIN;
     }
 
     private void setListener() {

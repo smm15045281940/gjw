@@ -90,7 +90,6 @@ public class PurchaseFragment extends Fragment implements View.OnClickListener, 
                                 break;
                             case ParaConfig.REFRESH:
                                 mLv.hideHeadView();
-                                ToastUtils.toast(getActivity(), ParaConfig.REFRESH_SUCCESS);
                                 break;
                             default:
                                 break;

@@ -58,7 +58,6 @@ public class RegisterCommonFragment extends Fragment implements View.OnClickList
     private boolean autoLogin;
     private String hintResult;
     private UserInfo userInfo;
-    private Handler loginHandler;
 
     Handler handler = new Handler() {
         @Override
@@ -76,7 +75,6 @@ public class RegisterCommonFragment extends Fragment implements View.OnClickList
                         break;
                     case 2:
                         UserUtils.writeLogin(getActivity(), userInfo);
-                        loginHandler.sendEmptyMessage(1);
                         break;
                     default:
                         break;
@@ -89,7 +87,6 @@ public class RegisterCommonFragment extends Fragment implements View.OnClickList
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LoginActivity loginActivity = (LoginActivity) getActivity();
-        loginHandler = loginActivity.loginHandler;
     }
 
     @Nullable

@@ -44,7 +44,7 @@ import utils.UserUtils;
  * Created by Administrator on 2017/4/14 0014.
  */
 
-public class RealorderFragment extends Fragment implements View.OnClickListener {
+public class RealOrderFragment extends Fragment implements View.OnClickListener {
 
     private View rootView, emptyView;
     private LinearLayout allLl, waitpayLl, waitreceiveLl, waitselfLl, waitevaluateLl;

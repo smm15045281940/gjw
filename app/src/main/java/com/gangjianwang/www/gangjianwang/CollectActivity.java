@@ -21,6 +21,7 @@ import fragment.StoreCollectFragment;
 
 public class CollectActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private View rootView;
     private RelativeLayout mBackRl;
     private RelativeLayout mGoodscollectRl, mShopcollectRl;
     private GradientDrawable mGoodscollectGd, mShopcollectGd;
@@ -36,7 +37,8 @@ public class CollectActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_goods_store_collect);
+        rootView = View.inflate(this,R.layout.activity_goods_store_collect,null);
+        setContentView(rootView);
         initView();
         initData();
         setListener();
@@ -44,11 +46,15 @@ public class CollectActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initView() {
-        mBackRl = (RelativeLayout) findViewById(R.id.rl_collect_back);
-        mGoodscollectRl = (RelativeLayout) findViewById(R.id.rl_goodsstorecollect_goodscollect);
-        mShopcollectRl = (RelativeLayout) findViewById(R.id.rl_goodsstorecollect_shopcollect);
-        mGoodscollectTv = (TextView) findViewById(R.id.tv_goodsstorecollect_goodscollect);
-        mShopcollectTv = (TextView) findViewById(R.id.tv_goodstorecollect_storecollect);
+        initRoot();
+    }
+
+    private void initRoot(){
+        mBackRl = (RelativeLayout) rootView.findViewById(R.id.rl_collect_back);
+        mGoodscollectRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsstorecollect_goodscollect);
+        mShopcollectRl = (RelativeLayout) rootView.findViewById(R.id.rl_goodsstorecollect_shopcollect);
+        mGoodscollectTv = (TextView) rootView.findViewById(R.id.tv_goodsstorecollect_goodscollect);
+        mShopcollectTv = (TextView) rootView.findViewById(R.id.tv_goodstorecollect_storecollect);
         mGoodscollectGd = (GradientDrawable) mGoodscollectRl.getBackground();
         mShopcollectGd = (GradientDrawable) mShopcollectRl.getBackground();
         mGoodscollectGd.setColor(Color.RED);

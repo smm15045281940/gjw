@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="@android:color/darker_gray">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,7 +27,7 @@
                 android:layout_height="@dimen/x20"
                 android:layout_centerVertical="true"
                 android:scaleType="fitXY"
-                android:src="@mipmap/img_default"
+                android:src="@mipmap/cancel_b"
                 android:visibility="invisible" />
 
         </LinearLayout>
@@ -53,7 +53,7 @@
                 android:layout_height="@dimen/x20"
                 android:layout_centerVertical="true"
                 android:scaleType="fitXY"
-                android:src="@mipmap/img_default"
+                android:src="@mipmap/cancel_b"
                 android:visibility="invisible" />
 
         </LinearLayout>
