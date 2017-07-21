@@ -8,6 +8,7 @@
         android:id="@+id/rl_item_home_city"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/selector_press"
         android:padding="@dimen/x10">
 
         <TextView
@@ -18,10 +19,5 @@
             android:textSize="@dimen/x15" />
 
     </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/x1"
-        android:background="@android:color/darker_gray" />
 
 </LinearLayout>

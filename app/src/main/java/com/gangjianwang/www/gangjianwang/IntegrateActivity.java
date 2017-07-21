@@ -7,6 +7,7 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,17 +28,15 @@ import adapter.IntegrateAdapter;
 import bean.Integrate;
 import config.NetConfig;
 import config.ParaConfig;
-import customview.MyRefreshListView;
-import customview.OnRefreshListener;
 import utils.ToastUtils;
 import utils.UserUtils;
 
-public class IntegrateActivity extends AppCompatActivity implements View.OnClickListener, OnRefreshListener {
+public class IntegrateActivity extends AppCompatActivity implements View.OnClickListener {
 
     private View rootView;
     private RelativeLayout mBackRl;
     private TextView pointsTv;
-    private MyRefreshListView lv;
+    private ListView lv;
     private ProgressDialog progressDialog;
     private OkHttpClient okHttpClient;
     private List<Integrate> integrateList = new ArrayList<>();
@@ -45,37 +44,22 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
     private String point;
     private String key;
     private int curPage = 1;
-    private int STATE = ParaConfig.FIRST;
 
     public Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg != null) {
+                progressDialog.dismiss();
                 switch (msg.what) {
                     case 0:
-                        if (STATE == ParaConfig.FIRST) {
-                            progressDialog.dismiss();
-                            ToastUtils.toast(IntegrateActivity.this, ParaConfig.NETWORK_ERROR);
-                        } else if (STATE == ParaConfig.REFRESH) {
-                            lv.hideHeadView();
-                            ToastUtils.toast(IntegrateActivity.this, ParaConfig.REFRESH_DEFEAT_ERROR);
-                        }
+                        ToastUtils.toast(IntegrateActivity.this, ParaConfig.NETWORK_ERROR);
                         break;
                     case 1:
                         pointsTv.setText(point);
                         break;
                     case 2:
-                        if (STATE == ParaConfig.FIRST) {
-                            progressDialog.dismiss();
-                        } else if (STATE == ParaConfig.REFRESH) {
-                            lv.hideHeadView();
-                            ToastUtils.toast(IntegrateActivity.this, ParaConfig.REFRESH_SUCCESS);
-                            STATE = ParaConfig.FIRST;
-                        }
                         integrateAdapter.notifyDataSetChanged();
-                        break;
-                    default:
                         break;
                 }
             }
@@ -111,7 +95,7 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
     private void initRoot() {
         mBackRl = (RelativeLayout) rootView.findViewById(R.id.rl_integrate_back);
         pointsTv = (TextView) rootView.findViewById(R.id.tv_integrate_point);
-        lv = (MyRefreshListView) rootView.findViewById(R.id.lv_integrate);
+        lv = (ListView) rootView.findViewById(R.id.lv_integrate);
     }
 
     private void initData() {
@@ -128,13 +112,10 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
 
     private void setListener() {
         mBackRl.setOnClickListener(this);
-        lv.setOnRefreshListener(this);
     }
 
     private void loadData() {
-        if (STATE == ParaConfig.FIRST) {
-            progressDialog.show();
-        }
+        progressDialog.show();
         Request requestNum = new Request.Builder().url(NetConfig.integrateNumHeadUrl + key + NetConfig.integrateNumFootUrl).get().build();
         okHttpClient.newCall(requestNum).enqueue(new Callback() {
             @Override
@@ -161,9 +142,7 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void onResponse(Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    if (STATE == ParaConfig.REFRESH) {
-                        integrateList.clear();
-                    }
+                    integrateList.clear();
                     parseJson(response.body().string());
                 } else {
                     handler.sendEmptyMessage(0);
@@ -216,16 +195,5 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
             default:
                 break;
         }
-    }
-
-    @Override
-    public void onDownPullRefresh() {
-        STATE = ParaConfig.REFRESH;
-        loadData();
-    }
-
-    @Override
-    public void onLoadingMore() {
-        lv.hideFootView();
     }
 }

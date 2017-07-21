@@ -175,10 +175,9 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
     }
 
     private void loadData() {
+        mList.clear();
         if (LOAD_STATE == ParaConfig.FIRST) {
             progressDialog.show();
-        } else if (LOAD_STATE == ParaConfig.REFRESH) {
-            mList.clear();
         }
         RequestBody body = new FormEncodingBuilder().add("key", key).build();
         Request request = new Request.Builder().url(NetConfig.shopCarUrl).post(body).build();
@@ -190,8 +189,12 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
 
             @Override
             public void onResponse(Response response) throws IOException {
-                if (response.isSuccessful() && parseJson(response.body().string())) {
-                    handler.sendEmptyMessage(1);
+                if (response.isSuccessful()) {
+                    if (parseJson(response.body().string())) {
+                        handler.sendEmptyMessage(1);
+                    } else {
+                        handler.sendEmptyMessage(0);
+                    }
                 } else {
                     handler.sendEmptyMessage(0);
                 }

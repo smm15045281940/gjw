@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.squareup.okhttp.Callback;
@@ -28,55 +29,49 @@ import java.util.List;
 import adapter.ChangeCityAdapter;
 import bean.City;
 import config.NetConfig;
+import config.ParaConfig;
 import config.PersonConfig;
 import customview.LruJsonCache;
-import customview.MyRefreshListView;
-import customview.OnRefreshListener;
 import customview.SlideBar;
+import utils.ToastUtils;
 
-public class ChangeCityActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, OnRefreshListener {
+public class ChangeCityActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
-    private View rootView, headView, footView;
+    private View rootView;
     private RelativeLayout mBackRl;
-    private MyRefreshListView mLv;
+    private ListView mLv;
     private SlideBar mSb;
     private List<City> mDataList = new ArrayList<>();
     private ChangeCityAdapter mAdapter;
     private String[] lowerLetter;
     private ProgressDialog progressDialog;
     private OkHttpClient okHttpClient;
-    private final int LOAD_FIRST = 1;
-    private final int LOAD_REFRESH = 2;
     private LruJsonCache lruJsonCache;
 
-    Handler mainHandler = new Handler() {
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg != null) {
                 switch (msg.what) {
                     case 0:
-                        progressDialog.dismiss();
-                        headView.setVisibility(View.VISIBLE);
-                        footView.setVisibility(View.VISIBLE);
-                        mAdapter.notifyDataSetChanged();
+                        ToastUtils.toast(ChangeCityActivity.this, ParaConfig.NETWORK_ERROR);
                         break;
                     case 1:
-                        mLv.hideHeadView();
-                        mAdapter.notifyDataSetChanged();
-                        break;
-                    case 2:
                         progressDialog.dismiss();
-                        headView.setVisibility(View.VISIBLE);
-                        footView.setVisibility(View.VISIBLE);
                         mAdapter.notifyDataSetChanged();
-                        break;
-                    default:
                         break;
                 }
             }
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeMessages(0);
+        handler.removeMessages(1);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,15 +83,17 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
         initData();
         setData();
         setListener();
-        loadData(LOAD_FIRST);
+        loadData();
     }
 
     private void initView() {
+        initRoot();
+    }
+
+    private void initRoot() {
         mBackRl = (RelativeLayout) rootView.findViewById(R.id.rl_changecity_back);
-        mLv = (MyRefreshListView) rootView.findViewById(R.id.lv_changecity);
+        mLv = (ListView) rootView.findViewById(R.id.lv_changecity);
         mSb = (SlideBar) rootView.findViewById(R.id.sb_changecity);
-        headView = View.inflate(ChangeCityActivity.this, R.layout.head_changecity, null);
-        footView = View.inflate(ChangeCityActivity.this, R.layout.foot_changecity, null);
     }
 
     private void initData() {
@@ -104,23 +101,21 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
         progressDialog = new ProgressDialog(this);
         progressDialog.setCanceledOnTouchOutside(false);
         okHttpClient = new OkHttpClient();
-        lruJsonCache = LruJsonCache.get(ChangeCityActivity.this);
+        lruJsonCache = LruJsonCache.get(this);
+        mAdapter = new ChangeCityAdapter(this, mDataList);
     }
 
     private void setData() {
-        mAdapter = new ChangeCityAdapter(this, mDataList);
         mLv.setAdapter(mAdapter);
-        mLv.addHeaderView(headView);
-        mLv.addFooterView(footView);
     }
 
     private void setListener() {
         mBackRl.setOnClickListener(this);
         mLv.setOnItemClickListener(this);
-        mLv.setOnRefreshListener(this);
         mSb.setOnTouchLetterChangeListenner(new SlideBar.OnTouchLetterChangeListenner() {
             @Override
             public void onTouchLetterChange(MotionEvent event, String s) {
+                ToastUtils.log(ChangeCityActivity.this, s);
                 for (int i = 0; i < mDataList.size(); i++) {
                     if (s.equals(mDataList.get(i).getCityName())) {
                         mLv.setSelection(i);
@@ -130,59 +125,35 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
         });
     }
 
-    private void loadData(int LOAD_STATE) {
-        switch (LOAD_STATE) {
-            case LOAD_FIRST:
-                progressDialog.show();
-                headView.setVisibility(View.GONE);
-                footView.setVisibility(View.GONE);
-                String cacheData = lruJsonCache.getAsString("city");
-                if (cacheData != null) {
-                    parseJson(cacheData);
-                    mainHandler.sendEmptyMessage(2);
-                } else {
-                    Request requestFirst = new Request.Builder().url(NetConfig.cityUrl).get().build();
-                    okHttpClient.newCall(requestFirst).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(Request request, IOException e) {
-
-                        }
-
-                        @Override
-                        public void onResponse(Response response) throws IOException {
-                            if (response.isSuccessful()) {
-                                String json = response.body().string();
-                                lruJsonCache.put("city", json, PersonConfig.CITY_CACHE_TIME);
-                                parseJson(json);
-                                mainHandler.sendEmptyMessage(0);
-                            }
-                        }
-                    });
+    private void loadData() {
+        String cacheData = lruJsonCache.getAsString("city");
+        ToastUtils.log(this, "cacheData:" + cacheData);
+        if (cacheData != null && parseJson(cacheData)) {
+            handler.sendEmptyMessage(1);
+        } else {
+            progressDialog.show();
+            Request requestFirst = new Request.Builder().url(NetConfig.cityUrl).get().build();
+            okHttpClient.newCall(requestFirst).enqueue(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    handler.sendEmptyMessage(0);
                 }
-                break;
-            case LOAD_REFRESH:
-                lruJsonCache.clear();
-                Request requestRefresh = new Request.Builder().url(NetConfig.cityUrl).get().build();
-                okHttpClient.newCall(requestRefresh).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Request request, IOException e) {
 
-                    }
-
-                    @Override
-                    public void onResponse(Response response) throws IOException {
-                        if (response.isSuccessful()) {
-                            mDataList.clear();
-                            String json = response.body().string();
-                            lruJsonCache.put("city", json, PersonConfig.CITY_CACHE_TIME);
-                            parseJson(json);
-                            mainHandler.sendEmptyMessage(1);
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String cityJson = response.body().string();
+                        lruJsonCache.put("city", cityJson, PersonConfig.CITY_CACHE_TIME);
+                        if (parseJson(cityJson)) {
+                            handler.sendEmptyMessage(1);
+                        } else {
+                            handler.sendEmptyMessage(0);
                         }
+                    } else {
+                        handler.sendEmptyMessage(0);
                     }
-                });
-                break;
-            default:
-                break;
+                }
+            });
         }
     }
 
@@ -192,27 +163,25 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
             case R.id.rl_changecity_back:
                 finish();
                 break;
-            default:
-                break;
         }
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent();
-        if (position == 1) {
-            intent.putExtra("cityName", "全国");
-        } else {
-            intent.putExtra("cityName", mDataList.get(position - 2).getCityName());
-        }
+        intent.putExtra("cityName", mDataList.get(position).getCityName());
         setResult(1, intent);
         finish();
     }
 
-    private void parseJson(String str) {
+    private boolean parseJson(String str) {
         try {
             JSONObject objBean = new JSONObject(str);
             JSONObject objDatas = objBean.optJSONObject("datas");
+            City headCity = new City();
+            headCity.setCityId("-1");
+            headCity.setCityName("全国");
+            mDataList.add(headCity);
             for (int i = 0; i < lowerLetter.length; i++) {
                 JSONObject obj = objDatas.optJSONObject(lowerLetter[i]);
                 if (obj != null) {
@@ -233,18 +202,10 @@ public class ChangeCityActivity extends AppCompatActivity implements View.OnClic
                     }
                 }
             }
+            return true;
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void onDownPullRefresh() {
-        loadData(LOAD_REFRESH);
-    }
-
-    @Override
-    public void onLoadingMore() {
-        mLv.hideFootView();
+        return false;
     }
 }

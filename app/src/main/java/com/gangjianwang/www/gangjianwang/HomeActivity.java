@@ -43,7 +43,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private Fragment mHomeFragment, mPurchaseFragment, mCalculateFragment, mShopcarFragment, mMineFragment;
     private List<Fragment> mFragmentList = new ArrayList<>();
     private FragmentManager mFragmentManager;
-    private int curPosition, tarPosition;
+    private int curPosition = 0, tarPosition = -1;
     private long exitTime = 0;
     private LocationClient locationClient;
     private BDLocationListener bdLocationListener;
@@ -86,18 +86,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             switch (a) {
                 case 0:
                     tarPosition = 0;
-                    changeFrag();
                     break;
                 case 3:
                     tarPosition = 3;
-                    changeFrag();
                     break;
                 case 4:
                     tarPosition = 4;
-                    changeFrag();
                     mLoadUserHandler.sendEmptyMessage(1);
                     break;
             }
+            changeFrag();
         }
 
     }
@@ -110,9 +108,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(rootView);
         initView();
         initData();
-        initLoc();
         setListener();
-        locationClient.start();
+        loadData();
     }
 
     @Override
@@ -163,6 +160,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initView() {
+        initRoot();
+    }
+
+    private void initRoot() {
         mFirstpageRl = (RelativeLayout) rootView.findViewById(R.id.rl_home_firstpage);
         mPurchaseRl = (RelativeLayout) rootView.findViewById(R.id.rl_home_purchase);
         mCalculateRl = (RelativeLayout) rootView.findViewById(R.id.rl_home_calculate);
@@ -176,6 +177,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mPurchaseTv = (TextView) rootView.findViewById(R.id.tv_home_purchase);
         mShopcarTv = (TextView) rootView.findViewById(R.id.tv_home_shopcar);
         mMeTv = (TextView) rootView.findViewById(R.id.tv_home_me);
+
+        mFirstpageIv.setImageResource(R.mipmap.firstpage_choose);
+        mFirstpageTv.setTextColor(PersonConfig.TV_HOME_CHOOSE);
     }
 
     private void initData() {
@@ -195,8 +199,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transaction.add(R.id.ll_home_sit, mFragmentList.get(0));
         transaction.commit();
-        mFirstpageIv.setImageResource(R.mipmap.firstpage_choose);
-        mFirstpageTv.setTextColor(PersonConfig.TV_HOME_CHOOSE);
+        initLoc();
     }
 
     private void initLoc() {
@@ -240,6 +243,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mCalculateRl.setOnClickListener(this);
         mShopcarRl.setOnClickListener(this);
         mMeRl.setOnClickListener(this);
+    }
+
+    private void loadData(){
+        locationClient.start();
     }
 
     private void changeFrag() {

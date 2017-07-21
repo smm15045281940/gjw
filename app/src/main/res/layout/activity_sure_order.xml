@@ -4,7 +4,7 @@
     android:id="@+id/activity_make_sure_order"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/darker_gray"
+    android:background="@android:color/white"
     android:orientation="vertical"
     tools:context="com.gangjianwang.www.gangjianwang.SureOrderActivity">
 
@@ -43,7 +43,6 @@
         android:id="@+id/ll_sure_order_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/x5"
         android:background="@drawable/selector_press"
         android:clickable="true"
         android:orientation="horizontal"

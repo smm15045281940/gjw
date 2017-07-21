@@ -6,6 +6,8 @@ package config;
 
 public interface NetConfig {
 
+    //搜索记录
+    public static final String searchLogUrl = "http://www.gangjianwang.com/mobile/index.php?act=index&op=search_key_list";
     //城市列表
     public static final String cityUrl = "http://www.gangjianwang.com/shop/index.php?act=index&op=getWapAreaCities";
     //首页碎片

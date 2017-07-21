@@ -25,5 +25,5 @@ public interface PersonConfig {
     public static int TV_HOME_DEFAULT = Color.parseColor("#909090");
     public static int TV_HOME_CHOOSE = Color.parseColor("#FF6207");
     //城市列表缓存时间
-    public static int CITY_CACHE_TIME = 10;
+    public static int CITY_CACHE_TIME = 60;
 }
