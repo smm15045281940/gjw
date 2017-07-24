@@ -133,4 +133,10 @@ public interface NetConfig {
     public static final String storeIntroCollectCancelUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_favorites_store&op=favorites_del";
     //购物车数量 key
     public static final String cartCountUrl = "http://www.gangjianwang.com/mobile/index.php?act=member_cart&op=cart_count";
+    //询价单 key
+    public static final String inquiryHeadUrl = "http://www.gangjianwang.com/mobile/index.php?act=quotation&op=getQuotationList&page=10&curpage=";
+    public static final String inquiryFootHeadUrl = "&state_type=";
+    public static final String inquiryFootFootUrl = "&quotation_sn=";
+    //询价单 删除 quotation_id,key
+    public static final String inquiryDelUrl = "http://www.gangjianwang.com/mobile/index.php?act=quotation&op=quotation_del";
 }

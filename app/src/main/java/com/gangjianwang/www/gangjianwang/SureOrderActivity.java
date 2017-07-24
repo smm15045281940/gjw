@@ -35,7 +35,6 @@ import bean.SureOrderStore;
 import config.NetConfig;
 import config.ParaConfig;
 import utils.ToastUtils;
-import utils.UserUtils;
 
 public class SureOrderActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -47,12 +46,11 @@ public class SureOrderActivity extends AppCompatActivity implements View.OnClick
 
     private ListView lv;
     private List<SureOrderStore> sureOrderStoreList = new ArrayList<>();
-    private List<String> storeIdList = new ArrayList<>();
     private SureOrderStoreAdapter sureOrderStoreAdapter;
     private OkHttpClient okHttpClient = new OkHttpClient();
     private String name, area, address, payway, billInfo, orderAmount;
 
-    private String key, cart_id, quotation_id, ifcart, address_id;
+    private String key, cart_id, quotation_id, ifcart, address_id, store_id;
 
     public Handler handler = new Handler() {
         @Override
@@ -122,20 +120,19 @@ public class SureOrderActivity extends AppCompatActivity implements View.OnClick
 
     private void initData() {
         sureOrderStoreAdapter = new SureOrderStoreAdapter(this, sureOrderStoreList);
-        key = UserUtils.readLogin(this, true).getKey();
+        Intent intent = getIntent();
+        key = intent.getStringExtra("key");
+        cart_id = intent.getStringExtra("cart_id");
+        quotation_id = intent.getStringExtra("quotation_id");
+        ifcart = intent.getStringExtra("ifcart");
+        address_id = intent.getStringExtra("address_id");
+        store_id = intent.getStringExtra("store_id");
         name = "";
         area = "";
         address = "";
         payway = "货到付款";
         billInfo = "";
         orderAmount = "";
-        cart_id = "123|1,124|1,125|1,126|1,127|1,128|1";
-        quotation_id = "";
-        ifcart = "1";
-        address_id = "";
-        storeIdList.add("5");
-        storeIdList.add("6");
-        storeIdList.add("97");
     }
 
     private void setData() {
@@ -190,25 +187,23 @@ public class SureOrderActivity extends AppCompatActivity implements View.OnClick
                 JSONObject objInvInfo = objDatas.optJSONObject("inv_info");
                 billInfo = objInvInfo.optString("content");
                 JSONObject objStoreCartList = objDatas.optJSONObject("store_cart_list");
-                for (int i = 0; i < storeIdList.size(); i++) {
-                    JSONObject objStore = objStoreCartList.optJSONObject(storeIdList.get(i));
-                    SureOrderStore sureOrderStore = new SureOrderStore();
-                    sureOrderStore.setStoreName(objStore.optString("store_name"));
-                    sureOrderStore.setStoreGoodsTotal(objStore.optString("store_goods_total"));
-                    JSONArray arrGoodsList = objStore.optJSONArray("goods_list");
-                    List<SureOrderGoods> sureOrderGoodsList = new ArrayList<>();
-                    for (int j = 0; j < arrGoodsList.length(); j++) {
-                        JSONObject objGoods = arrGoodsList.optJSONObject(j);
-                        SureOrderGoods sureOrderGoods = new SureOrderGoods();
-                        sureOrderGoods.setGoodsName(objGoods.optString("goods_name"));
-                        sureOrderGoods.setGoodsSpec(objGoods.optString("goods_spec"));
-                        sureOrderGoods.setGoodsPrice(objGoods.optString("goods_price"));
-                        sureOrderGoods.setGoodsImageUrl(objGoods.optString("goods_image_url"));
-                        sureOrderGoodsList.add(sureOrderGoods);
-                    }
-                    sureOrderStore.setSureOrderGoodsList(sureOrderGoodsList);
-                    sureOrderStoreList.add(sureOrderStore);
+                JSONObject objStore = objStoreCartList.optJSONObject(store_id);
+                SureOrderStore sureOrderStore = new SureOrderStore();
+                sureOrderStore.setStoreName(objStore.optString("store_name"));
+                sureOrderStore.setStoreGoodsTotal(objStore.optString("store_goods_total"));
+                JSONArray arrGoodsList = objStore.optJSONArray("goods_list");
+                List<SureOrderGoods> sureOrderGoodsList = new ArrayList<>();
+                for (int j = 0; j < arrGoodsList.length(); j++) {
+                    JSONObject objGoods = arrGoodsList.optJSONObject(j);
+                    SureOrderGoods sureOrderGoods = new SureOrderGoods();
+                    sureOrderGoods.setGoodsName(objGoods.optString("goods_name"));
+                    sureOrderGoods.setGoodsSpec(objGoods.optString("goods_spec"));
+                    sureOrderGoods.setGoodsPrice(objGoods.optString("goods_price"));
+                    sureOrderGoods.setGoodsImageUrl(objGoods.optString("goods_image_url"));
+                    sureOrderGoodsList.add(sureOrderGoods);
                 }
+                sureOrderStore.setSureOrderGoodsList(sureOrderGoodsList);
+                sureOrderStoreList.add(sureOrderStore);
                 return true;
             }
         } catch (JSONException e) {

@@ -18,11 +18,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.HomeActivity;
-import com.gangjianwang.www.gangjianwang.InquiryListActivity;
+import com.gangjianwang.www.gangjianwang.InquiryActivity;
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
 import com.gangjianwang.www.gangjianwang.R;
 import com.gangjianwang.www.gangjianwang.ShopCarClickHelp;
-import com.gangjianwang.www.gangjianwang.SureOrderActivity;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
@@ -247,10 +246,11 @@ public class ShopCarFragment extends Fragment implements View.OnClickListener, C
                 changehandler.sendEmptyMessage(0);
                 break;
             case R.id.rl_shopcar_createorderprice:
-                startActivity(new Intent(getActivity(), InquiryListActivity.class));
+                startActivity(new Intent(getActivity(), InquiryActivity.class));
                 break;
             case R.id.rl_shopcar_sureinfo:
-                startActivity(new Intent(getActivity(), SureOrderActivity.class));
+                ToastUtils.log(getActivity(),"确认信息");
+//                startActivity(new Intent(getActivity(), SureOrderActivity.class));
                 break;
             default:
                 break;

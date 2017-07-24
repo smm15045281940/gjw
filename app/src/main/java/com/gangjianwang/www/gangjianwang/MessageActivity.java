@@ -29,12 +29,10 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
             super.handleMessage(msg);
             if (msg != null) {
                 switch (msg.what) {
-                    case ParaConfig.DEFEAT:
-                        progressDialog.dismiss();
-                        emptyView.setVisibility(View.VISIBLE);
+                    case 0:
                         ToastUtils.toast(MessageActivity.this, ParaConfig.NETWORK_ERROR);
                         break;
-                    case ParaConfig.SUCCESS:
+                    case 1:
                         progressDialog.dismiss();
                         emptyView.setVisibility(View.VISIBLE);
                         break;
@@ -60,8 +58,8 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        handler.removeMessages(ParaConfig.DEFEAT);
-        handler.removeMessages(ParaConfig.SUCCESS);
+        handler.removeMessages(0);
+        handler.removeMessages(1);
     }
 
     private void initView() {
@@ -96,7 +94,7 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     private void loadData() {
         emptyView.setVisibility(View.INVISIBLE);
         progressDialog.show();
-        handler.sendEmptyMessageDelayed(ParaConfig.SUCCESS, 500);
+        handler.sendEmptyMessage(1);
     }
 
     @Override

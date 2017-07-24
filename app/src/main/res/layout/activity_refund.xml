@@ -4,13 +4,13 @@
     android:id="@+id/activity_refund"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
     android:orientation="vertical"
     tools:context="com.gangjianwang.www.gangjianwang.RefundActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@android:color/white">
 
         <RelativeLayout
             android:id="@+id/rl_refund_back"
@@ -79,6 +79,11 @@
         </LinearLayout>
 
     </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x1"
+        android:background="@android:color/darker_gray" />
 
     <LinearLayout
         android:id="@+id/ll_refund_sit"

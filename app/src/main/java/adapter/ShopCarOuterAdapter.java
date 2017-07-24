@@ -28,7 +28,6 @@ public class ShopCarOuterAdapter extends BaseAdapter implements ShopCarClickHelp
     private List<ShopCar> list;
     private ShopCarClickHelp callback;
     private ListItemClickHelp lcallback;
-    private ShopCarInnerAdpater mAdapter;
     private ViewHolder holder;
 
     public ShopCarOuterAdapter(Context context, List<ShopCar> list, ShopCarClickHelp callback, ListItemClickHelp lcallback) {
@@ -74,8 +73,7 @@ public class ShopCarOuterAdapter extends BaseAdapter implements ShopCarClickHelp
             }
         });
         holder.shopNameTv.setText(shopCar.getShopName());
-        mAdapter = new ShopCarInnerAdpater(context, shopCar.getGoodsList(), this);
-        holder.goodsLv.setAdapter(mAdapter);
+        holder.goodsLv.setAdapter(new ShopCarInnerAdpater(context, shopCar.getGoodsList(), this));
         HeightUtils.setListViewHeight(holder.goodsLv);
         return convertView;
     }

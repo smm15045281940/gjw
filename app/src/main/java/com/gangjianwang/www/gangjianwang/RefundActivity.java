@@ -26,7 +26,7 @@ public class RefundActivity extends AppCompatActivity implements View.OnClickLis
     private TextView mRefundTv, mReturnTv;
     private FragmentManager mFragmentManager;
     private List<Fragment> fragmentList = new ArrayList<>();
-    private int curPosition, tarPosition;
+    private int curPosition = 0, tarPosition = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,11 +104,16 @@ public class RefundActivity extends AppCompatActivity implements View.OnClickLis
                     mRefundTv.setTextColor(Color.BLACK);
                     mReturnTv.setTextColor(Color.WHITE);
                     break;
-                default:
-                    break;
             }
             FragmentTransaction transaction = mFragmentManager.beginTransaction();
-            transaction.replace(R.id.ll_refund_sit, fragmentList.get(tarPosition));
+            Fragment curFragment = fragmentList.get(curPosition);
+            Fragment tarFragment = fragmentList.get(tarPosition);
+            transaction.hide(curFragment);
+            if (tarFragment.isAdded()) {
+                transaction.show(tarFragment);
+            } else {
+                transaction.add(R.id.ll_refund_sit, tarFragment);
+            }
             transaction.commit();
             curPosition = tarPosition;
         }

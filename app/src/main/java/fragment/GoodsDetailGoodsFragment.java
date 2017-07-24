@@ -142,7 +142,7 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
                     case 1:
                         leftAdapter.notifyDataSetChanged();
                         gridAdapter.notifyDataSetChanged();
-                        HeightUtils.setGridViewHeight(headGv);
+                        HeightUtils.setGridViewHeight(headGv,3);
                         if (mOtherList.size() == 0) {
                             footView.setVisibility(View.GONE);
                         }

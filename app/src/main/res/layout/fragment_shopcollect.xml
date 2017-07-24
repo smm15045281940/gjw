@@ -8,6 +8,7 @@
         android:id="@+id/lv_store_collect"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@null" />
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="@dimen/x1" />
 
 </LinearLayout>

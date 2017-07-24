@@ -69,9 +69,7 @@ public class GoodsCollectFragment extends Fragment implements ListItemClickHelp,
             if (msg != null) {
                 switch (msg.what) {
                     case 0:
-                        progressDialog.dismiss();
-                        ToastUtils.toast(getActivity(), "无网络");
-                        gv.setEmptyView(emptyView);
+                        ToastUtils.toast(getActivity(), ParaConfig.NETWORK_ERROR);
                         break;
                     case 1:
                         progressDialog.dismiss();
@@ -82,14 +80,20 @@ public class GoodsCollectFragment extends Fragment implements ListItemClickHelp,
                         progressDialog.dismiss();
                         goodsCollectList.remove(delPosition);
                         goodsCollectGridAdapter.notifyDataSetChanged();
-                        ToastUtils.toast(getActivity(), "删除成功");
-                        break;
-                    default:
+                        ToastUtils.toast(getActivity(), ParaConfig.DELETE_SUCCESS);
                         break;
                 }
             }
         }
     };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        handler.removeMessages(0);
+        handler.removeMessages(1);
+        handler.removeMessages(2);
+    }
 
     @Nullable
     @Override

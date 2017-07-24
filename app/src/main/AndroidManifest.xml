@@ -87,7 +87,8 @@
         <activity android:name=".ChoosePayWayActivity" />
         <activity android:name=".ManageBillInfoActivity" />
         <activity android:name=".ShopIntroActivity" />
-        <activity android:name=".InquiryListActivity" />
+        <activity android:name=".InquiryActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
             android:name=".GoodsScreenActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />

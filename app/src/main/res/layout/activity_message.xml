@@ -4,7 +4,6 @@
     android:id="@+id/activity_message"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray"
     android:orientation="vertical"
     tools:context="com.gangjianwang.www.gangjianwang.MessageActivity">
 
@@ -33,6 +32,11 @@
             android:text="消息列表" />
 
     </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x1"
+        android:background="@android:color/darker_gray" />
 
     <ListView
         android:id="@+id/lv_message"

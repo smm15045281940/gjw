@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.R;
 
+import config.ParaConfig;
 import utils.ToastUtils;
 
 /**
@@ -35,21 +36,23 @@ public class RefundFragment extends Fragment {
             if (msg != null) {
                 switch (msg.what) {
                     case 0:
-                        progressDialog.dismiss();
-                        emptyView.setVisibility(View.VISIBLE);
-                        ToastUtils.toast(getActivity(), "无网络");
+                        ToastUtils.toast(getActivity(), ParaConfig.NETWORK_ERROR);
                         break;
                     case 1:
                         progressDialog.dismiss();
                         emptyView.setVisibility(View.VISIBLE);
-                        break;
-                    default:
                         break;
                 }
             }
         }
     };
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        handler.removeMessages(0);
+        handler.removeMessages(1);
+    }
 
     @Nullable
     @Override
@@ -88,6 +91,6 @@ public class RefundFragment extends Fragment {
     private void loadData() {
         emptyView.setVisibility(View.GONE);
         progressDialog.show();
-        handler.sendEmptyMessageDelayed(1, 100);
+        handler.sendEmptyMessage(1);
     }
 }

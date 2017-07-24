@@ -101,7 +101,7 @@ public class HomeAdapter extends BaseAdapter {
                 if (homeGoodsOuter != null) {
                     holder1.titleTv.setText(homeGoodsOuter.getTitle());
                     holder1.gv.setAdapter(new HomeGoodsInnerAdapter(context, homeGoodsOuter.getHomeGoodsInnerList()));
-                    HeightUtils.setGridViewHeight(holder1.gv);
+                    HeightUtils.setGridViewHeight(holder1.gv,3);
                 }
                 break;
             case 1:
@@ -121,7 +121,7 @@ public class HomeAdapter extends BaseAdapter {
                 if (homeBlockOuter != null) {
                     holder2.titleTv.setText(homeBlockOuter.getTitle());
                     holder2.gv.setAdapter(new HomeBlockInnerAdapter(context, homeBlockOuter.getHomeBlockInnerList()));
-                    HeightUtils.setGridViewHeight(holder2.gv);
+                    HeightUtils.setGridViewHeight(holder2.gv,3);
                 }
                 break;
             case 2:

@@ -117,7 +117,7 @@ public class StoreDetailActivity extends AppCompatActivity implements View.OnCli
                         break;
                     case 3:
                         gridAdapter.notifyDataSetChanged();
-                        HeightUtils.setGridViewHeight(gv);
+                        HeightUtils.setGridViewHeight(gv,4);
                         break;
                 }
             }

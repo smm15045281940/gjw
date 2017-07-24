@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -34,17 +35,15 @@ import adapter.AddressAdapter;
 import bean.Address;
 import config.NetConfig;
 import config.ParaConfig;
-import customview.MyRefreshListView;
-import customview.OnRefreshListener;
 import utils.ToastUtils;
 import utils.UserUtils;
 
-public class AddressManagerActivity extends AppCompatActivity implements View.OnClickListener, ListItemClickHelp, OnRefreshListener {
+public class AddressManagerActivity extends AppCompatActivity implements View.OnClickListener, ListItemClickHelp {
 
     private View rootView, emptyView;
     private RelativeLayout mBackRl, mAddRl;
     private AlertDialog alertDialog;
-    private MyRefreshListView lv;
+    private ListView lv;
     private List<Address> addressList = new ArrayList<>();
     private AddressAdapter addressAdapter;
     private ProgressDialog progressDialog;
@@ -52,7 +51,6 @@ public class AddressManagerActivity extends AppCompatActivity implements View.On
     private boolean isLogined;
     private String key;
     private int delPositon;
-    private int STATE = ParaConfig.FIRST;
 
     public Handler handler = new Handler() {
         @Override
@@ -61,22 +59,10 @@ public class AddressManagerActivity extends AppCompatActivity implements View.On
             if (msg != null) {
                 switch (msg.what) {
                     case 0:
-                        if (STATE == ParaConfig.FIRST) {
-                            progressDialog.dismiss();
-                            ToastUtils.toast(AddressManagerActivity.this, ParaConfig.NETWORK_ERROR);
-                        } else if (STATE == ParaConfig.REFRESH) {
-                            lv.hideHeadView();
-                            ToastUtils.toast(AddressManagerActivity.this, ParaConfig.REFRESH_DEFEAT_ERROR);
-                        }
-                        addressAdapter.notifyDataSetChanged();
+                        ToastUtils.toast(AddressManagerActivity.this, ParaConfig.NETWORK_ERROR);
                         break;
                     case 1:
-                        if (STATE == ParaConfig.FIRST) {
-                            progressDialog.dismiss();
-                        } else if (STATE == ParaConfig.REFRESH) {
-                            lv.hideHeadView();
-                            ToastUtils.toast(AddressManagerActivity.this, ParaConfig.REFRESH_SUCCESS);
-                        }
+                        progressDialog.dismiss();
                         addressAdapter.notifyDataSetChanged();
                         break;
                     case 2:
@@ -84,8 +70,6 @@ public class AddressManagerActivity extends AppCompatActivity implements View.On
                         addressList.remove(delPositon);
                         addressAdapter.notifyDataSetChanged();
                         ToastUtils.toast(AddressManagerActivity.this, ParaConfig.DELETE_SUCCESS);
-                        break;
-                    default:
                         break;
                 }
             }
@@ -122,7 +106,7 @@ public class AddressManagerActivity extends AppCompatActivity implements View.On
     private void initRoot() {
         mBackRl = (RelativeLayout) rootView.findViewById(R.id.rl_addressmanage_back);
         mAddRl = (RelativeLayout) rootView.findViewById(R.id.rl_addressmanage_add);
-        lv = (MyRefreshListView) rootView.findViewById(R.id.lv_address_manager);
+        lv = (ListView) rootView.findViewById(R.id.lv_address_manager);
     }
 
     private void initEmpty() {
@@ -171,14 +155,11 @@ public class AddressManagerActivity extends AppCompatActivity implements View.On
     private void setListener() {
         mBackRl.setOnClickListener(this);
         mAddRl.setOnClickListener(this);
-        lv.setOnRefreshListener(this);
     }
 
     private void loadData() {
-        if (STATE == ParaConfig.FIRST) {
-            emptyView.setVisibility(View.INVISIBLE);
-            progressDialog.show();
-        }
+        emptyView.setVisibility(View.INVISIBLE);
+        progressDialog.show();
         RequestBody body = new FormEncodingBuilder()
                 .add("key", key)
                 .build();
@@ -194,9 +175,6 @@ public class AddressManagerActivity extends AppCompatActivity implements View.On
             @Override
             public void onResponse(Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    if (STATE == ParaConfig.REFRESH) {
-                        addressList.clear();
-                    }
                     if (parseJson(response.body().string())) {
                         handler.sendEmptyMessage(1);
                     } else {
@@ -310,14 +288,4 @@ public class AddressManagerActivity extends AppCompatActivity implements View.On
         return b;
     }
 
-    @Override
-    public void onDownPullRefresh() {
-        STATE = ParaConfig.REFRESH;
-        loadData();
-    }
-
-    @Override
-    public void onLoadingMore() {
-        lv.hideFootView();
-    }
 }

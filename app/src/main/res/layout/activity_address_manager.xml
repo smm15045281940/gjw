@@ -4,7 +4,7 @@
     android:id="@+id/activity_address_manager"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray"
+    android:background="@android:color/darker_gray"
     android:orientation="vertical"
     tools:context="com.gangjianwang.www.gangjianwang.AddressManagerActivity">
 
@@ -50,11 +50,17 @@
 
     </RelativeLayout>
 
-    <customview.MyRefreshListView
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x1"
+        android:background="@android:color/darker_gray" />
+
+    <ListView
+        android:background="@android:color/white"
         android:id="@+id/lv_address_manager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@color/gray"
+        android:divider="@android:color/darker_gray"
         android:dividerHeight="@dimen/x10" />
 
 </LinearLayout>
