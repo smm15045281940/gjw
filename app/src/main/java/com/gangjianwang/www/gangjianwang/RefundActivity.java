@@ -2,6 +2,7 @@ package com.gangjianwang.www.gangjianwang;
 
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,9 @@ import android.view.View;
 import android.view.Window;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import fragment.RefundFragment;
 import fragment.ReturnFragment;
@@ -21,6 +25,8 @@ public class RefundActivity extends AppCompatActivity implements View.OnClickLis
     private GradientDrawable mRefundGd, mReturnGd;
     private TextView mRefundTv, mReturnTv;
     private FragmentManager mFragmentManager;
+    private List<Fragment> fragmentList = new ArrayList<>();
+    private int curPosition = 0, tarPosition = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +35,7 @@ public class RefundActivity extends AppCompatActivity implements View.OnClickLis
         rootView = View.inflate(this, R.layout.activity_refund, null);
         setContentView(rootView);
         initView();
-        initManager();
+        initData();
         setListener();
     }
 
@@ -47,10 +53,14 @@ public class RefundActivity extends AppCompatActivity implements View.OnClickLis
         mReturnTv.setTextColor(Color.BLACK);
     }
 
-    private void initManager() {
+    private void initData() {
         mFragmentManager = getSupportFragmentManager();
+        RefundFragment refundFragment = new RefundFragment();
+        ReturnFragment returnFragment = new ReturnFragment();
+        fragmentList.add(refundFragment);
+        fragmentList.add(returnFragment);
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
-        transaction.add(R.id.ll_refund_sit, new RefundFragment());
+        transaction.add(R.id.ll_refund_sit, fragmentList.get(0));
         transaction.commit();
     }
 
@@ -67,38 +77,45 @@ public class RefundActivity extends AppCompatActivity implements View.OnClickLis
                 finish();
                 break;
             case R.id.rl_refund_refund:
-                changeFragment(0);
+                tarPosition = 0;
+                changeFragment();
                 break;
             case R.id.rl_refund_return:
-                changeFragment(1);
+                tarPosition = 1;
+                changeFragment();
                 break;
             default:
                 break;
         }
     }
 
-    private void changeFragment(int index) {
-        switch (index) {
-            case 0:
-                mRefundGd.setColor(Color.RED);
-                mReturnGd.setColor(Color.WHITE);
-                mRefundTv.setTextColor(Color.WHITE);
-                mReturnTv.setTextColor(Color.BLACK);
-                FragmentTransaction refundTransaction = mFragmentManager.beginTransaction();
-                refundTransaction.replace(R.id.ll_refund_sit, new RefundFragment());
-                refundTransaction.commit();
-                break;
-            case 1:
-                mRefundGd.setColor(Color.WHITE);
-                mReturnGd.setColor(Color.RED);
-                mRefundTv.setTextColor(Color.BLACK);
-                mReturnTv.setTextColor(Color.WHITE);
-                FragmentTransaction returnTransaction = mFragmentManager.beginTransaction();
-                returnTransaction.replace(R.id.ll_refund_sit, new ReturnFragment());
-                returnTransaction.commit();
-                break;
-            default:
-                break;
+    private void changeFragment() {
+        if (tarPosition != curPosition) {
+            switch (tarPosition) {
+                case 0:
+                    mRefundGd.setColor(Color.RED);
+                    mReturnGd.setColor(Color.WHITE);
+                    mRefundTv.setTextColor(Color.WHITE);
+                    mReturnTv.setTextColor(Color.BLACK);
+                    break;
+                case 1:
+                    mRefundGd.setColor(Color.WHITE);
+                    mReturnGd.setColor(Color.RED);
+                    mRefundTv.setTextColor(Color.BLACK);
+                    mReturnTv.setTextColor(Color.WHITE);
+                    break;
+            }
+            FragmentTransaction transaction = mFragmentManager.beginTransaction();
+            Fragment curFragment = fragmentList.get(curPosition);
+            Fragment tarFragment = fragmentList.get(tarPosition);
+            transaction.hide(curFragment);
+            if (tarFragment.isAdded()) {
+                transaction.show(tarFragment);
+            } else {
+                transaction.add(R.id.ll_refund_sit, tarFragment);
+            }
+            transaction.commit();
+            curPosition = tarPosition;
         }
     }
 }

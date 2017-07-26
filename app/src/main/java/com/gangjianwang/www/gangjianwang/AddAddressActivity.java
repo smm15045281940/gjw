@@ -1,120 +1,124 @@
 package com.gangjianwang.www.gangjianwang;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import bean.Address;
+import utils.RegularUtils;
+import utils.ToastUtils;
 
-public class AddAddressActivity extends AppCompatActivity implements View.OnClickListener{
+public class AddAddressActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private ImageView mBackIv,mSaveIv;
-    private TextView mAddressTitleTv;
-    private EditText mNameEt,mPhoneEt,mAddressEt;
-    private Switch mDefaultSh;
-    private Address editAddress;
-    private int ADDRESS_STATE = 0;
-    private final int ADD_ADDRESS = 0;
-    private final int EDIT_ADDRESS = 1;
-    private int editPostion = 0;
+    private View rootView;
+    private RelativeLayout backRl, saveRl;
+    private TextView titleTv;
+    private EditText nameEt, phoneEt, addressEt;
+    private TextView areaTv;
+    private Switch defaultSh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_add_address);
-        init();
+        rootView = View.inflate(this, R.layout.activity_add_address, null);
+        setContentView(rootView);
         initView();
+        initData();
         setListener();
     }
 
-    private void init() {
+    private void initView() {
+        initRoot();
+    }
+
+    private void initRoot() {
+        backRl = (RelativeLayout) rootView.findViewById(R.id.rl_addaddress_back);
+        saveRl = (RelativeLayout) rootView.findViewById(R.id.rl_addaddress_save);
+        titleTv = (TextView) rootView.findViewById(R.id.tv_addaddress_title);
+        nameEt = (EditText) rootView.findViewById(R.id.et_addaddress_name);
+        phoneEt = (EditText) rootView.findViewById(R.id.et_addaddress_phone);
+        addressEt = (EditText) rootView.findViewById(R.id.et_addaddress_address);
+        areaTv = (TextView) rootView.findViewById(R.id.tv_addaddress_area);
+        defaultSh = (Switch) rootView.findViewById(R.id.sh_addaddress_default);
+    }
+
+    private void initData() {
         Intent intent = getIntent();
-        if(intent.getIntExtra("addressstate",0) == 0){
-            ADDRESS_STATE = ADD_ADDRESS;
-        }else if(intent.getIntExtra("addressstate",0) == 1){
-            ADDRESS_STATE = EDIT_ADDRESS;
-            editPostion = intent.getIntExtra("editposition",0);
-            Bundle bundle = intent.getBundleExtra("addressobject");
-            editAddress = (Address) bundle.getSerializable("addressobject");
+        if (intent != null) {
+            titleTv.setText(intent.getStringExtra("title"));
+            Address address = (Address) intent.getSerializableExtra("address");
+            if (address != null) {
+                nameEt.setText(address.getTrueName());
+                nameEt.setSelection(address.getTrueName().length());
+                phoneEt.setText(address.getMobPhone());
+                addressEt.setText(address.getAddress());
+                areaTv.setText(address.getAreaInfo());
+                if (address.getIsDefault().equals("0")) {
+                    defaultSh.setChecked(false);
+                } else {
+                    defaultSh.setChecked(true);
+                }
+            }
         }
     }
 
-    private void initView() {
-        mBackIv = (ImageView) findViewById(R.id.iv_addaddress_back);
-        mSaveIv = (ImageView) findViewById(R.id.iv_addaddress_save);
-        mAddressTitleTv = (TextView) findViewById(R.id.tv_address_title);
-        mNameEt = (EditText) findViewById(R.id.et_addaddress_name);
-        mPhoneEt = (EditText) findViewById(R.id.et_addaddress_phone);
-        mAddressEt = (EditText) findViewById(R.id.et_addaddress_address);
-        mDefaultSh = (Switch) findViewById(R.id.sh_addaddress_default);
-        switch (ADDRESS_STATE){
-            case ADD_ADDRESS:
-                mAddressTitleTv.setText("新增收货地址");
+    private void setListener() {
+        backRl.setOnClickListener(this);
+        saveRl.setOnClickListener(this);
+        areaTv.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.rl_addaddress_back:
+                finish();
                 break;
-            case EDIT_ADDRESS:
-                mAddressTitleTv.setText("编辑收货地址");
-                mNameEt.setText(editAddress.getName());
-                mPhoneEt.setText(editAddress.getPhone());
-                mAddressEt.setText(editAddress.getAddress());
-                mDefaultSh.setChecked(editAddress.getDefault());
+            case R.id.rl_addaddress_save:
+                toJudge();
+                break;
+            case R.id.tv_addaddress_area:
+                startActivityForResult(new Intent(AddAddressActivity.this, ReceiveAreaActivity.class), 0);
                 break;
             default:
                 break;
         }
     }
 
-    private void setListener() {
-        mBackIv.setOnClickListener(this);
-        mSaveIv.setOnClickListener(this);
-    }
-
     @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.iv_addaddress_back:
-                finish();
-                break;
-            case R.id.iv_addaddress_save:
-                switch (ADDRESS_STATE){
-                    case ADD_ADDRESS:
-                        Address address = new Address();
-                        address.setName(mNameEt.getText().toString());
-                        address.setPhone(mPhoneEt.getText().toString());
-                        address.setAddress(mAddressEt.getText().toString());
-                        address.setDefault(mDefaultSh.isChecked());
-                        Intent intent = new Intent();
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("addaddress",address);
-                        intent.putExtra("addaddress",bundle);
-                        setResult(1,intent);
-                        finish();
-                        break;
-                    case EDIT_ADDRESS:
-                        Address address2 = new Address();
-                        address2.setName(mNameEt.getText().toString());
-                        address2.setPhone(mPhoneEt.getText().toString());
-                        address2.setAddress(mAddressEt.getText().toString());
-                        address2.setDefault(mDefaultSh.isChecked());
-                        Intent intent2 = new Intent();
-                        Bundle bundle2 = new Bundle();
-                        bundle2.putInt("editposition",editPostion);
-                        bundle2.putSerializable("addaddress",address2);
-                        intent2.putExtra("addaddress",bundle2);
-                        setResult(2,intent2);
-                        finish();
-                        break;
-                    default:
-                        break;
-                }
-                break;
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0 && resultCode == 1 && data != null) {
+            areaTv.setText(data.getStringExtra("sendAddress"));
         }
     }
 
+    private void toJudge() {
+        String name = nameEt.getText().toString();
+        String phone = phoneEt.getText().toString();
+        String area = areaTv.getText().toString();
+        String address = addressEt.getText().toString();
+        boolean isDefault = defaultSh.isChecked();
+        if (TextUtils.isEmpty(name)) {
+            ToastUtils.toast(AddAddressActivity.this, "姓名不能为空！");
+        } else if (TextUtils.isEmpty(phone)) {
+            ToastUtils.toast(AddAddressActivity.this, "手机不能为空！");
+        } else if (!RegularUtils.isPhonenumber(phone)) {
+            ToastUtils.toast(AddAddressActivity.this, "手机格式不正确！");
+        } else if (TextUtils.isEmpty(area)) {
+            ToastUtils.toast(AddAddressActivity.this, "地区不能为空！");
+        } else if (TextUtils.isEmpty(address)) {
+            ToastUtils.toast(AddAddressActivity.this, "详细地址不能为空！");
+        } else {
+            ToastUtils.toast(AddAddressActivity.this, "save");
+        }
+    }
 }

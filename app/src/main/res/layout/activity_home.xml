@@ -4,6 +4,7 @@
     android:id="@+id/activity_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/press_true"
     android:orientation="vertical"
     tools:context="com.gangjianwang.www.gangjianwang.HomeActivity">
 
@@ -11,18 +12,14 @@
         android:id="@+id/ll_home_sit"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_above="@+id/rg_home"
+        android:layout_marginBottom="@dimen/x1"
         android:layout_weight="1"
         android:orientation="vertical" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/x1"
-        android:background="#BCBCBC" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@android:color/white"
         android:orientation="horizontal">
 
         <RelativeLayout

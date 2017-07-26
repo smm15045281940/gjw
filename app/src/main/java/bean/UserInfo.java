@@ -13,7 +13,8 @@ public class UserInfo implements Serializable {
     private String levelName;
     private String favoritesStore;
     private String favoritersGoods;
-    private String autoLogin;
+    private boolean autoLogin;
+    private String key;
 
     public UserInfo() {
     }
@@ -58,12 +59,32 @@ public class UserInfo implements Serializable {
         this.favoritersGoods = favoritersGoods;
     }
 
-    public String getAutoLogin() {
+    public boolean isAutoLogin() {
         return autoLogin;
     }
 
-    public void setAutoLogin(String autoLogin) {
+    public void setAutoLogin(boolean autoLogin) {
         this.autoLogin = autoLogin;
     }
 
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    @Override
+    public String toString() {
+        return "UserInfo{" +
+                "userName='" + userName + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", levelName='" + levelName + '\'' +
+                ", favoritesStore='" + favoritesStore + '\'' +
+                ", favoritersGoods='" + favoritersGoods + '\'' +
+                ", autoLogin=" + autoLogin +
+                ", key='" + key + '\'' +
+                '}';
+    }
 }

@@ -2,20 +2,22 @@ package fragment;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.R;
 
-import java.util.ArrayList;
-import java.util.List;
+import config.ParaConfig;
+import utils.ToastUtils;
 
 /**
  * Created by Administrator on 2017/4/17 0017.
@@ -23,10 +25,34 @@ import java.util.List;
 
 public class ReturnFragment extends Fragment {
 
-    private View rootView;
-    private ListView mLv;
-    private ArrayAdapter<String> mAdapter;
-    private List<String> mList;
+    private View rootView, emptyView;
+    private ListView lv;
+    private ProgressDialog progressDialog;
+
+    public Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg != null) {
+                switch (msg.what) {
+                    case 0:
+                        ToastUtils.toast(getActivity(), ParaConfig.NETWORK_ERROR);
+                        break;
+                    case 1:
+                        progressDialog.dismiss();
+                        emptyView.setVisibility(View.VISIBLE);
+                        break;
+                }
+            }
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        handler.removeMessages(0);
+        handler.removeMessages(1);
+    }
 
     @Nullable
     @Override
@@ -34,28 +60,38 @@ public class ReturnFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_refundreturn, null);
         initView();
         initData();
-        setData();
         loadData();
         return rootView;
     }
 
     private void initView() {
-        mLv = (ListView) rootView.findViewById(R.id.lv_refundreturn);
+        initRoot();
+        initEmpty();
+    }
+
+    private void initRoot() {
+        rootView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        lv = (ListView) rootView.findViewById(R.id.lv_refundreturn);
+    }
+
+    private void initEmpty() {
+        emptyView = View.inflate(getActivity(), R.layout.empty_refund, null);
+        emptyView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        ((TextView) emptyView.findViewById(R.id.tv_empty_refund_hint)).setText("您还没有退货信息");
+        ((TextView) emptyView.findViewById(R.id.tv_empty_refund_tips)).setText("已购订单详情可申请退货");
+        ((ViewGroup) lv.getParent()).addView(emptyView);
+        emptyView.setVisibility(View.GONE);
+        lv.setEmptyView(emptyView);
     }
 
     private void initData() {
-        mList = new ArrayList<>();
-        mAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, mList);
+        progressDialog = new ProgressDialog(getActivity());
     }
 
-    private void setData() {
-        mLv.setAdapter(mAdapter);
-    }
 
     private void loadData() {
-        for (int i = 0; i < 20; i++) {
-            mList.add("退货" + i);
-        }
-        mAdapter.notifyDataSetChanged();
+        emptyView.setVisibility(View.GONE);
+        progressDialog.show();
+        handler.sendEmptyMessage(1);
     }
 }

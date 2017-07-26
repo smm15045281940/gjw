@@ -1,5 +1,7 @@
 package fragment;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.gangjianwang.www.gangjianwang.HomeActivity;
 import com.gangjianwang.www.gangjianwang.LoginActivity;
 import com.gangjianwang.www.gangjianwang.R;
 import com.squareup.okhttp.Callback;
@@ -34,6 +37,7 @@ import java.io.IOException;
 
 import bean.UserInfo;
 import config.NetConfig;
+import config.ParaConfig;
 import utils.ToastUtils;
 import utils.UserUtils;
 
@@ -50,34 +54,35 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private ImageView mClearUsernameIv, mClearPasswordIv;
     private CheckBox mAutoLoginCb;
     private RelativeLayout mLoginRl;
-    private Handler mForgetpwdHandler;
-    private Handler mLoginHandler;
-    private String username;
-    private String password;
-    private String client;
-    private String key;
-    private UserInfo userInfo;
-    private String s;
 
-    private OkHttpClient okHttpClient = new OkHttpClient();
+    private Handler mForgetpwdHandler, mLoginHandler;
+    private String username, password, client, key, defeatHint;
+    private UserInfo userInfo;
+    private OkHttpClient okHttpClient;
+    private ProgressDialog progressDialog;
 
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg != null) {
+                progressDialog.dismiss();
                 switch (msg.what) {
                     case 0:
-                        ToastUtils.toast(getActivity(), "无网络");
+                        if (TextUtils.isEmpty(defeatHint)) {
+                            ToastUtils.toast(getActivity(), ParaConfig.NETWORK_ERROR);
+                        } else {
+                            ToastUtils.toast(getActivity(), defeatHint);
+                        }
                         break;
                     case 1:
                         getUserData();
                         break;
                     case 2:
                         UserUtils.writeLogin(getActivity(), userInfo);
-                        mLoginHandler.sendEmptyMessage(1);
-                        break;
-                    default:
+                        Intent intent = new Intent(getActivity(), HomeActivity.class);
+                        intent.putExtra("what", 4);
+                        startActivity(intent);
                         break;
                 }
             }
@@ -85,24 +90,37 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     };
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        handler.removeMessages(0);
+        handler.removeMessages(1);
+        handler.removeMessages(2);
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LoginActivity loginActivity = (LoginActivity) getActivity();
         mForgetpwdHandler = loginActivity.forgetpwdHandler;
-        mLoginHandler = loginActivity.loginHandler;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_login, null);
-        rootView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         initView();
+        initData();
         setListener();
         return rootView;
     }
 
     private void initView() {
+        initRoot();
+        initProgress();
+    }
+
+    private void initRoot() {
+        rootView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         mForgetpwdTv = (TextView) rootView.findViewById(R.id.tv_login_forgetpassword);
         mUsernameEt = (EditText) rootView.findViewById(R.id.et_login_username);
         mPasswordEt = (EditText) rootView.findViewById(R.id.et_login_password);
@@ -112,52 +130,65 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         mLoginRl = (RelativeLayout) rootView.findViewById(R.id.rl_login_login);
     }
 
+    private void initProgress() {
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setCanceledOnTouchOutside(false);
+    }
+
+    private void initData() {
+        okHttpClient = new OkHttpClient();
+    }
+
     private void setListener() {
         mForgetpwdTv.setOnClickListener(this);
         mLoginRl.setOnClickListener(this);
-        mUsernameEt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() == 0) {
-                    mClearUsernameIv.setVisibility(View.INVISIBLE);
-                } else {
-                    mClearUsernameIv.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-        mPasswordEt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() == 0) {
-                    mClearPasswordIv.setVisibility(View.INVISIBLE);
-                } else {
-                    mClearPasswordIv.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+        mUsernameEt.addTextChangedListener(userNameTw);
+        mPasswordEt.addTextChangedListener(passwordTw);
         mClearUsernameIv.setOnClickListener(this);
         mClearPasswordIv.setOnClickListener(this);
     }
+
+    TextWatcher userNameTw = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (s.length() == 0) {
+                mClearUsernameIv.setVisibility(View.INVISIBLE);
+            } else {
+                mClearUsernameIv.setVisibility(View.VISIBLE);
+            }
+        }
+    };
+
+    TextWatcher passwordTw = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (s.length() == 0) {
+                mClearPasswordIv.setVisibility(View.INVISIBLE);
+            } else {
+                mClearPasswordIv.setVisibility(View.VISIBLE);
+            }
+        }
+    };
 
     @Override
     public void onClick(View v) {
@@ -172,46 +203,34 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 mForgetpwdHandler.sendEmptyMessage(100);
                 break;
             case R.id.rl_login_login:
-                loginJudge();
+                if (judge()) {
+                    login();
+                }
                 break;
             default:
                 break;
         }
     }
 
-    private void loginJudge() {
+    private boolean judge() {
         if (TextUtils.isEmpty(mUsernameEt.getText().toString())) {
             ToastUtils.toast(getActivity(), "请输入用户名!");
-            return;
+            return false;
         } else if (TextUtils.isEmpty(mPasswordEt.getText().toString())) {
             ToastUtils.toast(getActivity(), "请输入密码!");
-            return;
+            return false;
         } else {
-            ToastUtils.toast(getActivity(), "用户名:" + mUsernameEt.getText().toString() + "\n" + "密码:" + mPasswordEt.getText().toString() + "\n" + "七天自动登陆:" + mAutoLoginCb.isChecked() + "\n" + "正在登陆...");
             username = mUsernameEt.getText().toString();
             password = mPasswordEt.getText().toString();
             client = "wap";
-            if (mAutoLoginCb.isChecked()) {
-                s = "1";
-                ToastUtils.log(getActivity(), "七天自动登录");
-            } else {
-                s = "0";
-                ToastUtils.log(getActivity(), "七天不自动登录");
-            }
-            toLogin();
+            return true;
         }
     }
 
-    private void toLogin() {
-        RequestBody body = new FormEncodingBuilder()
-                .add("username", username)
-                .add("password", password)
-                .add("client", client)
-                .build();
-        Request request = new Request.Builder()
-                .url(NetConfig.loginUrl)
-                .post(body)
-                .build();
+    private void login() {
+        progressDialog.show();
+        RequestBody body = new FormEncodingBuilder().add("username", username).add("password", password).add("client", client).build();
+        Request request = new Request.Builder().url(NetConfig.loginUrl).post(body).build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
@@ -220,10 +239,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onResponse(Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String result = response.body().string();
-                    if (parseJson(result))
-                        handler.sendEmptyMessage(1);
+                if (response.isSuccessful() && parseJson(response.body().string())) {
+                    handler.sendEmptyMessage(1);
+                } else {
+                    handler.sendEmptyMessage(0);
                 }
             }
         });
@@ -232,9 +251,15 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private boolean parseJson(String json) {
         try {
             JSONObject objBean = new JSONObject(json);
-            JSONObject objDatas = objBean.optJSONObject("datas");
-            key = objDatas.optString("key");
-            return true;
+            if (objBean.optInt("code") == 200) {
+                JSONObject objDatas = objBean.optJSONObject("datas");
+                key = objDatas.optString("key");
+                return true;
+            } else if (objBean.optInt("code") == 400) {
+                JSONObject objDatas = objBean.optJSONObject("datas");
+                defeatHint = objDatas.optString("error");
+                return false;
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -242,13 +267,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     }
 
     private void getUserData() {
-        RequestBody body = new FormEncodingBuilder()
-                .add("key", key)
-                .build();
-        Request request = new Request.Builder()
-                .url(NetConfig.loginAfterUrl)
-                .post(body)
-                .build();
+        RequestBody body = new FormEncodingBuilder().add("key", key).build();
+        Request request = new Request.Builder().url(NetConfig.loginAfterUrl).post(body).build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
@@ -257,10 +277,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onResponse(Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String result = response.body().string();
-                    if (parseUserData(result))
-                        handler.sendEmptyMessage(2);
+                if (response.isSuccessful() && parseUserData(response.body().string())) {
+                    handler.sendEmptyMessage(2);
+                } else {
+                    handler.sendEmptyMessage(0);
                 }
             }
         });
@@ -277,7 +297,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             userInfo.setLevelName(objInfo.optString("level_name"));
             userInfo.setFavoritesStore(objInfo.optString("favorites_store"));
             userInfo.setFavoritersGoods(objInfo.optString("favorites_goods"));
-            userInfo.setAutoLogin(s);
+            userInfo.setAutoLogin(mAutoLoginCb.isChecked());
+            userInfo.setKey(key);
             return true;
         } catch (JSONException e) {
             e.printStackTrace();

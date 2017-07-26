@@ -31,6 +31,7 @@ import bean.ClassifyLeft;
 import bean.ClassifyRightInner;
 import bean.ClassifyRightOuter;
 import config.NetConfig;
+import config.ParaConfig;
 import utils.ToastUtils;
 
 public class ClassifyActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, ListItemClickHelp {
@@ -43,7 +44,8 @@ public class ClassifyActivity extends AppCompatActivity implements View.OnClickL
     private ClassifyLeftAdapter mLeftAdapter;
     private ClassifyRightAdapter mRightAdapter;
     private OkHttpClient okHttpClient;
-    private ProgressDialog mPd;
+    private ProgressDialog progressDialog;
+    private String rightDataId = "1";
 
     Handler handler = new Handler() {
         @Override
@@ -52,15 +54,15 @@ public class ClassifyActivity extends AppCompatActivity implements View.OnClickL
             if (msg != null) {
                 switch (msg.what) {
                     case 0:
-                        mPd.dismiss();
-                        ToastUtils.toast(ClassifyActivity.this, "无网络");
+                        progressDialog.dismiss();
+                        ToastUtils.toast(ClassifyActivity.this, ParaConfig.NETWORK_ERROR);
                         break;
                     case 1:
                         mLeftAdapter.notifyDataSetChanged();
-                        loadRightData("1");
+                        loadRightData(rightDataId);
                         break;
                     case 2:
-                        mPd.dismiss();
+                        progressDialog.dismiss();
                         mRightAdapter.notifyDataSetChanged();
                         break;
                     default:
@@ -91,8 +93,8 @@ public class ClassifyActivity extends AppCompatActivity implements View.OnClickL
 
     private void initData() {
         okHttpClient = new OkHttpClient();
-        mPd = new ProgressDialog(this);
-        mPd.setMessage("加载中..");
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCanceledOnTouchOutside(false);
         mLeftAdapter = new ClassifyLeftAdapter(this, mLeftDataList);
         mRightAdapter = new ClassifyRightAdapter(this, mRightDataList, this);
     }
@@ -103,7 +105,7 @@ public class ClassifyActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void loadLeftData() {
-        mPd.show();
+        progressDialog.show();
         Request request = new Request.Builder().url(NetConfig.classifyLeftUrl).get().build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -123,7 +125,7 @@ public class ClassifyActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void loadRightData(String leftId) {
-        mPd.show();
+        progressDialog.show();
         Request request = new Request.Builder().url(NetConfig.classifyRightUrl + leftId).get().build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -159,6 +161,9 @@ public class ClassifyActivity extends AppCompatActivity implements View.OnClickL
                 classifyLeft.setId(o.optString("gc_id"));
                 classifyLeft.setTitle(o.optString("gc_name"));
                 classifyLeft.setImgUrl(o.optString("image"));
+                if (i == 0) {
+                    classifyLeft.setCheck(true);
+                }
                 mLeftDataList.add(classifyLeft);
             }
             return true;
@@ -210,14 +215,25 @@ public class ClassifyActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        loadRightData(mLeftDataList.get(position).getId());
+        if (!rightDataId.equals(mLeftDataList.get(position).getId())) {
+            for (int i = 0; i < mLeftDataList.size(); i++) {
+                if (i == position) {
+                    mLeftDataList.get(i).setCheck(true);
+                } else {
+                    mLeftDataList.get(i).setCheck(false);
+                }
+            }
+            mLeftAdapter.notifyDataSetChanged();
+            rightDataId = mLeftDataList.get(position).getId();
+            loadRightData(rightDataId);
+        }
     }
 
     @Override
     public void onClick(View item, View widget, int position, int which, boolean isChecked) {
         switch (which) {
             case R.id.ll_item_classify_right_outer:
-                Intent intent = new Intent(ClassifyActivity.this, ContractProjectActivity.class);
+                Intent intent = new Intent(ClassifyActivity.this, StoreActivity.class);
                 intent.putExtra("gc_id", mRightDataList.get(position).getId());
                 startActivity(intent);
                 break;

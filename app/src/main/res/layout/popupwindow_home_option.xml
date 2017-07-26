@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:background="@drawable/default_gray_selector"
+            android:background="@drawable/selector_press"
             android:padding="@dimen/x10">
 
             <ImageView
@@ -37,7 +37,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/default_gray_selector"
+            android:background="@drawable/selector_press"
             android:padding="@dimen/x5">
 
             <ImageView
@@ -62,7 +62,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/default_gray_selector"
+            android:background="@drawable/selector_press"
             android:padding="@dimen/x5">
 
             <ImageView
@@ -86,7 +86,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/default_gray_selector"
+            android:background="@drawable/selector_press"
             android:padding="@dimen/x5">
 
             <ImageView
@@ -117,7 +117,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/default_gray_selector"
+            android:background="@drawable/selector_press"
             android:padding="@dimen/x5">
 
             <ImageView
@@ -139,12 +139,16 @@
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"></RelativeLayout>
+            android:layout_weight="1">
+
+        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"></RelativeLayout>
+            android:layout_weight="1">
+
+        </RelativeLayout>
 
     </LinearLayout>
 

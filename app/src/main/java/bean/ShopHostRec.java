@@ -6,15 +6,25 @@ package bean;
 
 public class ShopHostRec {
 
+    private String goodsId;
+    private String imageUrl;
     private String goodsName;
     private String goodsPrice;
 
-    public ShopHostRec() {
+    public String getGoodsId() {
+        return goodsId;
     }
 
-    public ShopHostRec(String goodsName, String goodsPrice) {
-        this.goodsName = goodsName;
-        this.goodsPrice = goodsPrice;
+    public void setGoodsId(String goodsId) {
+        this.goodsId = goodsId;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public String getGoodsName() {

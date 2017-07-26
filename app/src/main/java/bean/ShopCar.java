@@ -9,17 +9,9 @@ import java.util.List;
 public class ShopCar {
 
     private boolean isChecked;
+    private String storeId;
     private String shopName;
     private List<ShopCarGoods> goodsList;
-
-    public ShopCar() {
-    }
-
-    public ShopCar(boolean isChecked, String shopName, List<ShopCarGoods> goodsList) {
-        this.isChecked = isChecked;
-        this.shopName = shopName;
-        this.goodsList = goodsList;
-    }
 
     public boolean isChecked() {
         return isChecked;
@@ -27,6 +19,14 @@ public class ShopCar {
 
     public void setChecked(boolean checked) {
         isChecked = checked;
+    }
+
+    public String getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
     }
 
     public String getShopName() {

@@ -1,6 +1,7 @@
 package fragment;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,7 +14,9 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.gangjianwang.www.gangjianwang.AgreeMentActivity;
 import com.gangjianwang.www.gangjianwang.LoginActivity;
 import com.gangjianwang.www.gangjianwang.R;
 import com.squareup.okhttp.Callback;
@@ -30,6 +33,7 @@ import java.io.IOException;
 
 import bean.UserInfo;
 import config.NetConfig;
+import config.ParaConfig;
 import utils.RegularUtils;
 import utils.ToastUtils;
 import utils.UserUtils;
@@ -46,14 +50,14 @@ public class RegisterCommonFragment extends Fragment implements View.OnClickList
     private RelativeLayout registerRl;
     private OkHttpClient okHttpClient;
     private String name, pwd, surePwd, email, client = "wap";
-    private ProgressDialog mPd;
+    private ProgressDialog progressDialog;
     private String json;
-    private String hintResult;
+    private TextView agreeTv;
     private String getUserName, getKey;
     private int getUserId;
-    private String autoLogin;
+    private boolean autoLogin;
+    private String hintResult;
     private UserInfo userInfo;
-    private Handler loginHandler;
 
     Handler handler = new Handler() {
         @Override
@@ -62,16 +66,15 @@ public class RegisterCommonFragment extends Fragment implements View.OnClickList
             if (msg != null) {
                 switch (msg.what) {
                     case 0:
-                        mPd.dismiss();
-                        ToastUtils.toast(getActivity(), "无网络");
+                        progressDialog.dismiss();
+                        ToastUtils.toast(getActivity(), ParaConfig.NETWORK_ERROR);
                         break;
                     case 1:
-                        mPd.dismiss();
+                        progressDialog.dismiss();
                         ToastUtils.toast(getActivity(), hintResult);
                         break;
                     case 2:
                         UserUtils.writeLogin(getActivity(), userInfo);
-                        loginHandler.sendEmptyMessage(1);
                         break;
                     default:
                         break;
@@ -84,7 +87,6 @@ public class RegisterCommonFragment extends Fragment implements View.OnClickList
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LoginActivity loginActivity = (LoginActivity) getActivity();
-        loginHandler = loginActivity.loginHandler;
     }
 
     @Nullable
@@ -107,21 +109,27 @@ public class RegisterCommonFragment extends Fragment implements View.OnClickList
         surePwdEt = (EditText) rootView.findViewById(R.id.et_register_common_surepwd);
         emailEt = (EditText) rootView.findViewById(R.id.et_register_common_email);
         autoCb = (CheckBox) rootView.findViewById(R.id.cb_register_common_agree);
+        agreeTv = (TextView) rootView.findViewById(R.id.tv_register_common_agreement);
         registerRl = (RelativeLayout) rootView.findViewById(R.id.rl_register_common_register);
     }
 
     private void initData() {
         okHttpClient = new OkHttpClient();
-        mPd = new ProgressDialog(getActivity());
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setCanceledOnTouchOutside(false);
     }
 
     private void setListener() {
+        agreeTv.setOnClickListener(this);
         registerRl.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.tv_register_common_agreement:
+                startActivity(new Intent(getActivity(), AgreeMentActivity.class));
+                break;
             case R.id.rl_register_common_register:
                 judge();
                 break;
@@ -150,17 +158,12 @@ public class RegisterCommonFragment extends Fragment implements View.OnClickList
         } else if (!TextUtils.isEmpty(email) && !RegularUtils.isEmail(email)) {
             ToastUtils.toast(getActivity(), "邮箱格式不正确!");
         } else {
-            if (autoCb.isChecked()) {
-                autoLogin = "七天自动登录";
-            } else {
-                autoLogin = "七天不自动登录";
-            }
             register();
         }
     }
 
     private void register() {
-        mPd.show();
+        progressDialog.show();
         RequestBody body = new FormEncodingBuilder()
                 .add("username", name)
                 .add("password", pwd)
@@ -241,6 +244,7 @@ public class RegisterCommonFragment extends Fragment implements View.OnClickList
             userInfo = new UserInfo();
             userInfo.setUserName(objInfo.optString("user_name"));
             userInfo.setAvatar(objInfo.optString("avatar"));
+            userInfo.setKey(getKey);
             userInfo.setLevelName(objInfo.optString("level_name"));
             userInfo.setFavoritesStore(objInfo.optString("favorites_store"));
             userInfo.setFavoritersGoods(objInfo.optString("favorites_goods"));

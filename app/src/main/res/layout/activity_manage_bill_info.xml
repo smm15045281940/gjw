@@ -17,7 +17,7 @@
             android:id="@+id/rl_managebillinfo_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/default_gray_selector"
+            android:background="@drawable/selector_press"
             android:clickable="true"
             android:padding="@dimen/x10">
 

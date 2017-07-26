@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
@@ -18,13 +17,14 @@ import bean.Address;
  * Created by Administrator on 2017/5/5 0005.
  */
 
-public class AddressAdapter extends BaseAdapter{
+public class AddressAdapter extends BaseAdapter {
 
     private Context context;
     private List<Address> list;
     private ListItemClickHelp callback;
+    private ViewHolder holder;
 
-    public AddressAdapter(Context context, List<Address> list,ListItemClickHelp callback) {
+    public AddressAdapter(Context context, List<Address> list, ListItemClickHelp callback) {
         this.context = context;
         this.list = list;
         this.callback = callback;
@@ -47,54 +47,55 @@ public class AddressAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, final ViewGroup parent) {
-        ViewHolder holder;
-        if(convertView == null){
-            convertView = View.inflate(context,R.layout.item_address_manager,null);
+        if (convertView == null) {
+            convertView = View.inflate(context, R.layout.item_address_manager, null);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
-        }else{
+        } else {
             holder = (ViewHolder) convertView.getTag();
         }
         Address address = list.get(position);
-        holder.mNameTv.setText(address.getName());
-        holder.mPhoneTv.setText(address.getPhone());
-        holder.mAddressTv.setText(address.getAddress());
-        if(address.getDefault()){
-            holder.mDefaultTv.setVisibility(View.VISIBLE);
-        }else{
-            holder.mDefaultTv.setVisibility(View.INVISIBLE);
+        holder.trueNameTv.setText(address.getTrueName());
+        holder.mobPhoneTv.setText(address.getMobPhone());
+        holder.areaInfoTv.setText(address.getAreaInfo());
+        holder.addressTv.setText(address.getAddress());
+        if (address.getIsDefault().equals("1")) {
+            holder.isDefaultTv.setVisibility(View.VISIBLE);
+        } else {
+            holder.isDefaultTv.setVisibility(View.INVISIBLE);
         }
-        final View view1 = convertView;
-        final int p1 = position;
-        final int id1 = holder.mEditBtn.getId();
-        holder.mEditBtn.setOnClickListener(new View.OnClickListener() {
+        final View view = convertView;
+        final int p = position;
+        final int editId = holder.editTv.getId();
+        final int delId = holder.delTv.getId();
+        holder.editTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callback.onClick(view1,parent,p1,id1,false);
+                callback.onClick(view, parent, p, editId, false);
             }
         });
-        final View view2 = convertView;
-        final int p2 = position;
-        final int id2 = holder.mDeleteBtn.getId();
-        holder.mDeleteBtn.setOnClickListener(new View.OnClickListener() {
+        holder.delTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callback.onClick(view2,parent,p2,id2,false);
+                callback.onClick(view, parent, p, delId, false);
             }
         });
         return convertView;
     }
 
-    class ViewHolder{
-        private TextView mNameTv,mPhoneTv,mAddressTv,mDefaultTv;
-        private Button mEditBtn,mDeleteBtn;
-        public ViewHolder(View itemView){
-            mNameTv = (TextView) itemView.findViewById(R.id.tv_item_address_manager_name);
-            mPhoneTv = (TextView) itemView.findViewById(R.id.tv_item_address_manager_phone);
-            mAddressTv = (TextView) itemView.findViewById(R.id.tv_item_address_manager_address);
-            mDefaultTv = (TextView) itemView.findViewById(R.id.tv_item_address_manager_default);
-            mEditBtn = (Button) itemView.findViewById(R.id.btn_item_address_manager_edit);
-            mDeleteBtn = (Button) itemView.findViewById(R.id.btn_item_address_manager_delete);
+    class ViewHolder {
+
+        private TextView trueNameTv, mobPhoneTv, areaInfoTv, addressTv, isDefaultTv;
+        private TextView editTv, delTv;
+
+        public ViewHolder(View itemView) {
+            trueNameTv = (TextView) itemView.findViewById(R.id.tv_item_address_manager_true_name);
+            mobPhoneTv = (TextView) itemView.findViewById(R.id.tv_item_address_manager_mob_phone);
+            areaInfoTv = (TextView) itemView.findViewById(R.id.tv_item_address_manager_area_info);
+            addressTv = (TextView) itemView.findViewById(R.id.tv_item_address_manager_address);
+            isDefaultTv = (TextView) itemView.findViewById(R.id.tv_item_address_manager_isdefault);
+            editTv = (TextView) itemView.findViewById(R.id.tv_item_address_manager_edit);
+            delTv = (TextView) itemView.findViewById(R.id.tv_item_address_manager_delete);
         }
     }
 }

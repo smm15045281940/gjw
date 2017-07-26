@@ -6,12 +6,13 @@ import java.io.Serializable;
  * Created by Administrator on 2017/5/26.
  */
 
-public class AddAddress implements Serializable{
+public class AddAddress implements Serializable {
 
     private String name;
     private String number;
     private String roughAddress;
     private String detailAddress;
+    private String isDefault;
 
     public AddAddress() {
 
@@ -54,5 +55,13 @@ public class AddAddress implements Serializable{
 
     public void setDetailAddress(String detailAddress) {
         this.detailAddress = detailAddress;
+    }
+
+    public String getIsDefault() {
+        return isDefault;
+    }
+
+    public void setIsDefault(String isDefault) {
+        this.isDefault = isDefault;
     }
 }

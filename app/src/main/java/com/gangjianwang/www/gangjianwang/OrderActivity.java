@@ -3,35 +3,34 @@ package com.gangjianwang.www.gangjianwang;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import bean.Order;
-import fragment.RealorderFragment;
-import fragment.VirtualorderFragment;
+import fragment.RealOrderFragment;
+import fragment.VirtualOrderFragment;
+import utils.ToastUtils;
 
 public class OrderActivity extends AppCompatActivity implements OnClickListener {
 
+    private View rootView;
     private RelativeLayout mBackRl;
     private RelativeLayout mRealorderRl, mVirtualorderRl;
     private GradientDrawable mRealorderGd, mVirtualorderGd;
     private TextView mRealorderTv, mVirtualorderTv;
     private EditText mSearchEt;
-    private ImageView mSearchIv;
+    private RelativeLayout searchRl;
     private Fragment mRealorderFragment, mVirtualorderFragment;
     private List<Fragment> mFragmentList;
     private FragmentManager mFragmentManager;
@@ -41,33 +40,39 @@ public class OrderActivity extends AppCompatActivity implements OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_myorder);
+        rootView = View.inflate(this, R.layout.activity_myorder, null);
+        setContentView(rootView);
         initView();
-        initManager();
+        initData();
         setListener();
         receiveIntent();
     }
 
     private void initView() {
-        mBackRl = (RelativeLayout) findViewById(R.id.rl_myorder_back);
-        mRealorderRl = (RelativeLayout) findViewById(R.id.rl_myorder_realorder);
-        mVirtualorderRl = (RelativeLayout) findViewById(R.id.rl_myorder_virtualorder);
-        mRealorderGd = (GradientDrawable) mRealorderRl.getBackground();
-        mVirtualorderGd = (GradientDrawable) mVirtualorderRl.getBackground();
-        mRealorderTv = (TextView) findViewById(R.id.tv_myorder_realorder);
-        mVirtualorderTv = (TextView) findViewById(R.id.tv_myorder_virtualorder);
-        mSearchEt = (EditText) findViewById(R.id.et_myorder_search);
-        mSearchIv = (ImageView) findViewById(R.id.iv_myorder_search);
+        initRoot();
     }
 
-    private void initManager() {
+    private void initRoot() {
+        mBackRl = (RelativeLayout) rootView.findViewById(R.id.rl_myorder_back);
+        mRealorderRl = (RelativeLayout) rootView.findViewById(R.id.rl_myorder_realorder);
+        mVirtualorderRl = (RelativeLayout) rootView.findViewById(R.id.rl_myorder_virtualorder);
+        mRealorderGd = (GradientDrawable) mRealorderRl.getBackground();
+        mVirtualorderGd = (GradientDrawable) mVirtualorderRl.getBackground();
+        mRealorderTv = (TextView) rootView.findViewById(R.id.tv_myorder_realorder);
+        mVirtualorderTv = (TextView) rootView.findViewById(R.id.tv_myorder_virtualorder);
+        mSearchEt = (EditText) rootView.findViewById(R.id.et_myorder_search);
+        searchRl = (RelativeLayout) rootView.findViewById(R.id.rl_order_search);
         mRealorderGd.setColor(Color.RED);
         mRealorderTv.setTextColor(Color.WHITE);
+        mVirtualorderGd.setColor(Color.WHITE);
         mVirtualorderTv.setTextColor(Color.BLACK);
+    }
+
+    private void initData() {
         mFragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
-        mRealorderFragment = new RealorderFragment();
-        mVirtualorderFragment = new VirtualorderFragment();
+        mRealorderFragment = new RealOrderFragment();
+        mVirtualorderFragment = new VirtualOrderFragment();
         mFragmentList = new ArrayList<>();
         mFragmentList.add(mRealorderFragment);
         mFragmentList.add(mVirtualorderFragment);
@@ -79,7 +84,7 @@ public class OrderActivity extends AppCompatActivity implements OnClickListener 
         mBackRl.setOnClickListener(this);
         mRealorderRl.setOnClickListener(this);
         mVirtualorderRl.setOnClickListener(this);
-        mSearchIv.setOnClickListener(this);
+        searchRl.setOnClickListener(this);
     }
 
     @Override
@@ -94,9 +99,11 @@ public class OrderActivity extends AppCompatActivity implements OnClickListener 
             case R.id.rl_myorder_virtualorder:
                 changeFragment(1);
                 break;
-            case R.id.iv_myorder_search:
+            case R.id.rl_order_search:
                 if (!mSearchEt.getText().toString().isEmpty()) {
-                    Toast.makeText(OrderActivity.this, mSearchEt.getText().toString(), Toast.LENGTH_SHORT).show();
+                    ToastUtils.toast(OrderActivity.this, mSearchEt.getText().toString());
+                } else {
+                    ToastUtils.toast(OrderActivity.this, "请输入搜索内容");
                 }
                 break;
         }
@@ -134,9 +141,6 @@ public class OrderActivity extends AppCompatActivity implements OnClickListener 
         }
     }
 
-    /**
-     * 接收intent
-     */
     private void receiveIntent() {
         Intent intent = getIntent();
         Bundle bundle = new Bundle();

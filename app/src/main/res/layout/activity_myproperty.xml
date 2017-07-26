@@ -16,7 +16,7 @@
             android:id="@+id/rl_myproperty_back"
             android:layout_width="@dimen/x40"
             android:layout_height="match_parent"
-            android:background="@drawable/default_gray_selector"
+            android:background="@drawable/selector_press"
             android:padding="@dimen/x10">
 
             <ImageView
@@ -33,248 +33,270 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/rl_myproperty_accountbalance"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/srl_property"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/default_gray_selector"
-        android:clickable="true">
+        android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:id="@+id/rl_account_balance"
-            style="@style/rl_accountbalance">
-
-            <ImageView
-                android:id="@+id/iv_myproperty_accountbalance"
-                style="@style/iv_accountbalance"
-                android:src="@mipmap/account_balance" />
-
-            <TextView
-                style="@style/tv_accountbalance_one"
-                android:layout_alignBottom="@+id/iv_myproperty_accountbalance"
-                android:layout_toRightOf="@+id/iv_myproperty_accountbalance"
-                android:text="账户余额" />
-
-            <TextView
-                android:id="@+id/tv_myproperty_account"
-                style="@style/tv_accountbalance_two"
-                android:layout_alignLeft="@+id/iv_myproperty_accountbalance"
-                android:layout_below="@+id/iv_myproperty_accountbalance"
-                android:text="预存款账户余额、充值及提现明细" />
-
-            <ImageView
-                android:id="@+id/iv_myproperty_accountbalance_more"
-                style="@style/iv_mine_order_more"
-                android:src="@mipmap/more_black" />
-
-            <TextView
-                style="@style/tv_accountbalance_three"
-                android:layout_toLeftOf="@+id/iv_myproperty_accountbalance_more"
-                android:text="0.00元" />
-
-        </RelativeLayout>
-
-        <View
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/rl_account_balance"
-            android:layout_marginTop="@dimen/x10"
-            android:background="#F5F5F5" />
+            android:layout_height="match_parent">
 
-    </RelativeLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/rl_myproperty_prepaidphonecardaccountbalance"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/default_gray_selector"
-        android:clickable="true">
+                <RelativeLayout
+                    android:id="@+id/rl_myproperty_accountbalance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selector_press"
+                    android:clickable="true">
 
-        <RelativeLayout
-            android:id="@+id/rl_prepaidcard"
-            style="@style/rl_accountbalance">
+                    <RelativeLayout
+                        android:id="@+id/rl_account_balance"
+                        style="@style/rl_accountbalance">
 
-            <ImageView
-                android:id="@+id/iv_myproperty_prepaidcardaccountbalance"
-                style="@style/iv_accountbalance"
-                android:src="@mipmap/prepaidcard_account_balance" />
+                        <ImageView
+                            android:id="@+id/iv_myproperty_accountbalance"
+                            style="@style/iv_accountbalance"
+                            android:src="@mipmap/account_balance" />
 
-            <TextView
-                style="@style/tv_accountbalance_one"
-                android:layout_toRightOf="@+id/iv_myproperty_prepaidcardaccountbalance"
-                android:text="充值卡余额" />
+                        <TextView
+                            style="@style/tv_accountbalance_one"
+                            android:layout_alignBottom="@+id/iv_myproperty_accountbalance"
+                            android:layout_toRightOf="@+id/iv_myproperty_accountbalance"
+                            android:text="账户余额" />
 
-            <TextView
-                android:id="@+id/tv_myproperty_prepaidcard"
-                style="@style/tv_accountbalance_two"
-                android:layout_alignLeft="@+id/iv_myproperty_prepaidcardaccountbalance"
-                android:layout_below="@+id/iv_myproperty_prepaidcardaccountbalance"
-                android:text="充值卡账户余额以及卡密充值操作" />
+                        <TextView
+                            android:id="@+id/tv_myproperty_account"
+                            style="@style/tv_accountbalance_two"
+                            android:layout_alignLeft="@+id/iv_myproperty_accountbalance"
+                            android:layout_below="@+id/iv_myproperty_accountbalance"
+                            android:text="预存款账户余额、充值及提现明细" />
 
-            <ImageView
-                android:id="@+id/iv_myproperty_prepaidcardaccountbalance_more"
-                style="@style/iv_mine_order_more"
-                android:src="@mipmap/more_black" />
+                        <ImageView
+                            android:id="@+id/iv_myproperty_accountbalance_more"
+                            style="@style/iv_mine_order_more"
+                            android:src="@mipmap/more_black" />
 
-            <TextView
-                style="@style/tv_accountbalance_three"
-                android:layout_toLeftOf="@+id/iv_myproperty_prepaidcardaccountbalance_more"
-                android:text="0.00元" />
+                        <TextView
+                            android:id="@+id/tv_myproperty_available_rc_balance"
+                            style="@style/tv_accountbalance_three"
+                            android:layout_toLeftOf="@+id/iv_myproperty_accountbalance_more" />
 
-        </RelativeLayout>
+                    </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/rl_prepaidcard"
-            android:layout_marginTop="10dp"
-            android:background="#F5F5F5" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/rl_account_balance"
+                        android:layout_marginTop="@dimen/x10"
+                        android:background="#F5F5F5" />
 
-    </RelativeLayout>
+                </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/rl_myproperty_voucher"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/default_gray_selector"
-        android:clickable="true">
+                <RelativeLayout
+                    android:id="@+id/rl_myproperty_prepaidphonecardaccountbalance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selector_press"
+                    android:clickable="true">
 
-        <RelativeLayout
-            android:id="@+id/rl_storevoucher"
-            style="@style/rl_accountbalance">
+                    <RelativeLayout
+                        android:id="@+id/rl_prepaidcard"
+                        style="@style/rl_accountbalance">
 
-            <ImageView
-                android:id="@+id/iv_myproperty_storevouchers"
-                style="@style/iv_accountbalance"
-                android:src="@mipmap/store_voucher" />
+                        <ImageView
+                            android:id="@+id/iv_myproperty_prepaidcardaccountbalance"
+                            style="@style/iv_accountbalance"
+                            android:src="@mipmap/prepaidcard_account_balance" />
 
-            <TextView
-                style="@style/tv_accountbalance_one"
-                android:layout_toRightOf="@+id/iv_myproperty_storevouchers"
-                android:text="店铺代金券" />
+                        <TextView
+                            style="@style/tv_accountbalance_one"
+                            android:layout_toRightOf="@+id/iv_myproperty_prepaidcardaccountbalance"
+                            android:text="充值卡余额" />
 
-            <TextView
-                android:id="@+id/tv_myproperty_store"
-                style="@style/tv_accountbalance_two"
-                android:layout_alignLeft="@+id/iv_myproperty_storevouchers"
-                android:layout_below="@+id/iv_myproperty_storevouchers"
-                android:text="店铺代金券使用情况以及卡密兑换代金券操作" />
+                        <TextView
+                            android:id="@+id/tv_myproperty_prepaidcard"
+                            style="@style/tv_accountbalance_two"
+                            android:layout_alignLeft="@+id/iv_myproperty_prepaidcardaccountbalance"
+                            android:layout_below="@+id/iv_myproperty_prepaidcardaccountbalance"
+                            android:text="充值卡账户余额以及卡密充值操作" />
 
-            <ImageView
-                android:id="@+id/iv_myproperty_storevouchers_more"
-                style="@style/iv_mine_order_more"
-                android:src="@mipmap/more_black" />
+                        <ImageView
+                            android:id="@+id/iv_myproperty_prepaidcardaccountbalance_more"
+                            style="@style/iv_mine_order_more"
+                            android:src="@mipmap/more_black" />
 
-            <TextView
-                style="@style/tv_accountbalance_three"
-                android:layout_toLeftOf="@+id/iv_myproperty_storevouchers_more"
-                android:text="0张" />
+                        <TextView
+                            android:id="@+id/tv_myproperty_predepoit"
+                            style="@style/tv_accountbalance_three"
+                            android:layout_toLeftOf="@+id/iv_myproperty_prepaidcardaccountbalance_more" />
 
-        </RelativeLayout>
+                    </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/rl_storevoucher"
-            android:layout_marginTop="10dp"
-            android:background="#F5F5F5" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@+id/rl_prepaidcard"
+                        android:layout_marginTop="10dp"
+                        android:background="#F5F5F5" />
 
-    </RelativeLayout>
+                </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/rl_myproperty_platredbag"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/default_gray_selector"
-        android:clickable="true">
+                <RelativeLayout
+                    android:id="@+id/rl_myproperty_voucher"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selector_press"
+                    android:clickable="true">
 
-        <RelativeLayout
-            android:id="@+id/rl_platformredbag"
-            style="@style/rl_accountbalance">
+                    <RelativeLayout
+                        android:id="@+id/rl_storevoucher"
+                        style="@style/rl_accountbalance">
 
-            <ImageView
-                android:id="@+id/iv_myproperty_platformredbag"
-                style="@style/iv_accountbalance"
-                android:src="@mipmap/plat_redbeg" />
+                        <ImageView
+                            android:id="@+id/iv_myproperty_storevouchers"
+                            style="@style/iv_accountbalance"
+                            android:src="@mipmap/store_voucher" />
 
-            <TextView
-                style="@style/tv_accountbalance_one"
-                android:layout_toRightOf="@+id/iv_myproperty_platformredbag"
-                android:text="平台红包" />
+                        <TextView
+                            style="@style/tv_accountbalance_one"
+                            android:layout_toRightOf="@+id/iv_myproperty_storevouchers"
+                            android:text="店铺代金券" />
 
-            <TextView
-                android:id="@+id/tv_myproperty_platform"
-                style="@style/tv_accountbalance_two"
-                android:layout_alignLeft="@+id/iv_myproperty_platformredbag"
-                android:layout_below="@+id/iv_myproperty_platformredbag"
-                android:text="平台红包使用情况以及卡密领取红包操作" />
+                        <TextView
+                            android:id="@+id/tv_myproperty_store"
+                            style="@style/tv_accountbalance_two"
+                            android:layout_alignLeft="@+id/iv_myproperty_storevouchers"
+                            android:layout_below="@+id/iv_myproperty_storevouchers"
+                            android:text="店铺代金券使用情况以及卡密兑换代金券操作" />
 
-            <ImageView
-                android:id="@+id/iv_myproperty_platformredbag_more"
-                style="@style/iv_mine_order_more"
-                android:src="@mipmap/more_black" />
+                        <ImageView
+                            android:id="@+id/iv_myproperty_storevouchers_more"
+                            style="@style/iv_mine_order_more"
+                            android:src="@mipmap/more_black" />
 
-            <TextView
-                style="@style/tv_accountbalance_three"
-                android:layout_toLeftOf="@+id/iv_myproperty_platformredbag_more"
-                android:text="0个" />
+                        <TextView
+                            android:id="@+id/tv_myproperty_voucher"
+                            style="@style/tv_accountbalance_three"
+                            android:layout_toLeftOf="@+id/iv_myproperty_storevouchers_more" />
 
-        </RelativeLayout>
+                    </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/rl_platformredbag"
-            android:layout_marginTop="10dp"
-            android:background="#F5F5F5" />
-    </RelativeLayout>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@+id/rl_storevoucher"
+                        android:layout_marginTop="10dp"
+                        android:background="#F5F5F5" />
 
-    <RelativeLayout
-        android:id="@+id/rl_myproperty_vipintegrate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/default_gray_selector"
-        android:clickable="true">
+                </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/rl_vipintegrate"
-            style="@style/rl_accountbalance">
+                <RelativeLayout
+                    android:id="@+id/rl_myproperty_platredbag"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selector_press"
+                    android:clickable="true">
 
-            <ImageView
-                android:id="@+id/iv_myproperty_memberpoints"
-                style="@style/iv_accountbalance"
-                android:src="@mipmap/vip_integrate" />
+                    <RelativeLayout
+                        android:id="@+id/rl_platformredbag"
+                        style="@style/rl_accountbalance">
 
-            <TextView
-                style="@style/tv_accountbalance_one"
-                android:layout_toRightOf="@+id/iv_myproperty_memberpoints"
-                android:text="会员积分" />
+                        <ImageView
+                            android:id="@+id/iv_myproperty_platformredbag"
+                            style="@style/iv_accountbalance"
+                            android:src="@mipmap/plat_redbeg" />
 
-            <TextView
-                android:id="@+id/tv_myproperty_member"
-                style="@style/tv_accountbalance_two"
-                android:layout_alignLeft="@+id/iv_myproperty_memberpoints"
-                android:layout_below="@+id/iv_myproperty_memberpoints"
-                android:text="会员积分获取及消费日志" />
+                        <TextView
+                            style="@style/tv_accountbalance_one"
+                            android:layout_toRightOf="@+id/iv_myproperty_platformredbag"
+                            android:text="平台红包" />
 
-            <ImageView
-                android:id="@+id/iv_myproperty_memberpoints_more"
-                style="@style/iv_mine_order_more"
-                android:src="@mipmap/more_black" />
+                        <TextView
+                            android:id="@+id/tv_myproperty_platform"
+                            style="@style/tv_accountbalance_two"
+                            android:layout_alignLeft="@+id/iv_myproperty_platformredbag"
+                            android:layout_below="@+id/iv_myproperty_platformredbag"
+                            android:text="平台红包使用情况以及卡密领取红包操作" />
 
-            <TextView
-                style="@style/tv_accountbalance_three"
-                android:layout_toLeftOf="@+id/iv_myproperty_memberpoints_more"
-                android:text="10745分" />
+                        <ImageView
+                            android:id="@+id/iv_myproperty_platformredbag_more"
+                            style="@style/iv_mine_order_more"
+                            android:src="@mipmap/more_black" />
 
-        </RelativeLayout>
+                        <TextView
+                            android:id="@+id/tv_myproperty_redpacket"
+                            style="@style/tv_accountbalance_three"
+                            android:layout_toLeftOf="@+id/iv_myproperty_platformredbag_more" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/rl_vipintegrate"
-            android:layout_marginTop="10dp"
-            android:background="#F5F5F5" />
-    </RelativeLayout>
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@+id/rl_platformredbag"
+                        android:layout_marginTop="10dp"
+                        android:background="#F5F5F5" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_myproperty_vipintegrate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selector_press"
+                    android:clickable="true">
+
+                    <RelativeLayout
+                        android:id="@+id/rl_vipintegrate"
+                        style="@style/rl_accountbalance">
+
+                        <ImageView
+                            android:id="@+id/iv_myproperty_memberpoints"
+                            style="@style/iv_accountbalance"
+                            android:src="@mipmap/vip_integrate" />
+
+                        <TextView
+                            style="@style/tv_accountbalance_one"
+                            android:layout_toRightOf="@+id/iv_myproperty_memberpoints"
+                            android:text="会员积分" />
+
+                        <TextView
+                            android:id="@+id/tv_myproperty_member"
+                            style="@style/tv_accountbalance_two"
+                            android:layout_alignLeft="@+id/iv_myproperty_memberpoints"
+                            android:layout_below="@+id/iv_myproperty_memberpoints"
+                            android:text="会员积分获取及消费日志" />
+
+                        <ImageView
+                            android:id="@+id/iv_myproperty_memberpoints_more"
+                            style="@style/iv_mine_order_more"
+                            android:src="@mipmap/more_black" />
+
+                        <TextView
+                            android:id="@+id/tv_myproperty_point"
+                            style="@style/tv_accountbalance_three"
+                            android:layout_toLeftOf="@+id/iv_myproperty_memberpoints_more" />
+
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@+id/rl_vipintegrate"
+                        android:layout_marginTop="10dp"
+                        android:background="#F5F5F5" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

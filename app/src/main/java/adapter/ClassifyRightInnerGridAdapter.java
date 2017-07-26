@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.gangjianwang.www.gangjianwang.ContractProjectActivity;
+import com.gangjianwang.www.gangjianwang.StoreActivity;
 import com.gangjianwang.www.gangjianwang.R;
 
 import java.util.List;
@@ -59,7 +59,7 @@ public class ClassifyRightInnerGridAdapter extends BaseAdapter {
         holder.nameRl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, ContractProjectActivity.class);
+                Intent intent = new Intent(context, StoreActivity.class);
                 intent.putExtra("gc_id", classifyRightInner.getId());
                 context.startActivity(intent);
             }

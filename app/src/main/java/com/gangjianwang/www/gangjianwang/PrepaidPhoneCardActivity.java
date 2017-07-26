@@ -25,9 +25,9 @@ public class PrepaidPhoneCardActivity extends AppCompatActivity implements View.
     private GradientDrawable mAccountGd, mPayCashGd;
     private TextView mAccountTv, mPayCashTv;
 
-    private FragmentManager mFragmentManager;
-    private List<Fragment> mFragmentList;
-    private int curIndex;
+    private FragmentManager fragmentManager;
+    private List<Fragment> fragmentList = new ArrayList<>();
+    private int curPostion, tarPostion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +35,7 @@ public class PrepaidPhoneCardActivity extends AppCompatActivity implements View.
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_prepaid_phone_card);
         initView();
-        initManager();
+        initData();
         setLisenter();
     }
 
@@ -47,22 +47,19 @@ public class PrepaidPhoneCardActivity extends AppCompatActivity implements View.
         mPayCashGd = (GradientDrawable) mPayCashRl.getBackground();
         mAccountTv = (TextView) findViewById(R.id.tv_prepaidcard_account);
         mPayCashTv = (TextView) findViewById(R.id.tv_prepaidcard_paycash);
-
         mAccountGd.setColor(Color.RED);
         mAccountTv.setTextColor(Color.WHITE);
     }
 
-    private void initManager() {
-        mFragmentManager = getSupportFragmentManager();
-        mFragmentList = new ArrayList<>();
+    private void initData() {
+        fragmentManager = getSupportFragmentManager();
         PrepaidCardAccountFragment prepaidCardAccountFragment = new PrepaidCardAccountFragment();
         PrepaidCardPayCashFragment prepaidCardPayCashFragment = new PrepaidCardPayCashFragment();
-        mFragmentList.add(prepaidCardAccountFragment);
-        mFragmentList.add(prepaidCardPayCashFragment);
-        FragmentTransaction transaction = mFragmentManager.beginTransaction();
-        transaction.add(R.id.ll_prepaidcard_sit, mFragmentList.get(0));
+        fragmentList.add(prepaidCardAccountFragment);
+        fragmentList.add(prepaidCardPayCashFragment);
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.add(R.id.ll_prepaidcard_sit, fragmentList.get(curPostion));
         transaction.commit();
-        curIndex = 0;
     }
 
     private void setLisenter() {
@@ -78,48 +75,45 @@ public class PrepaidPhoneCardActivity extends AppCompatActivity implements View.
                 finish();
                 break;
             case R.id.rl_prepaidcard_account:
-                select(0);
-                changeFragment(0);
+                tarPostion = 0;
+                changeFragment();
                 break;
             case R.id.rl_prepaidcard_paycash:
-                select(1);
-                changeFragment(1);
+                tarPostion = 1;
+                changeFragment();
                 break;
         }
     }
 
-    private void select(int a) {
-        switch (a) {
-            case 0:
-                mAccountGd.setColor(Color.RED);
-                mPayCashGd.setColor(Color.WHITE);
-                mAccountTv.setTextColor(Color.WHITE);
-                mPayCashTv.setTextColor(Color.BLACK);
-                break;
-            case 1:
-                mAccountGd.setColor(Color.WHITE);
-                mPayCashGd.setColor(Color.RED);
-                mAccountTv.setTextColor(Color.BLACK);
-                mPayCashTv.setTextColor(Color.WHITE);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void changeFragment(int b) {
-        if (curIndex != b) {
-            FragmentTransaction transaction = mFragmentManager.beginTransaction();
-            Fragment curFragment = mFragmentList.get(curIndex);
-            Fragment tarFragment = mFragmentList.get(b);
+    private void changeFragment() {
+        if (curPostion != tarPostion) {
+            switch (tarPostion) {
+                case 0:
+                    mAccountGd.setColor(Color.RED);
+                    mPayCashGd.setColor(Color.WHITE);
+                    mAccountTv.setTextColor(Color.WHITE);
+                    mPayCashTv.setTextColor(Color.BLACK);
+                    break;
+                case 1:
+                    mAccountGd.setColor(Color.WHITE);
+                    mPayCashGd.setColor(Color.RED);
+                    mAccountTv.setTextColor(Color.BLACK);
+                    mPayCashTv.setTextColor(Color.WHITE);
+                    break;
+                default:
+                    break;
+            }
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            Fragment curFragment = fragmentList.get(curPostion);
+            Fragment tarFragment = fragmentList.get(tarPostion);
             transaction.hide(curFragment);
-            if(tarFragment.isAdded()){
+            if (tarFragment.isAdded()) {
                 transaction.show(tarFragment);
-            }else{
-                transaction.replace(R.id.ll_prepaidcard_sit,tarFragment);
+            } else {
+                transaction.add(R.id.ll_prepaidcard_sit, tarFragment);
             }
             transaction.commit();
-            curIndex = b;
+            curPostion = tarPostion;
         }
     }
 }

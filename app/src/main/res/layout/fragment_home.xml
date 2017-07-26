@@ -2,19 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
     android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/rl_homefrag_up"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/x40">
+        android:layout_height="@dimen/x40"
+        android:background="@android:color/white">
 
         <RelativeLayout
+            android:background="@drawable/selector_press"
             android:id="@+id/rl_home_changecity"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@drawable/default_gray_selector">
+            android:layout_centerVertical="true">
 
             <LinearLayout
                 android:layout_width="@dimen/x90"
@@ -49,12 +50,13 @@
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_centerHorizontal="true">
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true">
 
             <ImageView
-                android:layout_width="@dimen/x100"
-                android:layout_height="@dimen/x30"
+                android:layout_width="@dimen/x120"
+                android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:scaleType="fitXY"
                 android:src="@mipmap/app_logo" />
@@ -62,38 +64,38 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:background="@drawable/selector_press"
             android:id="@+id/rl_home_option"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:background="@drawable/default_gray_selector">
+            android:layout_centerVertical="true">
 
             <ImageView
                 android:id="@+id/iv_home_option"
-                android:layout_width="@dimen/x25"
+                android:layout_width="@dimen/x20"
                 android:layout_height="@dimen/x20"
                 android:layout_centerInParent="true"
-                android:layout_marginLeft="@dimen/x5"
-                android:layout_marginRight="@dimen/x5"
+                android:layout_margin="@dimen/x10"
                 android:scaleType="fitXY"
                 android:src="@mipmap/option_r" />
 
         </RelativeLayout>
 
         <RelativeLayout
+            android:background="@drawable/selector_press"
             android:id="@+id/rl_home_search"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_toLeftOf="@+id/rl_home_option"
-            android:background="@drawable/default_gray_selector">
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/rl_home_option">
 
             <ImageView
                 android:id="@+id/iv_home_search"
                 android:layout_width="@dimen/x20"
                 android:layout_height="@dimen/x20"
                 android:layout_centerInParent="true"
-                android:layout_marginLeft="@dimen/x5"
-                android:layout_marginRight="@dimen/x5"
+                android:layout_margin="@dimen/x10"
                 android:scaleType="fitXY"
                 android:src="@mipmap/search_b" />
 

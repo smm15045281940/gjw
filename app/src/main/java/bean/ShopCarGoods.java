@@ -7,21 +7,13 @@ package bean;
 public class ShopCarGoods {
 
     private boolean isChecked;
+    private String cartId;
+    private String storeId;
     private String goodsName;
     private String goodsSize;
     private String goodsPrice;
-    private String goodsCount;
-
-    public ShopCarGoods() {
-    }
-
-    public ShopCarGoods(boolean isChecked, String goodsName, String goodsSize, String goodsPrice, String goodsCount) {
-        this.isChecked = isChecked;
-        this.goodsName = goodsName;
-        this.goodsSize = goodsSize;
-        this.goodsPrice = goodsPrice;
-        this.goodsCount = goodsCount;
-    }
+    private String goodsImageUrl;
+    private String goodsNum;
 
     public boolean isChecked() {
         return isChecked;
@@ -31,8 +23,24 @@ public class ShopCarGoods {
         isChecked = checked;
     }
 
+    public String getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
+    }
+
     public String getGoodsName() {
         return goodsName;
+    }
+
+    public String getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(String cartId) {
+        this.cartId = cartId;
     }
 
     public void setGoodsName(String goodsName) {
@@ -55,11 +63,19 @@ public class ShopCarGoods {
         this.goodsPrice = goodsPrice;
     }
 
-    public String getGoodsCount() {
-        return goodsCount;
+    public String getGoodsImageUrl() {
+        return goodsImageUrl;
     }
 
-    public void setGoodsCount(String goodsCount) {
-        this.goodsCount = goodsCount;
+    public void setGoodsImageUrl(String goodsImageUrl) {
+        this.goodsImageUrl = goodsImageUrl;
+    }
+
+    public String getGoodsNum() {
+        return goodsNum;
+    }
+
+    public void setGoodsNum(String goodsNum) {
+        this.goodsNum = goodsNum;
     }
 }

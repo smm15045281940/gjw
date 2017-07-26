@@ -70,7 +70,7 @@ public class ClassifyRightAdapter extends BaseAdapter {
         });
         ClassifyRightInnerGridAdapter gridAdapter = new ClassifyRightInnerGridAdapter(context, classifyRightOuter.getList());
         holder.gv.setAdapter(gridAdapter);
-        HeightUtils.setGridViewHeight(holder.gv);
+        HeightUtils.setGridViewHeight(holder.gv,3);
         return convertView;
     }
 

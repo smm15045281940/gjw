@@ -67,13 +67,4 @@
         android:layout_above="@+id/rl_receiveaddressmanage_addreceiveaddress"
         android:layout_below="@+id/rl_receiveaddressmanage_topbar" />
 
-    <TextView
-        android:id="@+id/tv_receiveaddressmanage_empty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="invisible"
-        android:text="尚无收货地址"
-        android:textSize="@dimen/x15" />
-
 </RelativeLayout>

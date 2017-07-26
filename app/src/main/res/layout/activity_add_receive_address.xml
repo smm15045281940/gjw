@@ -10,7 +10,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@android:color/white">
 
         <RelativeLayout
             android:id="@+id/rl_addreceiveaddress_back"
@@ -37,6 +38,11 @@
             android:textSize="@dimen/x18" />
 
     </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x1"
+        android:background="@android:color/darker_gray" />
 
     <ScrollView
         android:layout_width="match_parent"

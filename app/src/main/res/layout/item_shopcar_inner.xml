@@ -20,22 +20,25 @@
             android:layout_width="@dimen/x50"
             android:layout_height="@dimen/x50"
             android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/x10"
             android:layout_toRightOf="@+id/cb_item_shopcar_inner"
             android:scaleType="fitXY"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@mipmap/img_default" />
 
         <TextView
             android:id="@+id/tv_item_shopcar_inner_goodsname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/iv_item_shopcar_inner_goodsicon"
-            android:text="goodsName" />
+            android:text="goodsName"
+            android:textColor="@android:color/black" />
 
         <TextView
             android:id="@+id/tv_item_shopcar_inner_goodssize"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_item_shopcar_inner_goodsname"
+            android:layout_marginTop="@dimen/x5"
             android:layout_toRightOf="@+id/iv_item_shopcar_inner_goodsicon"
             android:text="goodsSize" />
 
@@ -44,15 +47,60 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_item_shopcar_inner_goodssize"
+            android:layout_marginTop="@dimen/x5"
             android:layout_toRightOf="@+id/iv_item_shopcar_inner_goodsicon"
-            android:text="goodsPrice" />
+            android:text="goodsPrice"
+            android:textColor="@android:color/holo_red_light" />
 
         <ImageView
-            android:layout_width="@dimen/x10"
-            android:layout_height="@dimen/x10"
+            android:id="@+id/iv_item_shopcar_inner_delete"
+            android:layout_width="@dimen/x15"
+            android:layout_height="@dimen/x15"
             android:layout_alignParentRight="true"
             android:scaleType="fitXY"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@mipmap/del_b" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/tv_item_shopcar_inner_goodsprice"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/shape_shopcar_rec_cir"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_item_shopcar_inner_goodsnum_sub"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_shopcar_sub"
+                android:paddingBottom="@dimen/x5"
+                android:paddingLeft="@dimen/x10"
+                android:paddingRight="@dimen/x10"
+                android:paddingTop="@dimen/x5"
+                android:text="－" />
+
+            <TextView
+                android:id="@+id/tv_item_shopcar_inner_goodsnum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/x15"
+                android:layout_marginRight="@dimen/x15"
+                android:text="1"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/tv_item_shopcar_inner_goodsnum_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_shopcar_add"
+                android:paddingBottom="@dimen/x5"
+                android:paddingLeft="@dimen/x10"
+                android:paddingRight="@dimen/x10"
+                android:paddingTop="@dimen/x5"
+                android:text="＋" />
+
+        </LinearLayout>
 
     </RelativeLayout>
 

@@ -11,16 +11,16 @@
         <LinearLayout
             android:id="@+id/ll_goodsdetailgoods_bottom"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/x40"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:background="@drawable/goodsdetailgoods_bottom_shape"
             android:orientation="horizontal">
 
             <RelativeLayout
                 android:id="@+id/rl_goodsdetailgoods_customservice"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:background="@drawable/selector_press"
                 android:clickable="true">
 
                 <LinearLayout
@@ -28,6 +28,8 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:layout_marginBottom="@dimen/x5"
+                    android:layout_marginLeft="@dimen/x20"
+                    android:layout_marginRight="@dimen/x20"
                     android:layout_marginTop="@dimen/x5"
                     android:orientation="vertical">
 
@@ -36,7 +38,7 @@
                         android:layout_height="@dimen/x15"
                         android:layout_gravity="center_horizontal"
                         android:scaleType="fitXY"
-                        android:src="@mipmap/img_default" />
+                        android:src="@mipmap/kefu_b" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -58,12 +60,13 @@
 
             <RelativeLayout
                 android:id="@+id/rl_goodsdetailgoods_shopcar"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:background="@drawable/selector_press"
                 android:clickable="true">
 
                 <LinearLayout
+                    android:id="@+id/ll_goodsdetailgoods_shopcar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
@@ -76,7 +79,7 @@
                         android:layout_height="@dimen/x15"
                         android:layout_gravity="center_horizontal"
                         android:scaleType="fitXY"
-                        android:src="@mipmap/img_default" />
+                        android:src="@mipmap/cart_b" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -89,13 +92,27 @@
 
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/tv_goodsdetailgoods_shopcar_cart_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/x10"
+                    android:layout_marginTop="@dimen/x2"
+                    android:layout_toRightOf="@+id/ll_goodsdetailgoods_shopcar"
+                    android:background="@drawable/shape_circle_red"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:textColor="@android:color/holo_red_light"
+                    android:textSize="@dimen/x10"
+                    android:visibility="invisible" />
+
             </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/rl_goodsdetailgoods_buynow"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:background="#ED5564"
                 android:clickable="true">
 
@@ -103,6 +120,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
+                    android:layout_marginLeft="@dimen/x10"
+                    android:layout_marginRight="@dimen/x10"
                     android:text="立即购买"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/x13" />

@@ -30,14 +30,6 @@
 
         </LinearLayout>
 
-        <ImageView
-            android:layout_width="@dimen/x25"
-            android:layout_height="@dimen/x25"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="@dimen/x20"
-            android:scaleType="fitXY"
-            android:src="@mipmap/img_default" />
-
     </RelativeLayout>
 
 </LinearLayout>

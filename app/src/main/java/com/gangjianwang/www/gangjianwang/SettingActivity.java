@@ -1,5 +1,6 @@
 package com.gangjianwang.www.gangjianwang;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -8,14 +9,15 @@ import android.view.View;
 import android.view.Window;
 import android.widget.RelativeLayout;
 
+import config.ParaConfig;
 import utils.UserUtils;
 
 public class SettingActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private View rootView, dialogView;
-    private RelativeLayout mBackRl, mYesRl, mNoRl;
+    private View rootView;
+    private RelativeLayout mBackRl;
     private RelativeLayout mLoginpasswordRl, mPhoneproveRl, mPaypwdRl, mUserfeedback, mQuitRl;
-    private AlertDialog quitAd;
+    private AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +40,19 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initDialog() {
-        dialogView = View.inflate(this, R.layout.dialog_quit, null);
-        mYesRl = (RelativeLayout) dialogView.findViewById(R.id.rl_dialog_quit_yes);
-        mNoRl = (RelativeLayout) dialogView.findViewById(R.id.rl_dialog_quit_no);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(dialogView);
-        quitAd = builder.create();
+        alertDialog = new AlertDialog.Builder(this).setMessage(ParaConfig.QUIT_MESSAGE).setNegativeButton(ParaConfig.DELETE_YES, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                alertDialog.dismiss();
+                quit();
+            }
+        }).setPositiveButton(ParaConfig.DELETE_NO, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                alertDialog.dismiss();
+            }
+        }).create();
+        alertDialog.setCanceledOnTouchOutside(false);
     }
 
     private void setListener() {
@@ -53,8 +62,6 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         mPaypwdRl.setOnClickListener(this);
         mUserfeedback.setOnClickListener(this);
         mQuitRl.setOnClickListener(this);
-        mYesRl.setOnClickListener(this);
-        mNoRl.setOnClickListener(this);
     }
 
     @Override
@@ -76,18 +83,15 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(new Intent(SettingActivity.this, FeedbackActivity.class));
                 break;
             case R.id.rl_setting_safequit:
-                quitAd.show();
-                break;
-            case R.id.rl_dialog_quit_yes:
-                quitAd.dismiss();
-                UserUtils.clearLogin(this);
-                Intent intent = new Intent(SettingActivity.this, HomeActivity.class);
-                intent.putExtra("what", 4);
-                startActivity(intent);
-                break;
-            case R.id.rl_dialog_quit_no:
-                quitAd.dismiss();
+                alertDialog.show();
                 break;
         }
+    }
+
+    private void quit() {
+        UserUtils.clearLogin(this);
+        Intent intent = new Intent(SettingActivity.this, HomeActivity.class);
+        intent.putExtra("what", 4);
+        startActivity(intent);
     }
 }

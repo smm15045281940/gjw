@@ -16,7 +16,7 @@ import bean.GoodsDetailDetail;
  * Created by Administrator on 2017/5/23.
  */
 
-public class GoodsDetailDetailAdapter extends BaseAdapter{
+public class GoodsDetailDetailAdapter extends BaseAdapter {
 
     private Context context;
     private List<GoodsDetailDetail> list;
@@ -44,18 +44,18 @@ public class GoodsDetailDetailAdapter extends BaseAdapter{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        if(convertView == null){
-            convertView = View.inflate(context,R.layout.item_goodsdetaildetail,null);
+        if (convertView == null) {
+            convertView = View.inflate(context, R.layout.item_goodsdetaildetail, null);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
-        }else{
+        } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.iv.setImageResource(R.mipmap.ic_launcher);
+        holder.iv.setImageResource(R.mipmap.img_default);
         return convertView;
     }
 
-    class ViewHolder{
+    class ViewHolder {
 
         private ImageView iv;
 

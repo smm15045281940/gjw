@@ -3,171 +3,187 @@ package com.gangjianwang.www.gangjianwang;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
-import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import adapter.IntegrateAdapter;
+import bean.Integrate;
 import config.NetConfig;
-import customview.MyRefreshListView;
-import customview.OnRefreshListener;
+import config.ParaConfig;
 import utils.ToastUtils;
+import utils.UserUtils;
 
-public class IntegrateActivity extends AppCompatActivity implements View.OnClickListener, OnRefreshListener {
+public class IntegrateActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private View rootView;
     private RelativeLayout mBackRl;
-    private MyRefreshListView mLv;
-    private final int LOAD_FIRST = 1;
-    private final int LOAD_REFRESH = 2;
-    private final int LOAD_LOAD = 3;
-    private ProgressDialog mPd;
-    private Handler handler;
+    private TextView pointsTv;
+    private ListView lv;
+    private ProgressDialog progressDialog;
     private OkHttpClient okHttpClient;
+    private List<Integrate> integrateList = new ArrayList<>();
+    private IntegrateAdapter integrateAdapter;
+    private String point;
+    private String key;
+    private int curPage = 1;
 
-    private List<String> testList = new ArrayList<>();
-    private ArrayAdapter<String> testAdapter;
+    public Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg != null) {
+                progressDialog.dismiss();
+                switch (msg.what) {
+                    case 0:
+                        ToastUtils.toast(IntegrateActivity.this, ParaConfig.NETWORK_ERROR);
+                        break;
+                    case 1:
+                        pointsTv.setText(point);
+                        break;
+                    case 2:
+                        integrateAdapter.notifyDataSetChanged();
+                        break;
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_integrate);
+        rootView = View.inflate(this, R.layout.activity_integrate, null);
+        setContentView(rootView);
         initView();
         initData();
         setData();
         setListener();
-        loadData(LOAD_FIRST);
+        loadData();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeMessages(0);
+        handler.removeMessages(1);
+        handler.removeMessages(2);
+        integrateList.clear();
     }
 
     private void initView() {
-        mBackRl = (RelativeLayout) findViewById(R.id.rl_integrate_back);
-        mLv = (MyRefreshListView) findViewById(R.id.lv_integrate);
+        initRoot();
+    }
+
+    private void initRoot() {
+        mBackRl = (RelativeLayout) rootView.findViewById(R.id.rl_integrate_back);
+        pointsTv = (TextView) rootView.findViewById(R.id.tv_integrate_point);
+        lv = (ListView) rootView.findViewById(R.id.lv_integrate);
     }
 
     private void initData() {
-        mPd = new ProgressDialog(this);
-        mPd.setMessage("加载中..");
-        handler = new Handler();
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCanceledOnTouchOutside(false);
         okHttpClient = new OkHttpClient();
-        testAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, testList);
+        integrateAdapter = new IntegrateAdapter(this, integrateList);
+        key = UserUtils.readLogin(this, true).getKey();
     }
 
     private void setData() {
-        mLv.setAdapter(testAdapter);
+        lv.setAdapter(integrateAdapter);
     }
 
     private void setListener() {
         mBackRl.setOnClickListener(this);
-        mLv.setOnRefreshListener(this);
     }
 
-    private void loadData(int LOAD_STATE) {
-        switch (LOAD_STATE) {
-            case LOAD_FIRST:
-                mPd.show();
-                Request requestFirst = new Request.Builder().url(NetConfig.cityUrl).get().build();
-                okHttpClient.newCall(requestFirst).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Request request, IOException e) {
-                        mPd.dismiss();
-                        ToastUtils.toast(IntegrateActivity.this, "无网络");
-                    }
+    private void loadData() {
+        progressDialog.show();
+        Request requestNum = new Request.Builder().url(NetConfig.integrateNumHeadUrl + key + NetConfig.integrateNumFootUrl).get().build();
+        okHttpClient.newCall(requestNum).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
 
-                    @Override
-                    public void onResponse(Response response) throws IOException {
-                        if (response.isSuccessful()) {
-                            new Thread() {
-                                @Override
-                                public void run() {
-                                    super.run();
-                                    for (int i = 0; i < 20; i++) {
-                                        testList.add("会员积分-首次加载-" + i);
-                                    }
-                                    handler.post(runnableFirst);
-                                }
-                            }.start();
-                        } else {
-                            mPd.dismiss();
-                            ToastUtils.toast(IntegrateActivity.this, "出小差了");
-                        }
-                    }
-                });
-                break;
-            case LOAD_REFRESH:
-                Request requestRefresh = new Request.Builder().url(NetConfig.cityUrl).get().build();
-                okHttpClient.newCall(requestRefresh).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Request request, IOException e) {
-                        mLv.hideHeadView();
-                        ToastUtils.toast(IntegrateActivity.this, "无网络");
-                    }
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    parseJsonNum(response.body().string());
+                } else {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
+        Request request = new Request.Builder().url(NetConfig.integrateHeadUrl + key + NetConfig.integrateFootPageHeadUrl + curPage + NetConfig.integrateFootPageFootUrl).get().build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
 
-                    @Override
-                    public void onResponse(Response response) throws IOException {
-                        if (response.isSuccessful()) {
-                            new Thread() {
-                                @Override
-                                public void run() {
-                                    super.run();
-                                    List<String> tempList = new ArrayList<String>();
-                                    tempList.addAll(testList);
-                                    testList.clear();
-                                    for (int i = 0; i < 1; i++) {
-                                        testList.add("会员积分-刷新" + i);
-                                    }
-                                    testList.addAll(tempList);
-                                    handler.post(runnableRefresh);
-                                }
-                            }.start();
-                        } else {
-                            mLv.hideHeadView();
-                            ToastUtils.toast(IntegrateActivity.this, "出小差了");
-                        }
-                    }
-                });
-                break;
-            case LOAD_LOAD:
-                Request requestLoad = new Request.Builder().url(NetConfig.cityUrl).get().build();
-                okHttpClient.newCall(requestLoad).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Request request, IOException e) {
-                        mLv.hideFootView();
-                        ToastUtils.toast(IntegrateActivity.this, "无网络");
-                    }
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    integrateList.clear();
+                    parseJson(response.body().string());
+                } else {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
+    }
 
-                    @Override
-                    public void onResponse(Response response) throws IOException {
-                        if (response.isSuccessful()) {
-                            new Thread() {
-                                @Override
-                                public void run() {
-                                    super.run();
-                                    for (int i = 0; i < 1; i++) {
-                                        testList.add("会员积分-加载-" + i);
-                                    }
-                                    handler.post(runnableLoad);
-                                }
-                            }.start();
-                        } else {
-                            mLv.hideFootView();
-                            ToastUtils.toast(IntegrateActivity.this, "出小差了");
-                        }
-                    }
-                });
-                break;
-            default:
-                break;
+    private void parseJsonNum(String json) {
+        try {
+            JSONObject objBean = new JSONObject(json);
+            JSONObject objDatas = objBean.optJSONObject("datas");
+            point = objDatas.optString("point");
+            handler.sendEmptyMessage(1);
+            return;
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        handler.sendEmptyMessage(0);
+    }
+
+    private void parseJson(String json) {
+        try {
+            JSONObject objBean = new JSONObject(json);
+            JSONObject objDatas = objBean.optJSONObject("datas");
+            JSONArray arrLogList = objDatas.optJSONArray("log_list");
+            for (int i = 0; i < arrLogList.length(); i++) {
+                Integrate integrate = new Integrate();
+                JSONObject o = arrLogList.optJSONObject(i);
+                integrate.setStageText(o.optString("stagetext"));
+                integrate.setPlDesc(o.optString("pl_desc"));
+                integrate.setPlPoints(o.optString("pl_points"));
+                integrate.setAddTimeText(o.optString("addtimetext"));
+                integrateList.add(integrate);
+            }
+            handler.sendEmptyMessage(2);
+            return;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        handler.sendEmptyMessage(0);
     }
 
     @Override
@@ -180,38 +196,4 @@ public class IntegrateActivity extends AppCompatActivity implements View.OnClick
                 break;
         }
     }
-
-    @Override
-    public void onDownPullRefresh() {
-        loadData(LOAD_REFRESH);
-    }
-
-    @Override
-    public void onLoadingMore() {
-        loadData(LOAD_LOAD);
-    }
-
-    Runnable runnableFirst = new Runnable() {
-        @Override
-        public void run() {
-            mPd.dismiss();
-            testAdapter.notifyDataSetChanged();
-        }
-    };
-
-    Runnable runnableRefresh = new Runnable() {
-        @Override
-        public void run() {
-            mLv.hideHeadView();
-            testAdapter.notifyDataSetChanged();
-        }
-    };
-
-    Runnable runnableLoad = new Runnable() {
-        @Override
-        public void run() {
-            mLv.hideFootView();
-            testAdapter.notifyDataSetChanged();
-        }
-    };
 }

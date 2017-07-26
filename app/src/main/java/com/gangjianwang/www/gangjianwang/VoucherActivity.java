@@ -18,53 +18,55 @@ import java.util.List;
 import fragment.GetVoucherFragment;
 import fragment.MineVoucherFragment;
 
-public class VoucherActivity extends AppCompatActivity implements View.OnClickListener{
+public class VoucherActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private RelativeLayout mBackRl,mMineRl,mGetRl;
-    private GradientDrawable mMineGd,mGetGd;
-    private TextView mMineTv,mGetTv;
-
-    private FragmentManager mFragmentManager;
-    private List<Fragment> mFragmentList;
-    private int curIndex;
+    private View rootView;
+    private RelativeLayout mBackRl, mMineRl, mGetRl;
+    private GradientDrawable mMineGd, mGetGd;
+    private TextView mMineTv, mGetTv;
+    private FragmentManager fragmentManager;
+    private List<Fragment> fragmentList = new ArrayList<>();
+    private int curPosition, tarPostion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_voucher);
+        rootView = View.inflate(this, R.layout.activity_voucher, null);
+        setContentView(rootView);
         initView();
-        initManager();
+        initData();
         setListener();
     }
 
-    private void initView(){
-        mBackRl = (RelativeLayout) findViewById(R.id.rl_voucher_back);
-        mMineRl = (RelativeLayout) findViewById(R.id.rl_voucher_mine);
-        mGetRl = (RelativeLayout) findViewById(R.id.rl_voucher_get);
+    private void initView() {
+        initRoot();
+    }
+
+    private void initRoot() {
+        mBackRl = (RelativeLayout) rootView.findViewById(R.id.rl_voucher_back);
+        mMineRl = (RelativeLayout) rootView.findViewById(R.id.rl_voucher_mine);
+        mGetRl = (RelativeLayout) rootView.findViewById(R.id.rl_voucher_get);
         mMineGd = (GradientDrawable) mMineRl.getBackground();
         mGetGd = (GradientDrawable) mGetRl.getBackground();
-        mMineTv = (TextView) findViewById(R.id.tv_voucher_mine);
-        mGetTv = (TextView) findViewById(R.id.tv_voucher_get);
-
+        mMineTv = (TextView) rootView.findViewById(R.id.tv_voucher_mine);
+        mGetTv = (TextView) rootView.findViewById(R.id.tv_voucher_get);
         mMineGd.setColor(Color.RED);
         mMineTv.setTextColor(Color.WHITE);
     }
 
-    private void initManager(){
-        mFragmentManager = getSupportFragmentManager();
-        mFragmentList = new ArrayList<>();
+    private void initData() {
+        fragmentManager = getSupportFragmentManager();
         MineVoucherFragment mineVoucherFragment = new MineVoucherFragment();
         GetVoucherFragment getVoucherFragment = new GetVoucherFragment();
-        mFragmentList.add(mineVoucherFragment);
-        mFragmentList.add(getVoucherFragment);
-        FragmentTransaction transaction = mFragmentManager.beginTransaction();
-        transaction.add(R.id.ll_voucher_sit,mFragmentList.get(0));
+        fragmentList.add(mineVoucherFragment);
+        fragmentList.add(getVoucherFragment);
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.add(R.id.ll_voucher_sit, fragmentList.get(curPosition));
         transaction.commit();
-        curIndex = 0;
     }
 
-    private void setListener(){
+    private void setListener() {
         mBackRl.setOnClickListener(this);
         mMineRl.setOnClickListener(this);
         mGetRl.setOnClickListener(this);
@@ -72,55 +74,52 @@ public class VoucherActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.rl_voucher_back:
                 finish();
                 break;
             case R.id.rl_voucher_mine:
-                select(0);
-                changeFragment(0);
+                tarPostion = 0;
+                changeFragment();
                 break;
             case R.id.rl_voucher_get:
-                select(1);
-                changeFragment(1);
+                tarPostion = 1;
+                changeFragment();
                 break;
             default:
                 break;
         }
     }
 
-    private void select(int a){
-        switch (a){
-            case 0:
-                mMineGd.setColor(Color.RED);
-                mGetGd.setColor(Color.WHITE);
-                mMineTv.setTextColor(Color.WHITE);
-                mGetTv.setTextColor(Color.BLACK);
-                break;
-            case 1:
-                mMineGd.setColor(Color.WHITE);
-                mGetGd.setColor(Color.RED);
-                mMineTv.setTextColor(Color.BLACK);
-                mGetTv.setTextColor(Color.WHITE);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void changeFragment(int b){
-        if(curIndex!=b){
-            FragmentTransaction transaction = mFragmentManager.beginTransaction();
-            Fragment curFragment = mFragmentList.get(curIndex);
-            Fragment tarFragment = mFragmentList.get(b);
+    private void changeFragment() {
+        if (tarPostion != curPosition) {
+            switch (tarPostion) {
+                case 0:
+                    mMineGd.setColor(Color.RED);
+                    mGetGd.setColor(Color.WHITE);
+                    mMineTv.setTextColor(Color.WHITE);
+                    mGetTv.setTextColor(Color.BLACK);
+                    break;
+                case 1:
+                    mMineGd.setColor(Color.WHITE);
+                    mGetGd.setColor(Color.RED);
+                    mMineTv.setTextColor(Color.BLACK);
+                    mGetTv.setTextColor(Color.WHITE);
+                    break;
+                default:
+                    break;
+            }
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            Fragment curFragment = fragmentList.get(curPosition);
+            Fragment tarFragment = fragmentList.get(tarPostion);
             transaction.hide(curFragment);
-            if(tarFragment.isAdded()){
+            if (tarFragment.isAdded()) {
                 transaction.show(tarFragment);
-            }else{
-                transaction.replace(R.id.ll_voucher_sit,tarFragment);
+            } else {
+                transaction.add(R.id.ll_voucher_sit, tarFragment);
             }
             transaction.commit();
-            curIndex = b;
+            curPosition = tarPostion;
         }
     }
 }

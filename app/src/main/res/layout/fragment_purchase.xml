@@ -1,68 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/rl_purchase_frag"
+    <LinearLayout
+        android:id="@+id/ll_purchase_up"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#F5F5F5">
+        android:layout_height="@dimen/x40"
+        android:background="#F8F8F8"
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:id="@+id/ll_purchase_up"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/x40"
-            android:background="#F8F8F8"
-            android:orientation="horizontal">
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/x5"
+            android:layout_weight="1"
+            android:background="@drawable/shape_purchase_search">
 
-            <RelativeLayout
-                android:layout_width="0dp"
+            <EditText
+                android:id="@+id/et_purchase_search"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="@dimen/x5"
-                android:layout_weight="1"
-                android:background="@drawable/shape_purchase_search">
+                android:background="@null"
+                android:hint="请输入商品标题或采购单号进行搜索"
+                android:singleLine="true"
+                android:textCursorDrawable="@null"
+                android:textSize="@dimen/x13" />
 
-                <EditText
-                    android:id="@+id/et_purchase_search"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="@dimen/x5"
-                    android:background="@null"
-                    android:hint="请输入商品标题或采购单号进行搜索"
-                    android:singleLine="true"
-                    android:textCursorDrawable="@null"
-                    android:textSize="@dimen/x13" />
+        </RelativeLayout>
 
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/rl_purchase_search"
-                android:layout_width="@dimen/x40"
-                android:layout_height="match_parent"
-                android:background="@drawable/default_gray_selector"
-                android:clickable="true"
-                android:padding="@dimen/x10">
-
-                <ImageView
-                    android:id="@+id/iv_purchase_search"
-                    android:layout_width="@dimen/x20"
-                    android:layout_height="@dimen/x20"
-                    android:scaleType="fitXY"
-                    android:src="@mipmap/search_b" />
-
-            </RelativeLayout>
-
-        </LinearLayout>
-
-        <customview.MyRefreshListView
-            android:id="@+id/lv_purchase"
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:id="@+id/rl_purchase_search"
+            android:layout_width="@dimen/x40"
             android:layout_height="match_parent"
-            android:layout_below="@+id/ll_purchase_up"
-            android:layout_marginTop="@dimen/x1"
-            android:divider="@null" />
+            android:background="@drawable/selector_press"
+            android:clickable="true"
+            android:padding="@dimen/x10">
 
-    </RelativeLayout>
+            <ImageView
+                android:id="@+id/iv_purchase_search"
+                android:layout_width="@dimen/x20"
+                android:layout_height="@dimen/x20"
+                android:scaleType="fitXY"
+                android:src="@mipmap/search_b" />
 
-</RelativeLayout>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <customview.MyRefreshListView
+        android:id="@+id/lv_purchase"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@android:color/holo_red_light"
+        android:dividerHeight="@dimen/x1" />
+
+</LinearLayout>

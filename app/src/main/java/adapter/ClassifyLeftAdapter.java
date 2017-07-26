@@ -1,11 +1,13 @@
 package adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gangjianwang.www.gangjianwang.R;
@@ -62,15 +64,22 @@ public class ClassifyLeftAdapter extends BaseAdapter {
             holder.iconIv.setImageResource(R.mipmap.img_default);
         }
         holder.titleTv.setText(classifyLeft.getTitle());
+        if (classifyLeft.isCheck()) {
+            holder.ll.setBackgroundColor(Color.GRAY);
+        } else {
+            holder.ll.setBackgroundColor(Color.WHITE);
+        }
         return convertView;
     }
 
     class ViewHolder {
 
+        private LinearLayout ll;
         private ImageView iconIv;
         private TextView titleTv;
 
         public ViewHolder(View itemView) {
+            ll = (LinearLayout) itemView.findViewById(R.id.ll_item_classify_left);
             iconIv = (ImageView) itemView.findViewById(R.id.iv_item_classify_left_icon);
             titleTv = (TextView) itemView.findViewById(R.id.tv_item_classify_left_title);
         }

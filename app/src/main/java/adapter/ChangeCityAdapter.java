@@ -66,10 +66,8 @@ public class ChangeCityAdapter extends BaseAdapter {
         if (city.getCityName() != null) {
             if (city.getCityId().equals("0")) {
                 holder.cityNameRl.setBackgroundColor(Color.GRAY);
-                holder.cityNameTv.setTextColor(Color.BLACK);
             } else {
-                holder.cityNameRl.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.whitegray_selector));
-                holder.cityNameTv.setTextColor(Color.GRAY);
+                holder.cityNameRl.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.selector_press));
             }
             holder.cityNameTv.setText(city.getCityName());
         }

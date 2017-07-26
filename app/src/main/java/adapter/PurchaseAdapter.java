@@ -25,7 +25,6 @@ public class PurchaseAdapter extends BaseAdapter {
     private List<Purchase> list;
     private ListItemClickHelp callback;
 
-
     public PurchaseAdapter(Context context, List<Purchase> list, ListItemClickHelp callback) {
         this.context = context;
         this.list = list;

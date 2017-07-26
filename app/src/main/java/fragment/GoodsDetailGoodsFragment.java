@@ -1,16 +1,20 @@
 package fragment;
 
 
+import android.Manifest;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
@@ -18,7 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,15 +31,17 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.gangjianwang.www.gangjianwang.ReceiveAreaActivity;
+import com.gangjianwang.www.gangjianwang.ClassifyDetailActivity;
 import com.gangjianwang.www.gangjianwang.HomeActivity;
 import com.gangjianwang.www.gangjianwang.ListItemClickHelp;
-import com.gangjianwang.www.gangjianwang.MakeSureOrderActivity;
+import com.gangjianwang.www.gangjianwang.SureOrderActivity;
 import com.gangjianwang.www.gangjianwang.R;
-import com.gangjianwang.www.gangjianwang.ShopDetailActivity;
+import com.gangjianwang.www.gangjianwang.StoreDetailActivity;
 import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.squareup.picasso.Picasso;
 
@@ -47,23 +53,27 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import adapter.GoodsDetailGoodsHeadGvAdapter;
+import adapter.GoodsDetailClassifyLeftAdapter;
+import adapter.GoodsDetailClassifyTopAdapter;
 import adapter.GoodsDetailGoodsLvAdapter;
 import adapter.MyPagerAdapter;
+import bean.GoodsDetailClassifyLeft;
+import bean.GoodsDetailClassifyTop;
 import bean.GoodsDetailGoods;
 import bean.GoodsDetailOtherGoods;
 import config.NetConfig;
+import config.ParaConfig;
 import customview.FlowLayout;
-import customview.LazyFragment;
 import customview.SizeThickTextView;
 import utils.HeightUtils;
 import utils.ToastUtils;
+import utils.UserUtils;
 
 /**
  * Created by Administrator on 2017/5/23.
  */
 
-public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickListener, ListItemClickHelp {
+public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickListener, ListItemClickHelp, AdapterView.OnItemClickListener {
 
     private View rootView, headView, footView, popView;
     private PopupWindow popWindow;
@@ -85,12 +95,12 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
     private ViewPager headVp;
     private LinearLayout pointsLl;
     private RelativeLayout customServiceRl, shopcarServiceRl, buyNowRl, addShopcarRl;
-    private List<String> leftList = new ArrayList<>();
-    private List<String> rightList = new ArrayList<>();
-    private List<String> gridList = new ArrayList<>();
+    private List<GoodsDetailClassifyLeft> leftList = new ArrayList<>();
+    private GoodsDetailClassifyLeftAdapter leftAdapter;
+    private List<GoodsDetailClassifyTop> gridList = new ArrayList<>();
     private List<ImageView> imageList = new ArrayList<>();
-    private ArrayAdapter<String> leftAdapter;
-    private GoodsDetailGoodsHeadGvAdapter gridAdapter;
+
+    private GoodsDetailClassifyTopAdapter gridAdapter;
     private MyPagerAdapter myPagerAdapter;
 
     private List<GoodsDetailGoods> mMainList = new ArrayList<>();
@@ -103,6 +113,7 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
     private OkHttpClient okHttpClient = new OkHttpClient();
     private ProgressDialog mPd;
     private String goodsId;
+    private String storeId;
     private String result;
 
     private ImageView storeAvatarIv;
@@ -114,45 +125,50 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
     private GoodsDetailGoods goodsDetailGoods;
     private List<String> goodsImageUrlList = new ArrayList<>();
 
+    private TextView cartcountTv;
+    private int cartCount;
+    private String key;
+
     public Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg != null) {
+                mPd.dismiss();
                 switch (msg.what) {
                     case 0:
-                        mPd.dismiss();
-                        ToastUtils.log(getActivity(), "无网络");
+                        ToastUtils.toast(getActivity(), ParaConfig.NETWORK_ERROR);
                         break;
                     case 1:
+                        leftAdapter.notifyDataSetChanged();
+                        gridAdapter.notifyDataSetChanged();
+                        HeightUtils.setGridViewHeight(headGv,3);
+                        if (mOtherList.size() == 0) {
+                            footView.setVisibility(View.GONE);
+                        }
+                        break;
+                    case 2:
                         mPd.dismiss();
+                        goodsDetailGoodsLvAdapter.notifyDataSetChanged();
                         setView();
                         break;
-                }
-            }
-        }
-    };
-
-    public Handler firstloadHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg != null) {
-                if (msg.what == 1) {
-                    mPd.dismiss();
-                    leftAdapter.notifyDataSetChanged();
-                    gridAdapter.notifyDataSetChanged();
+                    case 3:
+                        setCartCountView();
+                        break;
+                    default:
+                        break;
                 }
             }
         }
     };
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Bundle bundle = getArguments();
-        goodsId = bundle.getString("goodsId");
-        ToastUtils.log(getActivity(), goodsId);
+    public void onDestroy() {
+        super.onDestroy();
+        handler.removeMessages(0);
+        handler.removeMessages(1);
+        handler.removeMessages(2);
+        handler.removeMessages(3);
     }
 
     @Nullable
@@ -194,6 +210,8 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
         servicecreditCreditTv = (TextView) rootView.findViewById(R.id.tv_goodsdetailgoods_store_servicecredit_credit);
         deliverycreditTextTv = (TextView) rootView.findViewById(R.id.tv_goodsdetailgoods_store_deliverycredit_text);
         deliverycreditCreditTv = (TextView) rootView.findViewById(R.id.tv_goodsdetailgoods_store_deliverycredit_credit);
+
+        cartcountTv = (TextView) rootView.findViewById(R.id.tv_goodsdetailgoods_shopcar_cart_count);
     }
 
     private void initHead() {
@@ -235,6 +253,7 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
 
     private void initPro() {
         mPd = new ProgressDialog(getActivity());
+        mPd.setCanceledOnTouchOutside(false);
     }
 
     private void initAnim() {
@@ -253,6 +272,10 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
     }
 
     private void initData() {
+        key = UserUtils.readLogin(getActivity(), true).getKey();
+        Bundle bundle = getArguments();
+        goodsId = bundle.getString("goods_id");
+        storeId = bundle.getString("store_id");
         sizeList.add("13");
         sizeList.add("16");
         sizeList.add("19");
@@ -430,29 +453,18 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
     }
 
     private void setData() {
-        leftAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, leftList);
+        leftAdapter = new GoodsDetailClassifyLeftAdapter(getActivity(), leftList);
         leftLv.setAdapter(leftAdapter);
         goodsDetailGoodsLvAdapter = new GoodsDetailGoodsLvAdapter(getActivity(), mMainList, mOtherList, this);
         rightLv.setAdapter(goodsDetailGoodsLvAdapter);
-        gridAdapter = new GoodsDetailGoodsHeadGvAdapter(getActivity(), gridList, this);
+        gridAdapter = new GoodsDetailClassifyTopAdapter(getActivity(), gridList);
         headGv.setAdapter(gridAdapter);
     }
 
     private void loadData() {
-        firstloadHandler.sendEmptyMessageDelayed(1, 1000);
-        leftList.add("圆管");
-        leftList.add("方管");
-        leftList.add("矩管");
-        leftList.add("花管");
-        for (int i = 0; i < 30; i++) {
-            rightList.add("圆管" + i);
-        }
-        for (int i = 0; i < 10; i++) {
-            gridList.add("门系列");
-        }
-        HeightUtils.setGridViewHeight(headGv);
-
         mPd.show();
+        loadLeftTopData();
+        loadCartCountData();
         Request request = new Request.Builder().url(NetConfig.contractprojectDetailHeadUrl + goodsId + NetConfig.contractprojectDetailFootUrl).get().build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -465,11 +477,107 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
                 if (response.isSuccessful()) {
                     result = response.body().string();
                     if (parseJson(result))
-                        handler.sendEmptyMessage(1);
+                        handler.sendEmptyMessage(2);
                 }
             }
         });
 
+    }
+
+    private void loadLeftTopData() {
+        RequestBody body = new FormEncodingBuilder().add("store_id", storeId).add("goods_id", goodsId).build();
+        Request request = new Request.Builder().url(NetConfig.goodsDetailClassifyUrl).post(body).build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    if (parseLeftJson(response.body().string()))
+                        handler.sendEmptyMessage(1);
+                } else {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
+    }
+
+    private void loadCartCountData() {
+        RequestBody body = new FormEncodingBuilder().add("key", key).build();
+        Request request = new Request.Builder().url(NetConfig.cartCountUrl).post(body).build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful() && parseCartCountJson(response.body().string())) {
+                    handler.sendEmptyMessage(3);
+                } else {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
+    }
+
+    private boolean parseCartCountJson(String json) {
+        try {
+            JSONObject objBean = new JSONObject(json);
+            if (objBean.optInt("code") == 200) {
+                JSONObject objDatas = objBean.optJSONObject("datas");
+                cartCount = objDatas.optInt("cart_count");
+                return true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private void setCartCountView() {
+        if (cartCount != 0) {
+            cartcountTv.setText(cartCount + "");
+            cartcountTv.setVisibility(View.VISIBLE);
+        } else {
+            cartcountTv.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private boolean parseLeftJson(String json) {
+        try {
+            JSONObject objBean = new JSONObject(json);
+            if (objBean.optInt("code") == 200) {
+                JSONObject objDatas = objBean.optJSONObject("datas");
+                JSONArray arrStoreGoodsClass3 = objDatas.optJSONArray("store_goods_class_3");
+                for (int i = 0; i < arrStoreGoodsClass3.length(); i++) {
+                    JSONObject o = arrStoreGoodsClass3.optJSONObject(i);
+                    GoodsDetailClassifyLeft goodsDetailClassify = new GoodsDetailClassifyLeft();
+                    goodsDetailClassify.setGcId(o.optString("gc_id"));
+                    goodsDetailClassify.setGcName(o.optString("gc_name"));
+                    goodsDetailClassify.setGoodsId(o.optString("goods_id"));
+                    goodsDetailClassify.setStyle(o.optString("style"));
+                    leftList.add(goodsDetailClassify);
+                }
+                JSONArray arrStoreGoodsClass2 = objDatas.optJSONArray("store_goods_class_2");
+                for (int i = 0; i < arrStoreGoodsClass2.length(); i++) {
+                    JSONObject o = arrStoreGoodsClass2.optJSONObject(i);
+                    GoodsDetailClassifyTop goodsDetailClassifyTop = new GoodsDetailClassifyTop();
+                    goodsDetailClassifyTop.setGcId(o.optString("gc_id"));
+                    goodsDetailClassifyTop.setGcName(o.optString("gc_name"));
+                    goodsDetailClassifyTop.setStoreId(o.optString("store_id"));
+                    gridList.add(goodsDetailClassifyTop);
+                }
+                return true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private boolean parseJson(String json) {
@@ -487,13 +595,11 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
             goodsDetailGoods.setIfStoreCn(objgoodsHairInfo.optString("if_store_cn"));
             goodsDetailGoods.setContent(objgoodsHairInfo.optString("content"));
             mMainList.add(goodsDetailGoods);
-
             String imgStr = objDatas.optString("goods_image");
             String[] imgArr = imgStr.split(",");
             for (int i = 0; i < imgArr.length; i++) {
                 goodsImageUrlList.add(imgArr[i]);
             }
-
             JSONObject objStoreInfo = objDatas.optJSONObject("store_info");
             storeAvatarUrl = objStoreInfo.optString("store_avatar");
             JSONObject objStoreCredit = objStoreInfo.optJSONObject("store_credit");
@@ -583,13 +689,16 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
         popShopCarRl.setOnClickListener(this);
         popBuyNowRl.setOnClickListener(this);
         popAddShopCarRl.setOnClickListener(this);
+        headGv.setOnItemClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ll_goodsdetailgoods_lefttop:
-                startActivity(new Intent(getActivity(), ShopDetailActivity.class));
+                Intent intentTop = new Intent(getActivity(), StoreDetailActivity.class);
+                intentTop.putExtra("store_id", storeId);
+                startActivity(intentTop);
                 break;
             case R.id.iv_pop_goodsdetailgoods_close:
                 popWindow.dismiss();
@@ -613,14 +722,18 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
                 getActivity().startActivity(intentPop);
                 break;
             case R.id.rl_pop_goodsdetailgoods_buynow:
-                startActivity(new Intent(getActivity(), MakeSureOrderActivity.class));
+                startActivity(new Intent(getActivity(), SureOrderActivity.class));
                 break;
             case R.id.rl_pop_goodsdetailgoods_addshopcar:
                 ToastUtils.toast(getActivity(), "加入购物车");
                 startAnim();
                 break;
             case R.id.rl_goodsdetailgoods_customservice:
-                ToastUtils.toast(getActivity(), "客服");
+                Intent intentKf = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + ParaConfig.SERVICE_PHONE));
+                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                getActivity().startActivity(intentKf);
                 break;
             case R.id.rl_goodsdetailgoods_shopcar:
                 Intent intent = new Intent(getActivity(), HomeActivity.class);
@@ -658,16 +771,16 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
 
     @Override
     public void onClick(View item, View widget, int position, int which, boolean isCheckeed) {
-        switch (which) {
-            case R.id.tv_item_gridview_head_goodsdetailgoods:
-                ToastUtils.toast(getActivity(), gridList.get(position) + ":" + position);
-                break;
-            case R.id.tv_item_goodsdetailgoods_areaname:
-                startActivityForResult(new Intent(getActivity(), ReceiveAreaActivity.class), 1);
-                break;
-            default:
-                break;
-        }
+//        switch (which) {
+//            case R.id.tv_item_gridview_head_goodsdetailgoods:
+//                ToastUtils.toast(getActivity(), gridList.get(position) + ":" + position);
+//                break;
+//            case R.id.tv_item_goodsdetailgoods_areaname:
+//                startActivityForResult(new Intent(getActivity(), ReceiveAreaActivity.class), 1);
+//                break;
+//            default:
+//                break;
+//        }
     }
 
     @Override
@@ -692,5 +805,19 @@ public class GoodsDetailGoodsFragment extends Fragment implements View.OnClickLi
         deliverycreditCreditTv.setText(deliverycreditCredit);
         goodsDetailGoodsLvAdapter.notifyDataSetChanged();
         createVp(goodsImageUrlList.size());
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        switch (parent.getId()) {
+            case R.id.gv_head_goodsdetailgoods:
+                Intent intent = new Intent(getActivity(), ClassifyDetailActivity.class);
+                intent.putExtra("gc_id", gridList.get(position).getGcId());
+                intent.putExtra("store_id", gridList.get(position).getStoreId());
+                startActivity(intent);
+                break;
+            default:
+                break;
+        }
     }
 }

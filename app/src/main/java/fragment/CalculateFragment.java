@@ -53,6 +53,7 @@ import adapter.CalculateChooseFileAdapter;
 import adapter.UnitPopAdapter;
 import bean.ChooseFile;
 import config.NetConfig;
+import config.ParaConfig;
 import utils.HeightUtils;
 import utils.ToastUtils;
 
@@ -88,13 +89,14 @@ public class CalculateFragment extends Fragment implements View.OnClickListener,
     private int DATE_STATE;
     private Bitmap bitmap;
     private OkHttpClient okHttpClient;
-    private ProgressDialog mPd;
+    private ProgressDialog progressDialog;
     private EditText purchaseNameEt, goodsNameEt, purchaseAmountEt, goodsDescriptionEt, detailAreaEt, deliverTimeEt;
     private EditText detailDescriptionEt, maxPriceEt, memberNameEt, memberPhoneEt, memberMobileEt;
     private TextView ofKindTv, unitTv, billRequireTv, tranRequireTv, bidEndTimeTv, resultTimeTv, receiveAreaTv;
     private String purchaseName, goodsName, ofKind, specialSupply, purchaseAmount, unit, goodsDescription;
     private String billRequire, tranRequire, receiveArea, detailArea, deliverTime, detailDescription;
     private String bidendTime, resultTime, maxPrice, memberName, memberPhone, memberMobile;
+    private int STATE = ParaConfig.FIRST;
 
     Handler handler = new Handler() {
         @Override
@@ -103,11 +105,11 @@ public class CalculateFragment extends Fragment implements View.OnClickListener,
             if (msg != null) {
                 switch (msg.what) {
                     case 0:
-                        mPd.dismiss();
-                        ToastUtils.toast(getActivity(), "无网络");
+                        progressDialog.dismiss();
+                        ToastUtils.toast(getActivity(), ParaConfig.NETWORK_ERROR);
                         break;
                     case 1:
-                        mPd.dismiss();
+                        progressDialog.dismiss();
                         mSpecialSupplyAdapter.notifyDataSetChanged();
                         mSpecialSupplySp.setSelection(0);
                         break;
@@ -173,8 +175,8 @@ public class CalculateFragment extends Fragment implements View.OnClickListener,
 
     private void initData() {
         okHttpClient = new OkHttpClient();
-        mPd = new ProgressDialog(getActivity());
-        mPd.setMessage("加载中..");
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setCanceledOnTouchOutside(false);
         mSpecialSupplyAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, mSpecialSupplyList);
         mUnitPopAdapter = new UnitPopAdapter(getActivity(), mUnitList);
         mCalculateChooseFileAdapter = new CalculateChooseFileAdapter(getActivity(), mChooseFileList, this);
@@ -206,7 +208,7 @@ public class CalculateFragment extends Fragment implements View.OnClickListener,
             mSpecialSupplyList.add("请选择");
             mSpecialSupplyAdapter.notifyDataSetChanged();
         } else {
-            mPd.show();
+            progressDialog.show();
             Request request = new Request.Builder().url(NetConfig.specialSupplyHeadUrl + id + NetConfig.specialSupplyFootUrl).get().build();
             okHttpClient.newCall(request).enqueue(new Callback() {
                 @Override

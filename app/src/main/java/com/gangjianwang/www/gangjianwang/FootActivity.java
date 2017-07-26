@@ -2,15 +2,20 @@ package com.gangjianwang.www.gangjianwang;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -19,34 +24,63 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import adapter.MyfootAdapter;
-import bean.Myfoot;
+import bean.MyFoot;
 import config.NetConfig;
-import customview.MyRefreshListView;
-import customview.OnRefreshListener;
-import utils.ToastUtils;
+import config.ParaConfig;
+import utils.UserUtils;
 
-public class FootActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemLongClickListener, OnRefreshListener {
+public class FootActivity extends AppCompatActivity implements View.OnClickListener, AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
 
     private View rootView, emptyView;
+    private LinearLayout emptyNetLl, emptyNoNetLl;
+    private RelativeLayout lookAroundRl;
+    private TextView reLoadTv;
     private RelativeLayout mBackRl, mClearRl;
-    private MyRefreshListView mMyfootLv;
-    private ImageView emptyIconIv;
-    private TextView emptyHintTv, emptyRecommendTv;
-    private List<Myfoot> mDataList = new ArrayList<>();
+    private ListView lv;
+    private List<MyFoot> myFootList = new ArrayList<>();
     private MyfootAdapter mAdapter;
-    private AlertDialog deleteAd, clearAd;
-    private int deletePosition;
-    private ProgressDialog mPd;
+    private AlertDialog alertDialog;
     private OkHttpClient okHttpClient;
-    private Handler handler;
-    private final int LOAD_FIRST = 1;
-    private final int LOAD_REFRESH = 2;
-    private final int LOAD_LOAD = 3;
+    private String key;
+    private ProgressDialog progressDialog;
+    private int curPage = 1, totalPage = 1;
+    private boolean isLast = false;
+    private int STATE = ParaConfig.FIRST;
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg != null) {
+                progressDialog.dismiss();
+                switch (msg.what) {
+                    case 0:
+                        emptyNetLl.setVisibility(View.INVISIBLE);
+                        emptyNoNetLl.setVisibility(View.VISIBLE);
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        myFootList.clear();
+                        emptyNetLl.setVisibility(View.VISIBLE);
+                        emptyNoNetLl.setVisibility(View.INVISIBLE);
+                        break;
+                    default:
+                        break;
+                }
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,225 +91,134 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
         initView();
         initData();
         setData();
-        loadData(LOAD_FIRST);
+        loadData();
         setListener();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeMessages(0);
+        handler.removeMessages(1);
+        handler.removeMessages(2);
+    }
+
     private void initView() {
+        initRoot();
+        initEmpty();
+        initDialog();
+    }
+
+    private void initRoot() {
         mBackRl = (RelativeLayout) rootView.findViewById(R.id.rl_myfoot_back);
         mClearRl = (RelativeLayout) rootView.findViewById(R.id.rl_myfoot_clear);
-        mMyfootLv = (MyRefreshListView) rootView.findViewById(R.id.lv_myfoot);
-        AlertDialog.Builder deleteBuilder = new AlertDialog.Builder(FootActivity.this);
-        deleteBuilder.setMessage("是否删除?");
-        deleteBuilder.setPositiveButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                deleteAd.dismiss();
-            }
-        }).setNegativeButton("删除", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mDataList.remove(deletePosition);
-                mAdapter.notifyDataSetChanged();
-                deleteAd.dismiss();
-            }
-        });
-        deleteAd = deleteBuilder.create();
-        AlertDialog.Builder clearBuilder = new AlertDialog.Builder(FootActivity.this);
-        clearBuilder.setMessage("是否清空?");
-        clearBuilder.setPositiveButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                clearAd.dismiss();
-            }
-        }).setNegativeButton("清空", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mDataList.clear();
-                mAdapter.notifyDataSetChanged();
-                clearAd.dismiss();
-                ToastUtils.toast(FootActivity.this, "已清空");
-            }
-        });
-        clearAd = clearBuilder.create();
+        lv = (ListView) rootView.findViewById(R.id.lv_myfoot);
+    }
+
+    private void initEmpty() {
         emptyView = View.inflate(FootActivity.this, R.layout.empty_type_myfoot, null);
-        emptyIconIv = (ImageView) emptyView.findViewById(R.id.iv_empty_type_myfoot_icon);
-        emptyHintTv = (TextView) emptyView.findViewById(R.id.tv_empty_type_myfoot_hint);
-        emptyRecommendTv = (TextView) emptyView.findViewById(R.id.tv_empty_type_myfoot_recommend);
-        emptyIconIv.setImageResource(R.mipmap.empty_myfoot);
-        emptyHintTv.setText("暂无您的浏览记录");
-        emptyRecommendTv.setText("可以去看看哪些想要买的");
+        lookAroundRl = (RelativeLayout) emptyView.findViewById(R.id.rl_empty_type_myfoot_lookaround);
+        emptyNetLl = (LinearLayout) emptyView.findViewById(R.id.ll_empty_net);
+        emptyNoNetLl = (LinearLayout) emptyView.findViewById(R.id.ll_empty_no_net);
+        reLoadTv = (TextView) emptyView.findViewById(R.id.tv_empty_type_myfoot_reload);
+        ((ImageView) emptyView.findViewById(R.id.iv_empty_type_myfoot_icon)).setImageResource(R.mipmap.empty_myfoot);
+        ((TextView) emptyView.findViewById(R.id.tv_empty_type_myfoot_hint)).setText("暂无您的浏览记录");
+        ((TextView) emptyView.findViewById(R.id.tv_empty_type_myfoot_recommend)).setText("可以去看看哪些想要买的");
         emptyView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         emptyView.setVisibility(View.GONE);
-        ((ViewGroup) mMyfootLv.getParent()).addView(emptyView);
-        mMyfootLv.setEmptyView(emptyView);
+        ((ViewGroup) lv.getParent()).addView(emptyView);
+        lv.setEmptyView(emptyView);
+    }
+
+    private void initDialog() {
+        alertDialog = new AlertDialog.Builder(this).setMessage(ParaConfig.DELETE_CLEAR).setPositiveButton(ParaConfig.DELETE_NO, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                alertDialog.dismiss();
+            }
+        }).setNegativeButton(ParaConfig.DELETE_YES, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                alertDialog.dismiss();
+                clear();
+            }
+        }).create();
+        alertDialog.setCanceledOnTouchOutside(false);
     }
 
     private void initData() {
-        mPd = new ProgressDialog(this);
-        mPd.setMessage("加载中..");
         okHttpClient = new OkHttpClient();
-        handler = new Handler();
-        mAdapter = new MyfootAdapter(this, mDataList);
+        progressDialog = new ProgressDialog(this);
+        mAdapter = new MyfootAdapter(this, myFootList);
+        key = UserUtils.readLogin(this, true).getKey();
     }
 
     private void setData() {
-        mMyfootLv.setAdapter(mAdapter);
-    }
-
-    private void loadData(int LOAD_STATE) {
-        switch (LOAD_STATE) {
-            case LOAD_FIRST:
-                emptyView.setVisibility(View.GONE);
-                mPd.show();
-                Request requestFirst = new Request.Builder().url(NetConfig.cityUrl).get().build();
-                okHttpClient.newCall(requestFirst).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Request request, IOException e) {
-                        mPd.dismiss();
-                        ToastUtils.toast(FootActivity.this, "无网络");
-                    }
-
-                    @Override
-                    public void onResponse(Response response) throws IOException {
-                        if (response.isSuccessful()) {
-                            new Thread() {
-                                @Override
-                                public void run() {
-                                    super.run();
-                                    Myfoot mf1 = new Myfoot();
-                                    mf1.goodsName = "精品瓷砖";
-                                    mf1.goodsPrice = "¥35.00";
-                                    mf1.goodsImg = null;
-                                    Myfoot mf2 = new Myfoot();
-                                    mf2.goodsName = "圆管";
-                                    mf2.goodsPrice = "¥25.50";
-                                    mf2.goodsImg = null;
-                                    Myfoot mf3 = new Myfoot();
-                                    mf3.goodsName = "把手";
-                                    mf3.goodsPrice = "¥10.00";
-                                    mf3.goodsImg = null;
-                                    mDataList.add(mf1);
-                                    mDataList.add(mf2);
-                                    mDataList.add(mf3);
-                                    mDataList.add(mf1);
-                                    mDataList.add(mf2);
-                                    mDataList.add(mf3);
-                                    mDataList.add(mf1);
-                                    mDataList.add(mf2);
-                                    mDataList.add(mf3);
-                                    mDataList.add(mf1);
-                                    mDataList.add(mf2);
-                                    mDataList.add(mf3);
-                                    mDataList.add(mf1);
-                                    mDataList.add(mf2);
-                                    mDataList.add(mf3);
-                                    handler.post(runnableFirst);
-                                }
-                            }.start();
-                        } else {
-                            mPd.dismiss();
-                            ToastUtils.toast(FootActivity.this, "出小差了");
-                        }
-                    }
-                });
-                break;
-            case LOAD_REFRESH:
-                Request requestRefresh = new Request.Builder().url(NetConfig.cityUrl).get().build();
-                okHttpClient.newCall(requestRefresh).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Request request, IOException e) {
-                        mMyfootLv.hideHeadView();
-                        ToastUtils.toast(FootActivity.this, "无网络");
-                    }
-
-                    @Override
-                    public void onResponse(Response response) throws IOException {
-                        if (response.isSuccessful()) {
-                            new Thread() {
-                                @Override
-                                public void run() {
-                                    super.run();
-                                    List<Myfoot> tempList = new ArrayList<Myfoot>();
-                                    tempList.addAll(mDataList);
-                                    mDataList.clear();
-                                    Myfoot mf1 = new Myfoot();
-                                    mf1.goodsName = "精品瓷砖";
-                                    mf1.goodsPrice = "¥35.00";
-                                    mf1.goodsImg = null;
-                                    Myfoot mf2 = new Myfoot();
-                                    mf2.goodsName = "圆管";
-                                    mf2.goodsPrice = "¥25.50";
-                                    mf2.goodsImg = null;
-                                    Myfoot mf3 = new Myfoot();
-                                    mf3.goodsName = "把手";
-                                    mf3.goodsPrice = "¥10.00";
-                                    mf3.goodsImg = null;
-                                    mDataList.add(mf1);
-                                    mDataList.add(mf2);
-                                    mDataList.add(mf3);
-                                    mDataList.addAll(tempList);
-                                    handler.post(runnableRefresh);
-                                }
-                            }.start();
-                        } else {
-                            mMyfootLv.hideHeadView();
-                            ToastUtils.toast(FootActivity.this, "出小差了");
-                        }
-                    }
-                });
-                break;
-            case LOAD_LOAD:
-                Request requestLoad = new Request.Builder().url(NetConfig.cityUrl).get().build();
-                okHttpClient.newCall(requestLoad).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Request request, IOException e) {
-                        mMyfootLv.hideFootView();
-                        ToastUtils.toast(FootActivity.this, "无网络");
-                    }
-
-                    @Override
-                    public void onResponse(Response response) throws IOException {
-                        if (response.isSuccessful()) {
-                            new Thread() {
-                                @Override
-                                public void run() {
-                                    super.run();
-                                    Myfoot mf1 = new Myfoot();
-                                    mf1.goodsName = "精品瓷砖";
-                                    mf1.goodsPrice = "¥35.00";
-                                    mf1.goodsImg = null;
-                                    Myfoot mf2 = new Myfoot();
-                                    mf2.goodsName = "圆管";
-                                    mf2.goodsPrice = "¥25.50";
-                                    mf2.goodsImg = null;
-                                    Myfoot mf3 = new Myfoot();
-                                    mf3.goodsName = "把手";
-                                    mf3.goodsPrice = "¥10.00";
-                                    mf3.goodsImg = null;
-                                    mDataList.add(mf1);
-                                    mDataList.add(mf2);
-                                    mDataList.add(mf3);
-                                    handler.post(runnableLoad);
-                                }
-                            }.start();
-                        } else {
-                            mMyfootLv.hideFootView();
-                            ToastUtils.toast(FootActivity.this, "出小差了");
-                        }
-                    }
-                });
-                break;
-            default:
-                break;
-        }
+        lv.setAdapter(mAdapter);
     }
 
     private void setListener() {
         mBackRl.setOnClickListener(this);
         mClearRl.setOnClickListener(this);
-        mMyfootLv.setOnItemLongClickListener(this);
-        mMyfootLv.setOnRefreshListener(this);
+        reLoadTv.setOnClickListener(this);
+        lookAroundRl.setOnClickListener(this);
+        lv.setOnItemClickListener(this);
+        lv.setOnScrollListener(this);
+    }
+
+    private void loadData() {
+        if (STATE == ParaConfig.FIRST) {
+            emptyView.setVisibility(View.GONE);
+            progressDialog.show();
+        }
+        Request request = new Request.Builder().url(NetConfig.footHeadUrl + key + NetConfig.footFootPageHeadUrl + curPage + NetConfig.footFootPageFootUrl).get().build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    if (STATE == ParaConfig.REFRESH) {
+                        myFootList.clear();
+                    }
+                    if (parseJson(response.body().string())) {
+                        handler.sendEmptyMessage(1);
+                    } else {
+                        handler.sendEmptyMessage(0);
+                    }
+                } else {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
+    }
+
+    private boolean parseJson(String json) {
+        try {
+            JSONObject objBean = new JSONObject(json);
+            if (objBean.optInt("code") == 200) {
+                totalPage = objBean.optInt("page_total");
+                JSONObject objDatas = objBean.optJSONObject("datas");
+                JSONArray arrGoodsbrowseList = objDatas.optJSONArray("goodsbrowse_list");
+                for (int i = 0; i < arrGoodsbrowseList.length(); i++) {
+                    MyFoot myFoot = new MyFoot();
+                    JSONObject o = arrGoodsbrowseList.optJSONObject(i);
+                    myFoot.setGoodsId(o.optString("goods_id"));
+                    myFoot.setStoreId(o.optString("store_id"));
+                    myFoot.setGoodsName(o.optString("goods_name"));
+                    myFoot.setGoodsPrice(o.optString("goods_promotion_price"));
+                    myFoot.setGoodsImgUrl(o.optString("goods_image_url"));
+                    myFootList.add(myFoot);
+                }
+                return true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override
@@ -285,63 +228,74 @@ public class FootActivity extends AppCompatActivity implements View.OnClickListe
                 finish();
                 break;
             case R.id.rl_myfoot_clear:
-                if (!mDataList.isEmpty()) {
-                    clearAd.show();
-                } else {
-                    ToastUtils.toast(FootActivity.this, "没有什么可清空的");
+                if (!myFootList.isEmpty()) {
+                    alertDialog.show();
                 }
                 break;
-            default:
+            case R.id.tv_empty_type_myfoot_reload:
+                loadData();
                 break;
-        }
-    }
-
-    @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        switch (parent.getId()) {
-            case R.id.lv_myfoot:
-                deletePosition = position - 1;
-                ToastUtils.toast(FootActivity.this, deletePosition + "");
-                deleteAd.show();
+            case R.id.rl_empty_type_myfoot_lookaround:
+                Intent intent = new Intent(FootActivity.this, HomeActivity.class);
+                intent.putExtra("what", 0);
+                startActivity(intent);
                 break;
             default:
                 break;
         }
-        return false;
+    }
+
+    private void clear() {
+        progressDialog.show();
+        Request request = new Request.Builder().url(NetConfig.footDelHeadUrl + key + NetConfig.footDelFootUrl).get().build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        JSONObject objBean = new JSONObject(response.body().string());
+                        if (objBean.optInt("code") == 200) {
+                            handler.sendEmptyMessage(2);
+                        } else {
+                            handler.sendEmptyMessage(0);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
     }
 
     @Override
-    public void onDownPullRefresh() {
-        loadData(LOAD_REFRESH);
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if (isLast && scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+            if (curPage < totalPage) {
+                curPage++;
+                STATE = ParaConfig.LOAD;
+                loadData();
+            }
+        }
     }
 
     @Override
-    public void onLoadingMore() {
-        loadData(LOAD_LOAD);
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        isLast = (firstVisibleItem + visibleItemCount) == totalItemCount;
     }
 
-    Runnable runnableFirst = new Runnable() {
-        @Override
-        public void run() {
-            mPd.dismiss();
-            emptyView.setVisibility(View.VISIBLE);
-            mAdapter.notifyDataSetChanged();
-        }
-    };
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = new Intent(FootActivity.this, GoodsDetailActivity.class);
+        intent.putExtra("store_id", myFootList.get(position).getStoreId());
+        intent.putExtra("goods_id", myFootList.get(position).getGoodsId());
+        startActivity(intent);
+    }
 
-    Runnable runnableRefresh = new Runnable() {
-        @Override
-        public void run() {
-            mMyfootLv.hideHeadView();
-            mAdapter.notifyDataSetChanged();
-        }
-    };
-
-    Runnable runnableLoad = new Runnable() {
-        @Override
-        public void run() {
-            mMyfootLv.hideFootView();
-            mAdapter.notifyDataSetChanged();
-        }
-    };
 }

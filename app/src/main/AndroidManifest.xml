@@ -44,14 +44,16 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".SettingActivity" />
         <activity android:name=".FeedbackActivity" />
-        <activity android:name=".SearchActivity" />
+        <activity
+            android:name=".SearchActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".ChangeCityActivity" />
         <activity
             android:name=".OrderActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".PropertyActivity" />
         <activity android:name=".PhoneproveActivity" />
-        <activity android:name=".GoodsStoreCollectActivity" />
+        <activity android:name=".CollectActivity" />
         <activity android:name=".FootActivity" />
         <activity android:name=".RefundActivity" />
         <activity android:name=".IntegrateActivity" />
@@ -72,20 +74,21 @@
         <activity android:name=".AdvertisementActivity" />
         <activity android:name=".MessageActivity" />
         <activity
-            android:name=".ContractProjectActivity"
+            android:name=".StoreActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".AddressManagerActivity" />
         <activity android:name=".AddAddressActivity" />
         <activity android:name=".GoodsDetailActivity" />
         <activity android:name=".ReceiveAreaActivity" />
-        <activity android:name=".ShopDetailActivity" />
-        <activity android:name=".MakeSureOrderActivity" />
+        <activity android:name=".StoreDetailActivity" />
+        <activity android:name=".SureOrderActivity" />
         <activity android:name=".ReceiveAddressManageActivity" />
         <activity android:name=".AddReceiveAddressActivity" />
         <activity android:name=".ChoosePayWayActivity" />
         <activity android:name=".ManageBillInfoActivity" />
         <activity android:name=".ShopIntroActivity" />
-        <activity android:name=".InquiryListActivity" />
+        <activity android:name=".InquiryActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
             android:name=".GoodsScreenActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
@@ -93,7 +96,9 @@
         <activity android:name=".DigouStoreActivity" />
         <activity android:name=".PurchaseDetailActivity" />
         <activity android:name=".StoreOfferActivity" />
-        <activity android:name=".AgreeMentActivity"></activity>
+        <activity android:name=".AgreeMentActivity" />
+        <activity android:name=".GjBuyActivity" />
+        <activity android:name=".ClassifyDetailActivity"></activity>
     </application>
 
 </manifest>

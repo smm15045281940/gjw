@@ -8,7 +8,7 @@
         android:id="@+id/rl_item_classify_right_inner_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/default_gray_selector"
+        android:background="@drawable/selector_press"
         android:clickable="true"
         android:padding="@dimen/x10">
 
