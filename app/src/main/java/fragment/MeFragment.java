@@ -60,7 +60,7 @@ import static android.app.Activity.RESULT_OK;
  * Created by Administrator on 2017/4/10 0010.
  */
 
-public class MineFragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class MeFragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     private View rootView;
     private SwipeRefreshLayout srl;
@@ -116,7 +116,7 @@ public class MineFragment extends Fragment implements View.OnClickListener, Swip
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_mine, null);
+        rootView = inflater.inflate(R.layout.fragment_me, null);
         initView();
         initData();
         setListener();

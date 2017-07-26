@@ -15,6 +15,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/press_true"
                 android:orientation="vertical">
 
                 <RelativeLayout
@@ -32,7 +33,6 @@
                             android:id="@+id/rl_mine_setting"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/selector_press"
                             android:padding="@dimen/x10">
 
                             <ImageView
@@ -63,7 +63,7 @@
                                     android:layout_centerInParent="true"
                                     android:alpha="0.6"
                                     android:background="@drawable/member_shape"
-                                    android:padding="@dimen/x20"
+                                    android:padding="@dimen/x15"
                                     android:scaleType="fitXY"
                                     android:src="@mipmap/member_white" />
 
@@ -106,7 +106,6 @@
 
                         </RelativeLayout>
 
-
                         <LinearLayout
                             android:id="@+id/ll_mine_midgray"
                             android:layout_width="match_parent"
@@ -128,9 +127,10 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_gravity="center_horizontal"
+                                        android:singleLine="true"
                                         android:text="0"
                                         android:textColor="@android:color/white"
-                                        android:textSize="@dimen/x15" />
+                                        android:textSize="@dimen/x13" />
 
                                     <TextView
                                         android:id="@+id/tv_mine_goodscollect"
@@ -152,9 +152,10 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_gravity="center_horizontal"
+                                        android:singleLine="true"
                                         android:text="0"
                                         android:textColor="@android:color/white"
-                                        android:textSize="@dimen/x15" />
+                                        android:textSize="@dimen/x13" />
 
                                     <TextView
                                         android:id="@+id/tv_mine_shopcollect"
@@ -191,15 +192,11 @@
 
                 </RelativeLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/x10"
-                    android:background="@android:color/darker_gray" />
-
                 <RelativeLayout
                     android:id="@+id/rl_mine_myorder"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/x10"
                     android:background="@drawable/selector_press">
 
                     <ImageView
@@ -224,17 +221,12 @@
                         android:layout_toLeftOf="@+id/iv_mine_myorder_all"
                         android:text="查看全部订单" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_alignParentBottom="true"
-                        android:background="@android:color/darker_gray" />
-
                 </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/x1"
                     android:orientation="horizontal">
 
                     <RelativeLayout
@@ -348,15 +340,11 @@
                     </RelativeLayout>
                 </LinearLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/x10"
-                    android:background="@android:color/darker_gray" />
-
                 <RelativeLayout
                     android:id="@+id/rl_mine_myproperty"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/x10"
                     android:background="@drawable/selector_press">
 
                     <ImageView
@@ -379,17 +367,12 @@
                         android:layout_toLeftOf="@+id/iv_mine_myproperty_all"
                         android:text="查看全部财产" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_alignParentBottom="true"
-                        android:background="@android:color/darker_gray" />
-
                 </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/x1"
                     android:orientation="horizontal">
 
                     <RelativeLayout
@@ -411,40 +394,79 @@
 
                         </LinearLayout>
 
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@android:color/white">
+
+                        <LinearLayout style="@style/ll_mine_midgray">
+
+                            <ImageView style="@style/iv_mine_waitpay" />
+
+                            <TextView style="@style/tv_mine_waitpay" />
+
+                        </LinearLayout>
 
                     </RelativeLayout>
 
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:background="@android:color/white">
+
+                        <LinearLayout style="@style/ll_mine_midgray">
+
+                            <ImageView style="@style/iv_mine_waitpay" />
+
+                            <TextView style="@style/tv_mine_waitpay" />
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
 
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:background="@android:color/white">
+
+                        <LinearLayout style="@style/ll_mine_midgray">
+
+                            <ImageView style="@style/iv_mine_waitpay" />
+
+                            <TextView style="@style/tv_mine_waitpay" />
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
 
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:background="@android:color/white">
 
-                    <RelativeLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        <LinearLayout style="@style/ll_mine_midgray">
+
+                            <ImageView style="@style/iv_mine_waitpay" />
+
+                            <TextView style="@style/tv_mine_waitpay" />
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
 
                 </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/x10"
-                    android:background="@android:color/darker_gray" />
 
                 <RelativeLayout
                     android:id="@+id/rl_mine_deliveryaddressmanage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/x10"
                     android:background="@drawable/selector_press">
 
                     <ImageView
@@ -461,18 +483,13 @@
                         style="@style/iv_mine_order_more"
                         android:src="@mipmap/more_black" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_alignParentBottom="true"
-                        android:background="@android:color/darker_gray" />
-
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:id="@+id/rl_mine_usersetting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/x1"
                     android:background="@drawable/selector_press">
 
                     <ImageView
@@ -489,18 +506,13 @@
                         style="@style/iv_mine_order_more"
                         android:src="@mipmap/more_black" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_alignParentBottom="true"
-                        android:background="@android:color/darker_gray" />
-
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:id="@+id/rl_mine_mypurchase"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/x1"
                     android:background="@drawable/selector_press">
 
                     <ImageView
@@ -517,17 +529,14 @@
                         style="@style/iv_mine_order_more"
                         android:src="@mipmap/more_black" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_alignParentBottom="true"
-                        android:background="@android:color/darker_gray" />
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:id="@+id/rl_mine_messagelist"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/x10"
+                    android:layout_marginTop="@dimen/x1"
                     android:background="@drawable/selector_press">
 
                     <ImageView
@@ -544,19 +553,7 @@
                         style="@style/iv_mine_order_more"
                         android:src="@mipmap/more_black" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_alignParentBottom="true"
-                        android:layout_alignParentTop="true"
-                        android:background="@android:color/darker_gray" />
-
                 </RelativeLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/x10"
-                    android:background="@android:color/darker_gray" />
 
             </LinearLayout>
 
